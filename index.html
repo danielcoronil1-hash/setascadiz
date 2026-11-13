@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Setas Campo de Gibraltar</title>
+<meta name="theme-color" content="#2f3b26">
+<meta name="description" content="¿Cuándo salir a por setas? Tiempo, zonas, modo campo y guía de setas del Campo de Gibraltar y Los Alcornocales.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Setas CdG">
+<style>
+:root{
+  --bg:#f4efe4; --card:#fffdf8; --ink:#2b2418; --muted:#6f6553; --line:#e3d9c6;
+  --moss:#2f3b26; --moss2:#4c5f3a; --bark:#7a4b2a; --cap:#b5542a;
+  --ok:#3f7d3a; --mid:#c98a1b; --bad:#b33a2b; --deadly:#7a0f14;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+header{background:var(--moss);color:#f4efe4;padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:8px}
+header h1{margin:0;font-size:1.1rem}
+header p{margin:1px 0 0;font-size:.75rem;opacity:.8}
+#btnInstall{font:inherit;font-size:.8rem;border:1px solid #f4efe4;background:transparent;color:#f4efe4;border-radius:99px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+main{max-width:760px;margin:0 auto;padding:14px 14px calc(90px + env(safe-area-inset-bottom))}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fffdf8;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:6}
+nav button{flex:1;border:0;background:none;font:inherit;font-size:.7rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;cursor:pointer}
+nav button span{font-size:1.35rem;line-height:1}
+nav button.on{color:var(--moss);font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 0 12px}
+.card h2{margin:0 0 8px;font-size:1.05rem}
+.card h3{margin:12px 0 6px;font-size:.95rem}
+.muted{color:var(--muted);font-size:.85rem}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+select,input,textarea{font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);max-width:100%}
+.b{display:inline-block;font:inherit;border:0;border-radius:10px;padding:10px 14px;background:var(--moss);color:#fff;cursor:pointer}
+.b2{display:inline-block;font:inherit;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff;color:var(--ink);cursor:pointer}
+button.big{width:100%;padding:14px;font-size:1.05rem;font-weight:700}
+.gauge{display:flex;align-items:center;gap:14px}
+.ring{width:108px;height:108px;flex:none}
+.verdict{font-size:1.25rem;font-weight:800;margin:0}
+.days{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-top:8px}
+.day{text-align:center;font-size:.7rem;color:var(--muted);cursor:default}
+.bar{height:70px;display:flex;align-items:flex-end;justify-content:center;background:#f3ecdf;border-radius:8px;overflow:hidden}
+.bar i{display:block;width:100%;border-radius:6px 6px 0 0}
+.day b{display:block;color:var(--ink);font-size:.74rem;line-height:1.15;margin-bottom:3px}
+.day.best .bar{outline:2px solid var(--moss)}
+.day small{display:block;min-height:1.2em}
+.pill{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:99px;background:#efe6d4;color:var(--ink);margin:2px 4px 2px 0}
+.t-exc{background:#dcebd2;color:#24501f}.t-buena{background:#e8efd9;color:#3e5a1f}
+.t-tox{background:#f7dfc9;color:#8a3d08}.t-mortal{background:var(--deadly);color:#fff}
+.n-1{background:#e2efe9;color:#1f5b45}.n-2{background:#f3ead2;color:#6a4d0c}.n-3{background:#f6dcd6;color:#7a1f12}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px}
+.chips button{flex:none;font:inherit;font-size:.82rem;border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 12px;cursor:pointer}
+.chips button.on{background:var(--moss);color:#fff;border-color:var(--moss)}
+.wrapchips{display:flex;flex-wrap:wrap;gap:6px}
+.wrapchips button{font:inherit;font-size:.8rem;border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 10px;cursor:pointer}
+.wrapchips button.on{background:var(--moss2);color:#fff;border-color:var(--moss2)}
+.sp{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.sp svg{flex:none;width:64px;height:64px;background:#f3ecdf;border-radius:12px}
+.sp h3{margin:0;font-size:1rem}
+.sp .sci{font-style:italic;color:var(--muted);font-size:.82rem}
+.detail{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:.92rem}
+.detail ul{margin:4px 0 8px;padding-left:18px}
+.warn{background:#fbe9e5;border:1px solid #efc2b8;color:#6d1b10;border-radius:12px;padding:10px 12px;font-size:.9rem}
+.danger{background:var(--deadly);color:#fff;border-radius:12px;padding:12px;font-size:.92rem}
+.danger a{color:#fff}
+.ok{background:#e4f0dc;border:1px solid #c3dcb3;border-radius:12px;padding:10px 12px;font-size:.9rem}
+.months{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;margin:6px 0}
+.months span{font-size:.62rem;text-align:center;padding:3px 0;border-radius:4px;background:#efe8da;color:#a99b80}
+.months span.y{background:var(--moss2);color:#fff}
+.months span.now{outline:2px solid var(--cap)}
+table{border-collapse:collapse;width:100%;font-size:.8rem}
+th,td{padding:5px 4px;border-bottom:1px solid var(--line);text-align:left}
+td.c,th.c{text-align:center}
+.dot{display:inline-block;width:12px;height:12px;border-radius:3px}
+.list li{margin:5px 0}
+.hidden{display:none!important}
+.note{font-size:.8rem;color:var(--muted);margin-top:6px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:.88rem}
+.kv b{text-align:right}
+label.chk{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+label.chk input{margin-top:3px;transform:scale(1.2)}
+.form label{display:block;font-size:.85rem;margin:8px 0 2px}
+.form input,.form select,.form textarea{width:100%}
+a{color:var(--bark)}
+.entry{border-bottom:1px solid var(--line);padding:10px 0;font-size:.9rem}
+.entry:last-child{border:0}
+.entry img{max-width:100%;border-radius:10px;margin-top:6px;display:block}
+.hbar{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:.88rem}
+.hbar .nm{flex:0 0 42%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar .tr{flex:1;height:10px;background:#efe6d4;border-radius:99px;overflow:hidden}
+.hbar .tr i{display:block;height:100%;border-radius:99px}
+.hbar .v{flex:0 0 34px;text-align:right;font-weight:700;font-size:.8rem}
+.zone{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.zone:last-child{border:0}
+.zone .sc{flex:none;width:44px;height:44px;border-radius:12px;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.zone .tx{flex:1;font-size:.9rem}
+.zone .tx small{color:var(--muted);display:block}
+details{border-top:1px solid var(--line)}
+details:first-of-type{border-top:0}
+summary{cursor:pointer;padding:12px 0;font-weight:700;list-style:none;display:flex;justify-content:space-between}
+summary::after{content:"＋";color:var(--muted)}
+details[open] summary::after{content:"－"}
+details>div{padding-bottom:10px}
+.compass{width:180px;height:180px;margin:6px auto;display:block}
+.bignum{font-size:2rem;font-weight:800;text-align:center;margin:0}
+.center{text-align:center}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stat div{background:#f3ecdf;border-radius:12px;padding:8px 4px}
+.stat b{display:block;font-size:1.2rem}
+.stat span{font-size:.72rem;color:var(--muted)}
+.legend{font-size:.72rem;color:var(--muted);margin-top:6px}
+.mm{position:relative;overflow:hidden;touch-action:none;background:#e8e2d4;user-select:none;-webkit-user-select:none}
+.mm-tiles,.mm-layer{position:absolute;inset:0}
+.mm-tile{position:absolute;left:0;top:0;opacity:0;transition:opacity .2s;max-width:none}
+.mm-tile.ok{opacity:1}
+.mm-svg{position:absolute;left:0;top:0;pointer-events:none}
+.mm-markers{position:absolute;inset:0;pointer-events:none}
+.mm-mk{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer}
+.mm-attr{position:absolute;right:0;bottom:84px;font-size:10px;background:rgba(255,255,255,.85);padding:1px 6px;max-width:75%;z-index:5}
+.mm-scale{position:absolute;left:8px;bottom:90px;border:2px solid #555;border-top:0;font-size:11px;background:rgba(255,255,255,.85);text-align:center;z-index:5}
+#mapZoom{position:absolute;left:8px;bottom:112px;z-index:1100;display:flex;flex-direction:column;gap:4px}
+#mapZoom button{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:rgba(255,253,248,.97);font-size:1.3rem;box-shadow:0 1px 4px #0003;cursor:pointer}
+body.mapmode main{max-width:none;padding:0}
+#mapWrap{position:relative}
+#map{width:100%;height:70vh}
+#mapTop{position:absolute;top:8px;left:8px;right:70px;z-index:1100;display:flex;gap:6px;flex-wrap:wrap;pointer-events:none}
+#mapTop span{background:rgba(255,253,248,.95);border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-size:.82rem;font-weight:700;box-shadow:0 1px 4px #0002}
+#mapBtns{position:absolute;top:8px;right:8px;z-index:1100;display:flex;flex-direction:column;gap:5px}
+#mapBtns button{width:50px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(255,253,248,.97);font-size:1.25rem;line-height:1;box-shadow:0 1px 4px #0003;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0}
+#mapBtns button small{font-size:.58rem;color:var(--muted);margin-top:2px}
+#mapBtns button.on{background:var(--moss);border-color:var(--moss)}#mapBtns button.on small{color:#e9efe0}
+#mapBtns button.rec{background:#b33a2b;border-color:#b33a2b}#mapBtns button.rec small{color:#fff}
+#mapMsg{position:absolute;left:60px;right:66px;bottom:96px;z-index:1050;text-align:center;font-size:.85rem;pointer-events:none}
+#mapMsg:not(:empty){background:rgba(255,253,248,.95);border-radius:10px;padding:6px}
+#sheet{position:absolute;left:0;right:0;bottom:0;z-index:1200;background:var(--card);border-radius:18px 18px 0 0;box-shadow:0 -4px 16px #0003;padding:14px 14px 16px;max-height:62%;overflow:auto}
+#sheetX{position:absolute;top:8px;right:10px;border:0;background:#efe6d4;border-radius:99px;width:32px;height:32px;font-size:1rem;cursor:pointer}
+#sheet h2{margin:0 40px 4px 0;font-size:1.1rem}
+.mk{width:38px;height:38px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 2px 6px #0005}
+.mk b{transform:rotate(45deg);color:#fff;font-size:.9rem}
+.mkl{position:absolute;top:46px;left:19px;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:700;background:rgba(255,253,248,.92);padding:1px 6px;border-radius:6px;box-shadow:0 1px 3px #0003;color:#2b2418}
+.mk2{font-size:1.6rem;filter:drop-shadow(0 1px 2px #0006)}
+#mapBest{position:absolute;left:0;right:0;bottom:0;z-index:1150;display:flex;gap:8px;overflow-x:auto;padding:8px;scroll-snap-type:x mandatory}
+#mapBest:empty{display:none}
+.bestc{flex:0 0 78%;max-width:320px;scroll-snap-align:start;background:rgba(255,253,248,.98);border:1px solid var(--line);border-radius:14px;padding:8px 10px;display:flex;gap:10px;align-items:center;box-shadow:0 2px 8px #0003;cursor:pointer}
+.bestc .sc{flex:none;width:42px;height:42px;border-radius:12px;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.bestc .tx{font-size:.85rem;line-height:1.25;min-width:0}
+.bestc .tx b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bestc .tx span{color:var(--muted)}
+#mapNoTiles{position:absolute;inset:0;z-index:1300;background:rgba(244,239,228,.96);display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}
+#mapNoTiles>div{max-width:340px}
+.maplibregl-map{position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;font:12px/1.4 system-ui,sans-serif}
+.maplibregl-canvas{position:absolute;left:0;top:0}
+.maplibregl-marker{position:absolute;top:0;left:0;will-change:transform}
+.maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right,.maplibregl-ctrl-top-left,.maplibregl-ctrl-top-right{position:absolute;pointer-events:none;z-index:2}
+.maplibregl-ctrl-bottom-left{left:0;bottom:84px!important}.maplibregl-ctrl-bottom-right{right:0;bottom:84px!important}
+.maplibregl-ctrl{pointer-events:auto;clear:both}
+.maplibregl-ctrl-bottom-left .maplibregl-ctrl{margin:0 0 6px 8px;float:left}
+.gl-mk{cursor:pointer}
+.ruta{background:#f3ecdf;border-radius:12px;padding:8px 10px;font-size:.88rem;margin:8px 0}
+.ruta b{display:inline-block;min-width:92px}
+.gal{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;margin:8px 0;padding-bottom:4px}
+.gal figure{flex:0 0 72%;max-width:300px;margin:0;scroll-snap-align:start;cursor:zoom-in}
+.gal img{width:100%;height:190px;object-fit:cover;border-radius:12px;display:block;background:#e9e1cf}
+.gal figcaption{font-size:.68rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp img.thumb{flex:none;width:64px;height:64px;object-fit:cover;border-radius:12px}
+#viewer{position:fixed;inset:0;z-index:3000;background:rgba(10,10,8,.96);color:#fff;display:flex;align-items:center;justify-content:center;overflow:auto;padding:calc(env(safe-area-inset-top) + 50px) 10px 20px}
+#viewer img{max-width:100%;max-height:72vh;border-radius:10px;display:block;margin:0 auto}
+#viewer .vcap{font-size:.85rem;margin-top:10px;text-align:center}
+#viewer a{color:#cfe3b8}
+#viewerX,#vPrev,#vNext{position:fixed;z-index:3001;border:0;background:rgba(255,255,255,.15);color:#fff;border-radius:99px;width:44px;height:44px;font-size:1.3rem;cursor:pointer}
+#viewerX{top:calc(env(safe-area-inset-top) + 8px);right:10px}
+#vPrev{left:6px;top:50%}#vNext{right:6px;top:50%}
+#viewer.cmpmode #vPrev,#viewer.cmpmode #vNext{display:none}
+.cmp{max-width:720px;width:100%;align-self:flex-start}
+.cmpk{background:#fff3c4;color:#3b2f00;border-radius:12px;padding:10px;font-weight:700;margin-bottom:10px}
+.cmpg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cmpc ul{padding-left:16px;font-size:.78rem;margin:6px 0}
+.cmph{font-weight:800;padding:6px 8px;border-radius:10px;margin-bottom:6px;font-size:.9rem}
+.cmph.good{background:#2f6b2a}.cmph.bad{background:#8a1218}
+.cmpimgs{display:flex;flex-direction:column;gap:6px}
+.cmpimgs img{width:100%;height:130px!important;max-height:none!important;object-fit:cover;border-radius:10px}
+.pairbtn{display:flex;align-items:center;gap:8px;width:100%;text-align:left;font:inherit;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px;margin:6px 0;cursor:pointer}
+.me{width:18px;height:18px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 2px #1a73e866}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho</p></div>
+  <button id="btnInstall" class="hidden">Instalar app</button>
+</header>
+
+<main>
+
+<!-- ======================= HOY ======================= -->
+<section id="v-hoy">
+  <div class="card">
+    <div class="row" style="flex-wrap:nowrap">
+      <select id="zona" aria-label="Zona" style="flex:1;min-width:0"></select>
+      <button class="b2" id="btnGeo" title="Usar mi ubicación">📍</button>
+      <button class="b2" id="btnReload" title="Actualizar">↻</button>
+    </div>
+    <div id="estado" class="note">Cargando el tiempo…</div>
+  </div>
+
+  <div class="card" id="plan" style="border:2px solid var(--moss)">
+    <div class="muted" style="font-weight:700;letter-spacing:.3px">🧺 TU PLAN DE HOY</div>
+    <div id="planTxt" style="font-size:1.05rem;margin:6px 0 10px">Calculando…</div>
+    <div class="row" id="planBtns"></div>
+  </div>
+
+  <div class="card">
+    <div class="gauge">
+      <svg class="ring" viewBox="0 0 120 120" id="ring"></svg>
+      <div><p class="verdict" id="verdict">—</p><div id="verdictTxt" class="muted"></div></div>
+    </div>
+    <h3>Próximos días: ¿cuándo salir?</h3>
+    <div class="days" id="days"></div>
+    <div class="legend">💧 lluvia (mm) · 💨 levante fuerte · 🎯 fin de semana en temporada de caza (ojo con monterías) · recuadro = mejor día</div>
+  </div>
+
+  <div class="card">
+    <h2>¿Qué estará saliendo?</h2>
+    <div id="spChances" class="muted">Esperando datos del tiempo…</div>
+    <div id="spAlert"></div>
+  </div>
+
+  <div class="card">
+    <h2>📍 ¿Dónde ir? Mejores sitios</h2>
+    <p class="muted" style="margin:0 0 8px">¿Qué quieres coger?</p>
+    <div class="chips" id="fObjetivo"></div>
+    <div id="zonas" class="muted">Calculando…</div>
+    <div class="note">Los 3 mejores para hoy según el tiempo de cada sitio y las setas que suelen salir allí. Toca uno para ver qué buscar y cómo llegar.</div>
+  </div>
+
+  <div class="card">
+    <h2>Por qué</h2>
+    <div class="kv" id="why"></div>
+    <div id="consejo" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card form hidden" id="cardManual">
+    <h2>Modo manual</h2>
+    <p class="muted">Solo aparece si no hay internet o si abres la app dentro de Claude (ahí no puede descargar el tiempo). En la app instalada todo se rellena solo. Si quieres, puedes poner los datos a mano:</p>
+    <label>Lluvia total de los últimos 15–20 días (mm)</label><input id="mLluvia" type="number" inputmode="decimal" value="40">
+    <label>Días desde la última lluvia fuerte (≥10 mm)</label><input id="mDias" type="number" inputmode="numeric" value="10">
+    <label>Temperatura media de estos días (°C)</label><input id="mTemp" type="number" inputmode="decimal" value="15">
+    <label>Días de levante fuerte en la última semana</label><input id="mLev" type="number" inputmode="numeric" value="0">
+    <label>¿Ha helado estos días?</label><select id="mHel"><option value="0">No</option><option value="1">Sí</option></select>
+    <div style="margin-top:10px"><button class="b" id="btnManual">Calcular</button></div>
+  </div>
+
+  <div class="card">
+    <h2>🔔 Avisos de buen día</h2>
+    <p class="muted" id="notifInfo">Te aviso cuando la zona elegida vaya a tener un buen día.</p>
+    <div class="row">
+      <button class="b" id="btnNotif">Activar avisos</button>
+      <label class="muted">Avisar desde <select id="umbral"><option>55</option><option selected>65</option><option>75</option></select></label>
+    </div>
+    <div id="notifState" class="note"></div>
+  </div>
+</section>
+
+<!-- ======================= CAMPO ======================= -->
+<section id="v-mapa" class="hidden">
+  <div id="mapWrap">
+    <div id="map"></div>
+    <div id="mapTop">
+      <span id="tLuz">☀️ —</span>
+      <span id="tCoche" class="hidden">🚗 —</span>
+      <span id="tRuta" class="hidden">🥾 0 m</span>
+      <span id="tSeguir" class="hidden"></span>
+    </div>
+    <div id="mapBtns">
+      <button id="mbYo" title="Mi posición">🎯<small>Yo</small></button>
+      <button id="mb3d" class="hidden" title="Relieve 3D">⛰️<small>3D</small></button>
+      <button id="mbCapa" title="Cambiar mapa">🗺️<small>Topo</small></button>
+      <button id="mbSend" title="Senderos">🥾<small>Senderos</small></button>
+      <button id="mbCoche" title="Coche">🚗<small>Coche</small></button>
+      <button id="mbRuta" title="Grabar mi ruta">⏺️<small>Ruta</small></button>
+      <button id="mbSitio" title="Guardar sitio">⭐<small>Sitio</small></button>
+      <button id="mbSos" title="Emergencia">🆘<small>112</small></button>
+      <button id="mbInfo" title="Leyenda">❔<small>Ayuda</small></button>
+    </div>
+    <div id="mapZoom"><button id="mzIn" aria-label="Acercar">＋</button><button id="mzOut" aria-label="Alejar">－</button></div>
+    <div id="mapMsg"></div>
+    <div id="mapBest"></div>
+    <div id="mapNoTiles" class="hidden"><div><b>🗺️ El mapa no puede cargarse aquí</b><p>Si lo estás viendo dentro de Claude (vista previa), es normal: aquí no se cargan mapas ni el tiempo. Instala la app desde vercel.com/drop y verás el mapa en 3D con relieve, satélite y senderos.</p><p class="muted">Si ya la tienes instalada, revisa la conexión: sin cobertura solo se ven las zonas que abriste antes.</p><button class="b" id="btnNoTiles">Entendido</button></div></div>
+    <div id="sheet" class="hidden"><button id="sheetX" aria-label="Cerrar">✕</button><div id="sheetBody"></div></div>
+  </div>
+</section>
+
+<section id="v-setas" class="hidden">
+  <div class="danger" style="margin-bottom:12px">
+    <b>Regla de oro:</b> si no estás 100 % seguro, no se come. En Los Alcornocales sale la <b>oronja verde (Amanita phalloides)</b>, que mata. Enseña lo que recojas a un micólogo o a una asociación micológica antes de cocinarlo. Las fotos son de Wikimedia Commons y ayudan a reconocerlas, pero ninguna foto basta para identificar con seguridad.
+  </div>
+  <div class="card">
+    <h2>⚖️ Las confusiones más peligrosas</h2>
+    <p class="muted" style="margin:0 0 4px">Fotos reales lado a lado y la diferencia clave.</p>
+    <div id="pares"></div>
+  </div>
+  <div class="chips" id="fTipo"></div>
+  <div class="chips" id="fMes"></div>
+  <input id="buscar" placeholder="Buscar (tana, tentullo, níscalo…)" style="width:100%;margin-bottom:10px">
+  <div id="listaSetas"></div>
+
+  <div class="card">
+    <h2>⚠️ Comprobador de señales de peligro</h2>
+    <p class="muted">Marca lo que ves en la seta. No confirma que sea comestible: solo detecta señales de alarma.</p>
+    <div id="checks"></div>
+    <div id="checkRes" style="margin-top:10px"></div>
+  </div>
+</section>
+
+<!-- ======================= GUÍA ======================= -->
+<section id="v-guia" class="hidden">
+  <div class="danger" style="margin-bottom:12px">
+    <b>¿Malestar después de comer setas?</b> Llama al <b>112</b> o al Servicio de Información Toxicológica (24 h): <b>91 562 04 20</b>.
+    Guarda los restos de las setas y apunta la hora de la comida y la de los síntomas. <b>Si empiezan más de 6 horas después, es lo más grave</b>: ve a urgencias aunque mejores.
+  </div>
+  <div class="card">
+    <details open><summary>📅 Temporada y cuánto tardan en salir</summary><div>
+      <ul class="list">
+        <li><b>Temporada fuerte:</b> de mediados de octubre a enero, si ha llovido bien. Segunda temporada, más floja, en primavera (marzo–mayo). En verano casi nada.</li>
+        <li><b>Primeras lluvias:</b> hacen falta unos <b>30–40 mm acumulados</b> en pocos días para despertar el monte.</li>
+        <li><b>Desde la lluvia fuerte:</b> normalmente <b>7–15 días</b>. Barbudas, champiñones y gallipiernos a los 4–10; tanas a los 6–13; boletos y níscalos a los 10–18; rebozuelos, trompetas y pie azul a los 10–22.</li>
+        <li><b>Temperatura ideal:</b> medias de 10–20 °C. Con más de 23–24 °C se pasan; con heladas se paran.</li>
+        <li><b>Levante:</b> 2–3 días de levante fuerte secan el suelo. Después, busca en umbrías y canutos. El poniente húmedo ayuda.</li>
+        <li><b>Mejor hora:</b> a primera hora, después del amanecer.</li>
+      </ul>
+      <div style="overflow-x:auto"><table id="calTabla"></table></div>
+    </div></details>
+    <details><summary>🌳 Dónde buscar en la comarca</summary><div id="zonasInfo"></div></details>
+    <details><summary>⚖️ Normas en Cádiz</summary><div>
+      <ul class="list">
+        <li>En los montes públicos de la Junta, recoger <b>pequeñas cantidades para consumo propio</b> es gratis y no necesita autorización. El límite en Cádiz suele ser de <b>3 kg por persona y día</b>; la Junta publica cada año una resolución en el BOJA, así que mira la del año en curso.</li>
+        <li>Solo <b>desde la salida hasta la puesta del sol</b>. Nada de linternas.</li>
+        <li><b>Prohibidos rastrillos, azadas</b> o herramientas que levanten el mantillo.</li>
+        <li>No cojas setas inmaduras, pasadas, no comestibles o desconocidas. No las patees.</li>
+        <li><b>Fincas privadas:</b> hace falta permiso del dueño. Buena parte de Los Alcornocales es privada.</li>
+        <li><b>Parques naturales Los Alcornocales y del Estrecho:</b> tienen normas propias y las zonas de reserva necesitan autorización. Pregunta en el Centro de Visitantes Huerta Grande (Pelayo) o El Aljibe (Alcalá de los Gazules).</li>
+        <li><b>Caza:</b> de octubre a febrero hay monterías, sobre todo en fin de semana. Si ves carteles de cacería, no entres. Lleva ropa de color vivo.</li>
+        <li>No circules campo a través ni dejes basura.</li>
+      </ul>
+    </div></details>
+    <details><summary>🧺 Cómo recoger bien</summary><div>
+      <ul class="list">
+        <li><b>Cesta</b> de mimbre, nunca bolsas de plástico.</li>
+        <li>Saca la seta <b>entera</b> la primera vez, girándola: la base y la volva son clave para identificarla. Luego límpiala en el sitio y tapa el hueco.</li>
+        <li>Las dudosas, aparte en papel: un trozo de amanita mortal puede contaminar la cesta.</li>
+        <li>Deja los ejemplares jóvenes para que crezcan y los viejos para que suelten esporas.</li>
+        <li>Haz una foto de cada seta dudosa en el sitio (sombrero, láminas y base) y guárdala en el Diario para consultarla.</li>
+      </ul>
+    </div></details>
+    <details><summary>🍳 En casa: limpiar, conservar y comer</summary><div>
+      <ul class="list">
+        <li>Revisa la cesta <b>una por una</b> sobre la mesa antes de cocinar. Si hay una sola dudosa, consulta antes de comer nada.</li>
+        <li>Límpialas con cepillo o un paño húmedo, sin dejarlas en remojo.</li>
+        <li>Cocínalas en <b>24–48 horas</b> en la nevera, en papel o tela, nunca en plástico.</li>
+        <li>Cómelas siempre <b>cocinadas</b> y en cantidad moderada. Si es una especie nueva para ti, prueba poca.</li>
+        <li>Para guardar: los boletos y las trompetas se secan muy bien en láminas; rebozuelos y níscalos se congelan salteados.</li>
+        <li>Guarda 1–2 setas crudas de cada tipo en la nevera hasta el día siguiente: si alguien se pone malo, ayudan a saber qué fue.</li>
+      </ul>
+    </div></details>
+    <details><summary>❌ Mitos falsos</summary><div>
+      <ul class="list">
+        <li>La cuchara de plata, el ajo o el perejil que se ennegrecen: <b>falso</b>.</li>
+        <li>Si se la comen los animales, es comestible: <b>falso</b>.</li>
+        <li>Si huele y sabe bien, es buena: <b>falso</b> (la oronja verde dicen que sabe bien).</li>
+        <li>Cocinada o seca pierde el veneno: <b>falso</b> para las mortales.</li>
+        <li>Las que crecen en los árboles son todas buenas: <b>falso</b>.</li>
+      </ul>
+    </div></details>
+    <details><summary>🎒 Qué llevar</summary><div id="mochila"></div></details>
+    <details><summary>🎓 Aprender y que te revisen la cesta</summary><div>
+      <ul class="list">
+        <li><b>Jornadas Micológicas de Los Alcornocales</b> en Jimena de la Frontera, normalmente a finales de noviembre: talleres de identificación, salidas guiadas y charlas con micólogos de la comarca. La mejor forma de aprender.</li>
+        <li><b>Asociación Micológica Chantarela</b> (Jimena), la primera de la provincia, y <b>Asociación Micológica del Estrecho “Mairei”</b>. Las asociaciones suelen revisar setas a sus socios y organizan salidas.</li>
+        <li>Lectura local: <a href="https://institutoecg.es/wp-content/uploads/2024/04/27.02-2024-1430Guia-Setas-Campo-de-Gibraltar.pdf" target="_blank" rel="noopener">Guía de setas del Campo de Gibraltar</a> (Instituto de Estudios Campogibraltareños) y los trabajos de José Ramón Sogorb sobre los hongos de Los Alcornocales.</li>
+        <li>En muchas farmacias revisan setas: pregunta en la de tu pueblo si tienen farmacéutico con formación en micología.</li>
+      </ul>
+    </div></details>
+  </div>
+</section>
+
+<!-- ======================= DIARIO ======================= -->
+<section id="v-diario" class="hidden">
+  <div class="card"><div class="stat" id="stats"></div></div>
+  <div class="card form">
+    <h2>📓 Apuntar salida</h2>
+    <label>Fecha</label><input type="date" id="dFecha">
+    <label>Sitio</label><input id="dSitio" placeholder="p. ej. Canuto del arroyo, Castellar">
+    <label>Setas encontradas</label><div class="wrapchips" id="dSetasChips"></div>
+    <input id="dSetasOtra" placeholder="Otras (escribe)" style="margin-top:6px">
+    <label>Kilos (aprox.)</label><input id="dKg" type="number" step="0.1" inputmode="decimal">
+    <label>Notas</label><textarea id="dNotas" rows="2" placeholder="Umbría, junto al arroyo, había mucha gente…"></textarea>
+    <label>Foto (para que te la revisen o para recordar)</label><input type="file" id="dFoto" accept="image/*" capture="environment">
+    <div class="row" style="margin-top:10px">
+      <button class="b" id="btnGuardar">Guardar salida</button>
+      <button class="b2" id="btnGps">📍 Añadir GPS</button>
+      <span id="gpsTxt" class="muted"></span>
+    </div>
+    <div class="note">Se guarda también el tiempo de ese día (índice, lluvia, días desde la lluvia). Con eso irás aprendiendo cuándo salen en tus sitios.</div>
+  </div>
+  <div class="card"><h2>Salidas guardadas</h2><div id="entradas" class="muted">Aún no hay salidas.</div></div>
+  <div class="card form">
+    <h2>Copia de seguridad</h2>
+    <p class="muted">El diario y los sitios se guardan solo en este móvil. Haz una copia de vez en cuando (sin fotos).</p>
+    <div class="row"><button class="b2" id="btnExport">Exportar / compartir</button><button class="b2" id="btnImportShow">Importar</button><span id="expTxt" class="muted"></span></div>
+    <div id="importBox" class="hidden"><textarea id="importTxt" rows="4" placeholder="Pega aquí la copia"></textarea><button class="b" id="btnImport" style="margin-top:6px">Importar copia</button></div>
+  </div>
+</section>
+
+</main>
+
+<div id="viewer" class="hidden"><button id="viewerX" aria-label="Cerrar">✕</button><button id="vPrev" aria-label="Anterior">‹</button><button id="vNext" aria-label="Siguiente">›</button><div id="viewerBody"></div></div>
+
+<nav id="nav">
+  <button data-v="hoy" class="on"><span>🌦️</span>Hoy</button>
+  <button data-v="mapa"><span>🗺️</span>Mapa</button>
+  <button data-v="setas"><span>🍄</span>Setas</button>
+  <button data-v="guia"><span>📖</span>Guía</button>
+  <button data-v="diario"><span>📓</span>Diario</button>
+</nav>
+
+<script src="score.js"></script>
+<script src="minimap.js"></script>
+<script src="map3d.js"></script>
+<script>
+"use strict";
+const M = window.SetasModel;
+/* ===================== DATOS ===================== */
+const ZONAS = [
+  {id:"barrios",  n:"Los Barrios · Alcornocales", lat:36.205, lon:-5.520},
+  {id:"castellar", ruta:{km:"Unos 4 km ida y vuelta hasta el castillo", dif:"Fácil-moderada (cuesta y empedrado)", t:"2 h", park:"Junto al restaurante La Jarandilla, siguiendo los carteles", via:"Calzada antigua por la dehesa de alcornoques hasta Castellar Viejo."},n:"Castellar de la Frontera",   lat:36.318, lon:-5.455},
+  {id:"jimena",   n:"Jimena de la Frontera",      lat:36.435, lon:-5.452},
+  {id:"alcala",   n:"Alcalá de los Gazules",      lat:36.462, lon:-5.723},
+  {id:"tarifa",   n:"Tarifa · Facinas / Ojén",     lat:36.136, lon:-5.700},
+  {id:"algeciras",n:"Algeciras · Pelayo / Bujeo",  lat:36.060, lon:-5.520},
+  {id:"sanroque", n:"San Roque · pinares",        lat:36.215, lon:-5.385},
+  {id:"linea",    n:"La Línea",                    lat:36.168, lon:-5.348}
+];
+const MES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+const TIPOS = {exc:"Comestible excelente", buena:"Comestible", tox:"Tóxica", mortal:"MORTAL"};
+const NIVEL = {1:"Para empezar", 2:"Con experiencia", 3:"Solo expertos"};
+
+const SETAS = [
+ {id:"tentullo", n:"Tentullo (boleto negro)", sci:"Boletus aereus", t:"exc", m:[5,6,9,10,11,12],
+  hab:"Alcornocal y quejigal, con brezo y jara. La estrella de Los Alcornocales. Primavera (mayo–junio) y sobre todo otoño.",
+  claves:["Sombrero marrón muy oscuro, casi negro, aterciopelado","Debajo tiene POROS (como una esponja), blancos de joven y luego amarillo-verdosos","Pie grueso, con una redecilla fina arriba","Carne blanca y firme que NO se vuelve azul al cortarla"],
+  conf:"Boleto de Satanás (Rubroboletus satanas): poros ROJOS, pie rojizo, carne que azulea y olor desagradable; es tóxico. Boleto amargo (Tylopilus felleus): poros rosados, sabor muy amargo.",
+  tip:"Busca en vaguadas con alcornoques viejos, 10–15 días después de una buena lluvia. Si un boleto tiene poros rojos o naranjas, déjalo.",
+  svg:{s:"boleto",cap:"#3a2618",stem:"#d8c6a0",under:"#e3dc9e"}},
+ {id:"reticulado", n:"Boleto de verano", sci:"Boletus reticulatus", t:"exc", m:[5,6,9,10],
+  hab:"Alcornocal y quejigal, más temprano que el tentullo (primeras lluvias y primavera).",
+  claves:["Sombrero marrón claro, a menudo agrietado","Poros blancos → amarillo-verdosos","Pie con redecilla marcada por todo el pie","Carne blanca que no azulea"],
+  conf:"Mismas que el tentullo: rechaza cualquier boleto con poros rojos o carne que azulea mucho.",
+  tip:"Suele ser el primer boleto de la temporada, con las primeras tormentas de septiembre u octubre.",
+  svg:{s:"boleto",cap:"#9a7348",stem:"#d8c6a0",under:"#e3dc9e"}},
+ {id:"tana", n:"Tana (oronja, amanita de los césares)", sci:"Amanita caesarea", t:"exc", m:[9,10,11],
+  hab:"Alcornocales y castañares en suelo ácido, en laderas soleadas y claros. Muy apreciada en la comarca.",
+  claves:["Sombrero naranja-rojo intenso, liso, normalmente sin verrugas","LÁMINAS AMARILLAS y PIE AMARILLO (clave)","Anillo amarillo","Volva blanca grande en forma de saco en la base"],
+  conf:"Matamoscas (Amanita muscaria): láminas y pie BLANCOS; la lluvia puede quitarle las verrugas blancas y parecer una tana. En estado de “huevo” cerrado se confunde con la oronja verde MORTAL.",
+  tip:"Coge solo ejemplares abiertos en los que veas claramente láminas y pie amarillos. NUNCA cojas tanas en huevo si no las abres y compruebas el color amarillo por dentro, y mejor ni así si empiezas.",
+  svg:{s:"normal",cap:"#e0561c",stem:"#f1c232",under:"#f3cf3c",ring:"#f1c232",volva:true}},
+ {id:"gallipierno", n:"Gallipierno (parasol, galamperna)", sci:"Macrolepiota procera", t:"buena", m:[9,10,11,12],
+  hab:"Claros del alcornocal, bordes de caminos, prados y dehesas. De las primeras en salir tras la lluvia.",
+  claves:["GRANDE: sombrero de 10 a 30 cm, con escamas pardas","Pie alto y delgado, atigrado como piel de serpiente","Anillo doble que se mueve arriba y abajo","Láminas blancas, libres"],
+  conf:"Lepiotas pequeñas (Lepiota brunneoincarnata y parecidas): MORTALES, tienen menos de 10 cm. Chlorophyllum rhacodes: pie liso sin atigrado, carne que enrojece, indigesta.",
+  tip:"Regla de seguridad: no cojas ninguna de menos de 10–12 cm de sombrero. Se come solo el sombrero (el pie es fibroso).",
+  svg:{s:"parasol",cap:"#b89b78",stem:"#cbb28c",under:"#f5f0e6",ring:"#efe6d2"}},
+ {id:"niscalo", n:"Níscalo", sci:"Lactarius deliciosus / L. sanguifluus", t:"buena", m:[10,11,12],
+  hab:"Siempre bajo pinos (pinares de San Roque, Tarifa, zona de Sotogrande). No en el alcornocal puro.",
+  claves:["Sombrero naranja con anillos y manchas verdosas, algo hundido","Al cortarlo suelta LECHE NARANJA (rojo vino en L. sanguifluus)","Se mancha de verde al tocarlo"],
+  conf:"Lactarius torminosus y L. zonarius: leche BLANCA y picante, indigestos. Si la leche es blanca, déjalo.",
+  tip:"Córtalo y mira la leche en el momento. Muchos vienen con gusanos: ábrelos antes de meterlos en la cesta.",
+  svg:{s:"embudo",cap:"#d87a33",stem:"#d98a46",under:"#e69a52"}},
+ {id:"rebozuelo", n:"Rebozuelo (cantarela)", sci:"Cantharellus cibarius / C. pallens", t:"exc", m:[10,11,12,1],
+  hab:"Alcornocal con brezo, jara y musgo, en suelo ácido. Suele repetir en el mismo sitio.",
+  claves:["Amarillo huevo, forma de embudo","Debajo NO tiene láminas: tiene pliegues gruesos que bajan por el pie, como venas","Olor afrutado a albaricoque","Carne blanca, firme"],
+  conf:"Seta del olivo (Omphalotus olearius): TÓXICA, naranja intenso, láminas de verdad (finas, como hojas de libro), sale en matas sobre madera o raíces de olivo y encina. Falso rebozuelo (Hygrophoropsis aurantiaca): naranja, láminas finas y blandas.",
+  tip:"Si crece en grupo apretado saliendo de madera, NO es rebozuelo.",
+  svg:{s:"embudo",cap:"#f0b429",stem:"#f0b429",under:"#f3c24e"}},
+ {id:"trompeta", n:"Trompeta de los muertos", sci:"Craterellus cornucopioides", t:"buena", m:[11,12,1],
+  hab:"Hojarasca húmeda de quejigos y alcornoques en canutos y umbrías. Se camufla muy bien.",
+  claves:["Forma de trompeta o embudo hueco, gris oscuro a negro","Por fuera liso o con arrugas, sin láminas","Carne fina, olor agradable"],
+  conf:"Pocas confusiones peligrosas. Aun así, revisa que no tenga láminas.",
+  tip:"Cuando veas una, agáchate: hay decenas alrededor. Se seca muy bien.",
+  svg:{s:"trompeta",cap:"#2d2a2a",stem:"#3b3636",under:"#5a5454"}},
+ {id:"lengua", n:"Lengua de vaca (gamuza)", sci:"Hydnum repandum", t:"buena", m:[10,11,12,1],
+  hab:"Alcornocal y quejigal, a veces en corros.",
+  claves:["Sombrero color crema-anaranjado","Debajo tiene PÚAS o pinchitos blandos en vez de láminas","Carne blanca y quebradiza"],
+  conf:"Pocas confusiones peligrosas por las púas. De mayor amarga un poco.",
+  tip:"Buena opción para empezar porque es muy reconocible. Mejor jóvenes.",
+  svg:{s:"normal",cap:"#e2b77a",stem:"#efe0c4",under:"#f0d7a8",spines:true}},
+ {id:"cardo", n:"Seta de cardo", sci:"Pleurotus eryngii", t:"exc", m:[10,11,12],
+  hab:"Pastizales y dehesas, sobre las raíces del cardo corredor (Eryngium).",
+  claves:["Sombrero pardo, algo hundido","Láminas blanquecinas que bajan por el pie","Pie corto, a veces de lado","Siempre junto a cardos corredores (muertos)"],
+  conf:"Clitocybes blancas tóxicas que crecen en prados: si no hay cardo corredor al lado, desconfía.",
+  tip:"Busca los rodales de cardo seco en las dehesas tras las primeras lluvias.",
+  svg:{s:"normal",cap:"#8a6a4f",stem:"#efe6d6",under:"#efe3cf"}},
+ {id:"champi", n:"Champiñón silvestre", sci:"Agaricus campestris", t:"buena", m:[3,4,10,11,12],
+  hab:"Prados y pastos con ganado, sin árboles.",
+  claves:["Sombrero blanco, sedoso","Láminas ROSAS de joven y luego color chocolate (nunca blancas)","Anillo fino","Base del pie sin volva"],
+  conf:"Oronjas blancas (Amanita verna / A. virosa): MORTALES, láminas siempre BLANCAS y volva en la base. Agaricus xanthodermus: tóxico, se pone amarillo al rozar la base y huele a tinta.",
+  tip:"Si las láminas son blancas o tiene bolsa (volva) en la base, no es champiñón. Raspa la base: si amarillea fuerte, déjalo.",
+  svg:{s:"normal",cap:"#f4f1ea",stem:"#f1ece2",under:"#c98f86",ring:"#eee7da"}},
+ {id:"pieazul", n:"Pie azul", sci:"Lepista nuda", t:"buena", m:[11,12,1],
+  hab:"Hojarasca de quejigal y alcornocal, también setos y jardines. Tardía.",
+  claves:["Toda de color lila-violeta de joven","Láminas violetas","Olor afrutado","Esporada (polvo de esporas) rosada"],
+  conf:"Cortinarius violáceos: tienen una telilla (cortina) bajo el sombrero y esporada color óxido; algunos Cortinarius son MORTALES.",
+  tip:"Siempre bien cocinada (cruda es tóxica).",
+  svg:{s:"normal",cap:"#8c74a6",stem:"#a28fc0",under:"#9b86bb"}},
+ {id:"barbuda", n:"Barbuda", sci:"Coprinus comatus", t:"buena", m:[3,4,10,11,12],
+  hab:"Bordes de caminos, cunetas, prados abonados.",
+  claves:["Sombrero alargado en forma de huevo o campana, blanco con escamas","Láminas blancas que se vuelven negras y se deshacen en tinta"],
+  conf:"Coprinopsis atramentaria: gris, sin escamas, tóxica si se toma con alcohol.",
+  tip:"Comer el mismo día, solo con láminas totalmente blancas, y sin alcohol por si acaso.",
+  svg:{s:"coprino",cap:"#f2eee6",stem:"#f4f1ea",under:"#e8e3da"}},
+ {id:"higado", n:"Lengua de buey (hígado)", sci:"Fistulina hepatica", t:"buena", m:[9,10,11],
+  hab:"Sobre troncos vivos de quejigo, alcornoque y castaño.",
+  claves:["Parece un trozo de hígado o lengua, rojo, saliendo del tronco","Por debajo, poros finos crema","Suelta un jugo rojo al cortarla, sabor ácido"],
+  conf:"Poco confundible.",
+  tip:"Mejor joven y en ensalada en láminas finas o a la plancha.",
+  svg:{s:"repisa",cap:"#9c2a22",stem:"#9c2a22",under:"#efd7b6"}},
+ {id:"criadilla", n:"Criadilla de tierra (turma)", sci:"Terfezia spp.", t:"buena", m:[2,3,4],
+  hab:"Bajo tierra, en suelos arenosos con jarillas (Tuberaria) y jaras. Primavera, tras lluvias de otoño-invierno.",
+  claves:["Bola parecida a una patata, bajo tierra","Se nota porque levanta el suelo agrietándolo"],
+  conf:"Escleroderma (pedo de lobo duro): por dentro negra-violácea, tóxica. Las criadillas por dentro son blanco-rosadas con vetas.",
+  tip:"Búscala por las grietas en el suelo junto a las jarillas. No caves con herramientas.",
+  svg:{s:"trufa",cap:"#b49372",stem:"#b49372",under:"#e8d8c7"}},
+ /* ---- TÓXICAS Y MORTALES ---- */
+ {id:"phalloides", n:"Oronja verde (cicuta verde)", sci:"Amanita phalloides", t:"mortal", m:[9,10,11,12],
+  hab:"Alcornocales, encinares y castañares: COMÚN en Los Alcornocales. Causa la mayoría de muertes por setas.",
+  claves:["Sombrero verde oliva o amarillento (a veces casi blanco), con fibras radiales","Láminas BLANCAS","Anillo blanco colgante","Volva blanca en forma de saco en la base (a veces enterrada)"],
+  conf:"Se confunde con la tana en huevo, la carbonera (Russula verdes), el champiñón y otras setas verdes.",
+  tip:"Los síntomas aparecen 6–24 h después de comer, y luego parece que mejora mientras destruye el hígado. Media seta puede matar a un adulto.",
+  svg:{s:"normal",cap:"#a6ad6a",stem:"#f2f0e6",under:"#fbfaf5",ring:"#f5f3ea",volva:true}},
+ {id:"verna", n:"Oronjas blancas (cicuta blanca)", sci:"Amanita verna / A. virosa", t:"mortal", m:[3,4,5,10,11],
+  hab:"Bosques de alcornoque, encina y jara. A. verna en primavera (temporada del gurumelo), A. virosa en otoño.",
+  claves:["Toda blanca","Láminas BLANCAS","Anillo","Volva en saco en la base"],
+  conf:"Champiñón, gurumelo (Amanita ponderosa), tana en huevo, setas blancas de prado.",
+  tip:"Igual de mortal que la oronja verde. Cualquier seta blanca con láminas blancas y volva: fuera.",
+  svg:{s:"normal",cap:"#f7f5ee",stem:"#f7f5ee",under:"#ffffff",ring:"#f3f0e6",volva:true}},
+ {id:"lepiotas", n:"Lepiotas pequeñas", sci:"Lepiota brunneoincarnata, L. josserandii…", t:"mortal", m:[9,10,11,12],
+  hab:"Prados, jardines, bordes de caminos y claros. Mismos sitios que el gallipierno.",
+  claves:["Parecen gallipiernos en miniatura: menos de 10 cm","Escamas rosadas-pardas en el sombrero","Pie con bandas o escamas"],
+  conf:"Gallipierno joven o pequeño.",
+  tip:"Mismas toxinas que la oronja verde. Por eso nunca se cogen “parasoles” pequeños.",
+  svg:{s:"parasol",cap:"#b2786b",stem:"#d6b8a8",under:"#f5ede6",ring:"#eadbd0",small:true}},
+ {id:"galerina", n:"Galerina", sci:"Galerina marginata", t:"mortal", m:[10,11,12,1],
+  hab:"En grupos sobre madera muerta, tocones y ramas de pino o frondosas.",
+  claves:["Pequeña, color miel-marrón","Anillo fino","Crece sobre madera"],
+  conf:"Setas de tocón comestibles (Kuehneromyces) y otras pequeñas pardas.",
+  tip:"Contiene amatoxinas. No cojas setas pequeñas pardas de madera.",
+  svg:{s:"normal",cap:"#b0773a",stem:"#a07a52",under:"#c49056",ring:"#7a5a3a",small:true}},
+ {id:"cortinarius", n:"Cortinario de montaña", sci:"Cortinarius orellanus y afines", t:"mortal", m:[9,10,11],
+  hab:"Bosques de frondosas en suelo ácido (alcornocal, quejigal).",
+  claves:["Color naranja-rojizo leonado","Láminas del mismo color, esporada óxido","Telilla de joven"],
+  conf:"Rebozuelos, pie azul y otras setas naranjas.",
+  tip:"Destruye el riñón; los síntomas pueden tardar de 2 a 17 días.",
+  svg:{s:"normal",cap:"#b85f2a",stem:"#c98a4e",under:"#b36b33"}},
+ {id:"pantherina", n:"Amanita pantera", sci:"Amanita pantherina", t:"tox", m:[9,10,11,12],
+  hab:"Alcornocales, encinares y pinares.",
+  claves:["Sombrero pardo con verrugas blancas","Láminas blancas","Volva con reborde en la base"],
+  conf:"Amanita rubescens (vinosa) y otras amanitas pardas.",
+  tip:"Intoxicación grave del sistema nervioso (delirio, convulsiones). No cojas amanitas pardas.",
+  svg:{s:"normal",cap:"#7a5b3c",stem:"#f2efe6",under:"#fbfaf5",ring:"#f2efe6",volva:true,warts:true}},
+ {id:"muscaria", n:"Matamoscas", sci:"Amanita muscaria", t:"tox", m:[10,11,12],
+  hab:"Pinares y alcornocales.",
+  claves:["Sombrero rojo con verrugas blancas (que la lluvia puede quitar)","LÁMINAS y PIE BLANCOS","Volva en anillos"],
+  conf:"La tana: la diferencia está en las láminas y el pie (amarillos en la tana, blancos en la matamoscas).",
+  tip:"Tóxica y alucinógena. Puede ser grave.",
+  svg:{s:"normal",cap:"#d2261b",stem:"#f5f2ea",under:"#fbfaf5",ring:"#f5f2ea",volva:true,warts:true}},
+ {id:"satanas", n:"Boleto de Satanás", sci:"Rubroboletus satanas", t:"tox", m:[6,9,10],
+  hab:"Encinares y quejigales, mejor en suelos calizos y con calor.",
+  claves:["Sombrero blanquecino-grisáceo","Poros ROJOS","Pie hinchado, rojo","Carne que azulea; olor desagradable de mayor"],
+  conf:"Tentullo y boletos comestibles.",
+  tip:"Gastroenteritis muy fuerte. Ningún boleto con poros rojos.",
+  svg:{s:"boleto",cap:"#d6d0c4",stem:"#c8473a",under:"#c8352a"}},
+ {id:"omphalotus", n:"Seta del olivo", sci:"Omphalotus olearius", t:"tox", m:[9,10,11,12],
+  hab:"En matas sobre madera o raíces de olivo, acebuche, encina y alcornoque.",
+  claves:["Naranja intenso, en grupos apretados","Láminas verdaderas, finas, que bajan por el pie","Sale de madera"],
+  conf:"Rebozuelo (que tiene pliegues, no láminas, y sale del suelo).",
+  tip:"Vómitos y diarrea fuertes.",
+  svg:{s:"embudo",cap:"#e2701d",stem:"#e2701d",under:"#ef8a2c"}},
+ {id:"entoloma", n:"Pérfido (entoloma lívido)", sci:"Entoloma sinuatum", t:"tox", m:[10,11],
+  hab:"Bosques de frondosas, bordes.",
+  claves:["Sombrero gris-crema, grande","Láminas amarillentas que se vuelven rosadas","Olor a harina"],
+  conf:"Champiñón, pardilla (Clitocybe nebularis).",
+  tip:"Intoxicación digestiva grave.",
+  svg:{s:"normal",cap:"#cfc6b4",stem:"#efe9dd",under:"#e9cfb6"}},
+ {id:"hypholoma", n:"Hifoloma (falsa seta de tocón)", sci:"Hypholoma fasciculare", t:"tox", m:[1,2,3,9,10,11,12],
+  hab:"En matas sobre tocones y madera muerta, casi todo el año.",
+  claves:["Amarillo azufre, en grupos","Láminas verdosas","Sabor muy amargo"],
+  conf:"Setas de tocón comestibles.",
+  tip:"Tóxica. Ignora las matas amarillas de los tocones.",
+  svg:{s:"normal",cap:"#d9b52a",stem:"#e0c64a",under:"#a3a84a"}}
+];
+
+/* nivel de dificultad y cocina para las comestibles */
+const EXTRA = {
+  tentullo:{nv:2,coc:"Plancha, revuelto, arroz o crudo en láminas finas si es joven y firme. Se seca muy bien."},
+  reticulado:{nv:2,coc:"Igual que el tentullo: plancha, guisos, secado."},
+  tana:{nv:3,coc:"Cruda en carpaccio con aceite y sal cuando es joven, o a la plancha. Nunca recoger en huevo."},
+  gallipierno:{nv:1,coc:"Sombrero rebozado o empanado “como un filete”, o a la plancha. El pie se tira.",min:"Solo ejemplares de más de 10–12 cm de sombrero."},
+  niscalo:{nv:1,coc:"A la brasa o plancha con ajo y perejil, o guisado. Tiñe la orina de rojo: es normal."},
+  rebozuelo:{nv:1,coc:"Salteado, en revuelto o con carne. Se congela bien salteado.",min:"Comprueba los pliegues (no láminas) y que salga del suelo, no de madera."},
+  trompeta:{nv:1,coc:"Revueltos, salsas, arroces. Secas son un condimento estupendo."},
+  lengua:{nv:1,coc:"Salteada o en guisos. De mayor, quita las púas porque amarga."},
+  cardo:{nv:1,coc:"A la plancha con ajo, o guisada. Muy carnosa."},
+  champi:{nv:2,coc:"Plancha o salteado, como el champiñón cultivado pero con más sabor."},
+  pieazul:{nv:2,coc:"Siempre bien cocinada: guisos y salteados."},
+  barbuda:{nv:2,coc:"Revuelto o crema, el mismo día de recogerla. Sin alcohol."},
+  higado:{nv:1,coc:"Cruda en ensalada en láminas finas o a la plancha. Sabor ácido."},
+  criadilla:{nv:1,coc:"Pelada, en revuelto con huevo o guisada."}
+};
+
+const SITIOS = [
+ {id:"valdeinfierno", ruta:{km:"5,2 km circular", dif:"Fácil", t:"1 h 30 min", park:"Aparcamiento al inicio del sendero (toca “Llevarme en coche”)", via:"Pista ancha y luego senda junto al arroyo con pasarela; sube a un mirador."}, n:"Sendero Valdeinfierno", mun:"Los Barrios", lat:36.2277, lon:-5.5859, caza:true,
+  hab:"Monte público de la Junta. Alcornocal y quejigal con un canuto (bosque de ribera) junto al arroyo. Ruta circular de unos 5 km, parte con pasarela.",
+  sp:["tentullo","rebozuelo","trompeta","tana","lengua","gallipierno"],
+  tip:"Las trompetas y rebozuelos, en la parte umbría junto al arroyo; tanas y gallipiernos en los claros de la pista."},
+ {id:"ojen", ruta:{km:"Hasta 17 km ida y vuelta (puedes darte la vuelta cuando quieras)", dif:"Fácil, pista sin desnivel fuerte", t:"Lo que quieras", park:"Aparcamiento de la salida 77 de la A-381 (Los Barrios–Jerez)", via:"Pista forestal del Valle de Ojén (EuroVelo 8), entre alcornoques con mucho musgo."}, n:"Valle de Ojén (Camino de Ojén)", mun:"Los Barrios", lat:36.2089, lon:-5.5438, caza:true,
+  hab:"Pista entre alcornoques y quejigos muy húmeda, con mucho musgo. Larga (unos 17 km ida y vuelta): no hace falta hacerla entera.",
+  sp:["rebozuelo","trompeta","tentullo","lengua","pieazul","gallipierno"],
+  tip:"Busca en los taludes con musgo y bajo los quejigos. A los lados hay fincas privadas: quédate en zona pública."},
+ {id:"pinarrey", ruta:{km:"Varias rutas señalizadas por colores, de 1 a 6 km", dif:"Fácil", t:"30 min – 2 h", park:"Aparcamiento a la entrada del parque (mejor fuera de la valla los días de mucha gente)", via:"Pinar con áreas recreativas y un arroyo; se puede llegar hasta la zona de playa."}, n:"Pinar del Rey", mun:"San Roque", lat:36.2340, lon:-5.3985, caza:false, horario:"8:00–22:00",
+  hab:"Gran pinar con alcornoques sobre suelos de arenisca caliza. Según la Asociación Micológica Mairei, rico en níscalos (Lactarius), amanitas y parasoles. Parque periurbano con área recreativa.",
+  sp:["niscalo","gallipierno","champi","barbuda","tana"],
+  tip:"Muy concurrido: ve a primera hora. Es parque periurbano, así que consulta en el Ayuntamiento de San Roque si hay normas propias. Aquí salen amanita pantera y matamoscas.",
+  peligro:["pantherina","muscaria","phalloides"]},
+ {id:"castellar", n:"Calzada de la Dehesa Boyal", mun:"Castellar de la Frontera", lat:36.3113, lon:-5.4506, caza:true,
+  hab:"Dehesa municipal de alcornoques con la calzada que sube al castillo. Claros, pastos y alcornocal abierto.",
+  sp:["tentullo","tana","gallipierno","champi","cardo","lengua"],
+  tip:"Aparca junto a la venta La Jarandilla. Tanas y tentullos en las laderas de alcornoque; champiñones y setas de cardo en los pastos."},
+ {id:"hozgarganta", ruta:{km:"Ida y vuelta a tu medida por la pista del río", dif:"Fácil (algunos tramos empedrados y en cuesta)", t:"1–3 h", park:"Aparcamiento gratuito en la carretera de Cruz Blanca, junto a un mirador", via:"Pista junto al río Hozgarganta, con ribera y laderas de alcornocal."}, n:"Sendero del Hozgarganta", mun:"Jimena de la Frontera", lat:36.4399, lon:-5.4565, caza:true,
+  hab:"Pista junto al río Hozgarganta, con bosque de ribera y alcornocal en las laderas. Jimena tiene grandes montes públicos alrededor.",
+  sp:["rebozuelo","trompeta","tentullo","higado","lengua","pieazul"],
+  tip:"Aparcamiento gratuito en la carretera de Cruz Blanca. En temporada, en Jimena funciona un punto de información micológica: pregunta allí por zonas públicas."},
+ {id:"sauceda", ruta:{km:"Laguna del Moral: unos 5 km ida y vuelta. Subida al Aljibe: ruta larga (unas 5 h)", dif:"Fácil-media (Laguna) / dura (Aljibe)", t:"2–5 h", park:"Área recreativa de La Sauceda (CA-8201)", via:"Salen 3 rutas señalizadas del área recreativa; bosque húmedo con quejigos, musgo y arroyos."}, n:"La Sauceda y Laguna del Moral", mun:"Cortes de la Frontera (Málaga)", lat:36.5301, lon:-5.5869, caza:true,
+  hab:"Bosque húmedo de montaña con quejigos y alcornoques, canutos, musgo y helechos. De lo mejor de Los Alcornocales. Varias rutas salen del área recreativa.",
+  sp:["tentullo","tana","rebozuelo","trompeta","lengua","pieazul","gallipierno"],
+  tip:"Está en la provincia de Málaga: allí el límite es de 3 kg por persona y día y mandan sus propias normas. Con frío, mejor en las laderas soleadas.",
+  malaga:true},
+ {id:"picacho", ruta:{km:"Puerto Oscuro: 1 km. Subida al Picacho: más larga y con fuerte desnivel", dif:"Fácil (Puerto Oscuro) / dura (Picacho)", t:"30 min – 3 h", park:"Área recreativa El Picacho (A-375); caben unos 10–15 coches, llega temprano", via:"Garganta umbría con laguna estacional; subida rocosa al Picacho."}, n:"Área recreativa El Picacho", mun:"Alcalá de los Gazules", lat:36.5221, lon:-5.6502, caza:true,
+  hab:"Alcornocal y quejigal con la laguna del Picacho y el canuto de la Garganta de Puerto Oscuro (nacimiento del río Barbate). Aparcamiento pequeño.",
+  sp:["tentullo","rebozuelo","trompeta","tana","lengua","gallipierno"],
+  tip:"Llega temprano: hay sitio para unos 10–15 coches. El sendero de Puerto Oscuro es corto; el de subida al Picacho, duro."},
+ {id:"riomiel", ruta:{km:"Corto hasta el río (45 min) o circular de unos 12 km. Garganta del Capitán: unas 2 h", dif:"Media (piedras, zarzas, desnivel)", t:"1–5 h", park:"Inicio en la barriada de El Cobre / Río de la Miel; aparcamiento pequeño en la Garganta del Capitán", via:"Canuto con cascadas y pozas, laurel y ojaranzo; laderas expuestas al sol."}, n:"Río de la Miel y Garganta del Capitán", mun:"Algeciras", lat:36.1174, lon:-5.4769, caza:false,
+  hab:"Canutos con laurel, ojaranzo y helecho junto al río, y alcornocal en las laderas. Montes públicos del Ayuntamiento de Algeciras.",
+  sp:["trompeta","rebozuelo","tentullo","higado","lengua"],
+  tip:"Lo bueno está en las umbrías del canuto. Muy frecuentado los fines de semana: ve a primera hora."},
+ {id:"huertagrande", ruta:{km:"Paseos cortos desde el centro de visitantes", dif:"Fácil", t:"30 min – 1 h", park:"Centro de visitantes Huerta Grande (N-340, km 96, Pelayo)", via:"Alcornocal húmedo del sur del parque con vistas al Estrecho."}, n:"Huerta Grande y El Bujeo", mun:"Algeciras (Pelayo)", lat:36.0796, lon:-5.5040, caza:false,
+  hab:"Alcornocal del sur del parque, muy húmedo por las nubes del Estrecho. Centro de visitantes del parque natural.",
+  sp:["rebozuelo","tentullo","gallipierno","lengua","trompeta"],
+  tip:"Empieza preguntando en el centro de visitantes por las zonas y normas. Con levante fuerte, aquí aguanta más la humedad."}
+];
+
+const MOCHILA = ["Cesta de mimbre o rejilla","Navaja y cepillo","Papel o caja aparte para setas dudosas","Móvil cargado + batería externa","Guardar el coche en el modo Campo al aparcar","Agua y algo de comer","Botas impermeables y ropa de abrigo","Prenda de color vivo (temporada de caza)","Silbato","Decir a alguien a dónde vas y cuándo vuelves"];
+
+const ZONAS_INFO = [
+  ["Alcornocal y quejigal (Los Alcornocales: Los Barrios, Castellar, Jimena, Alcalá, Tarifa, Algeciras)","Tentullo, boleto de verano, tana, rebozuelo, trompeta, lengua de vaca, pie azul y gallipierno en los claros. Aquí también sale la oronja verde (mortal)."],
+  ["Canutos y vaguadas húmedas (bosque de ribera con laurel, ojaranzo y helecho)","Trompetas, rebozuelos y boletos cuando el resto del monte está seco o tras levante."],
+  ["Pinares (San Roque, Sotogrande, Tarifa)","Níscalos. Ojo con la amanita pantera y la matamoscas. Algunos pinares son parque periurbano o espacio protegido: mira las normas."],
+  ["Dehesas, prados y pastos con ganado","Champiñón silvestre, seta de cardo (junto al cardo corredor), gallipierno, barbuda. Aquí salen las lepiotas pequeñas mortales."],
+  ["Bordes de caminos y cortafuegos","Gallipiernos, barbudas, tanas en taludes soleados."],
+  ["Arenales con jara y jarilla","Criadillas de tierra en primavera."],
+  ["Trucos","Con frío y mucha agua, busca en solanas; en años secos o tras levante, en umbrías, canutos y orillas de arroyos. Muchas setas repiten sitio cada año: guárdalos en el modo Campo."]
+];
+
+/* ===================== UTILIDADES ===================== */
+const $ = s => document.querySelector(s);
+const clamp = M.clamp;
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ return false; } }
+};
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+const D2 = iso => new Date(iso+"T12:00:00");
+function fmtDate(iso){ return D2(iso).toLocaleDateString("es-ES",{weekday:"short",day:"numeric"}); }
+function fmtDay2(iso,hoy){ const d=D2(iso); return (hoy?"Hoy":d.toLocaleDateString("es-ES",{weekday:"short"}).replace(".",""))+"<br>"+d.getDate(); }
+function scoreColor(s){ return s>=70?"#3f7d3a":s>=45?"#7e9a2f":s>=25?"#c98a1b":"#b33a2b"; }
+function verdictOf(s){
+  if(s>=70) return ["¡Sal al campo!","Condiciones muy buenas."];
+  if(s>=45) return ["Merece la pena","Buenas posibilidades, sobre todo en umbrías y canutos."];
+  if(s>=25) return ["Floja","Puede haber algo suelto. Mejor esperar o ir solo a tus sitios fijos."];
+  return ["Mejor no ir","Muy pocas posibilidades ahora mismo."];
+}
+function shortName(s){ return s.n.split(" (")[0]; }
+function huntingDay(iso){ const d=D2(iso), wd=d.getDay(), m=d.getMonth(); return (wd===0||wd===6) && (m>=9||m<=1); }
+function haversine(a,b){ const R=6371000, t=x=>x*Math.PI/180; const dLa=t(b[0]-a[0]), dLo=t(b[1]-a[1]);
+  const h=Math.sin(dLa/2)**2+Math.cos(t(a[0]))*Math.cos(t(b[0]))*Math.sin(dLo/2)**2; return 2*R*Math.asin(Math.sqrt(h)); }
+function bearing(a,b){ const t=x=>x*Math.PI/180; const y=Math.sin(t(b[1]-a[1]))*Math.cos(t(b[0]));
+  const x=Math.cos(t(a[0]))*Math.sin(t(b[0]))-Math.sin(t(a[0]))*Math.cos(t(b[0]))*Math.cos(t(b[1]-a[1])); return (Math.atan2(y,x)*180/Math.PI+360)%360; }
+function cardinal(b){ return ["norte","noreste","este","sureste","sur","suroeste","oeste","noroeste"][Math.round(b/45)%8]; }
+function fmtDist(m){ return m<1000? Math.round(m)+" m" : (m/1000).toFixed(m<10000?1:0)+" km"; }
+const EDIBLES = () => SETAS.filter(s=>s.t==="exc"||s.t==="buena");
+
+/* ===================== TIEMPO ===================== */
+let DATA=null, CUR=null, CURLOC=null;
+async function fetchJSON(url,ms){
+  const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),ms||12000);
+  try{ const r=await fetch(url,{signal:ctrl.signal}); if(!r.ok) throw new Error("HTTP "+r.status); return await r.json(); }
+  finally{ clearTimeout(to); }
+}
+async function loadWeather(loc){
+  CURLOC=loc;
+  $("#estado").textContent = "Descargando el tiempo de "+loc.n+"…";
+  try{
+    const j = await fetchJSON(M.weatherURL(loc.lat,loc.lon,true));
+    DATA = M.buildData(j, loc.n);
+    store.set("lastWeather",{t:Date.now(),DATA,loc});
+    $("#cardManual").classList.add("hidden");
+    renderWeather();
+    $("#estado").textContent = "Actualizado a las "+new Date().toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})+" · "+loc.n+" · datos de Open-Meteo";
+    syncConf();
+  }catch(e){
+    const c = store.get("lastWeather",null);
+    if(c && c.DATA){
+      DATA=c.DATA; renderWeather();
+      $("#estado").textContent = "Sin conexión: datos guardados del "+new Date(c.t).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+" ("+DATA.label+").";
+    }else{
+      $("#estado").textContent = "No se pudo descargar el tiempo. Usa el modo manual.";
+      $("#cardManual").classList.remove("hidden");
+      renderGauge(null); $("#days").innerHTML=""; $("#why").innerHTML="";
+      $("#spChances").textContent="Sin datos del tiempo."; $("#zonas").textContent="Sin datos del tiempo.";
+    }
+  }
+}
+
+function renderGauge(s){
+  const r=50, c=2*Math.PI*r, v = s==null?0:s, col = s==null?"#ccc":scoreColor(v);
+  $("#ring").innerHTML =
+   '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="#efe6d4" stroke-width="12"/>'+
+   '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+(c*v/100)+' '+c+'" transform="rotate(-90 60 60)"/>'+
+   '<text x="60" y="66" text-anchor="middle" font-size="30" font-weight="800" fill="#2b2418">'+(s==null?"–":v)+'</text>'+
+   '<text x="60" y="84" text-anchor="middle" font-size="10" fill="#6f6553">de 100</text>';
+}
+
+function renderWeather(){
+  const i0 = M.todayIndex(DATA);
+  CUR = M.scoreDay(DATA,i0);
+  renderGauge(CUR.score);
+  const [v,vt] = verdictOf(CUR.score);
+  $("#verdict").textContent = v; $("#verdict").style.color = scoreColor(CUR.score);
+  const {best,bestI,list} = M.bestAhead(DATA,i0,8);
+  $("#days").innerHTML = list.map(([i,s])=>{
+    const rain=DATA.p[i]||0, lev=M.isLevante(DATA.wdir[i],DATA.wspd[i]);
+    return '<div class="day'+(i===bestI?' best':'')+'" title="'+DATA.time[i]+'"><b>'+fmtDay2(DATA.time[i],i===i0)+'</b>'+
+      '<div class="bar"><i style="height:'+Math.max(4,s)+'%;background:'+scoreColor(s)+'"></i></div>'+
+      '<b style="margin:2px 0 0">'+s+'</b><small>'+(rain>=1?"💧"+Math.round(rain):"")+(lev?"💨":"")+(huntingDay(DATA.time[i])?"🎯":"")+'</small></div>';
+  }).join("");
+  let txt = vt;
+  if(bestI!==i0 && best>=CUR.score+8) txt += " Mejor día previsto: <b>"+fmtDate(DATA.time[bestI])+"</b> ("+best+").";
+  const sr = DATA.sunrise[i0] ? DATA.sunrise[i0].slice(11,16) : null, ss = DATA.sunset[i0] ? DATA.sunset[i0].slice(11,16) : null;
+  if(sr) txt += "<br>Horario legal hoy: de "+sr+" a "+ss+".";
+  if((DATA.p[i0]||0)>=15) txt += "<br>⚠️ Hoy llueve fuerte: caminos resbaladizos y arroyos crecidos.";
+  $("#verdictTxt").innerHTML = txt;
+  renderWhy(CUR,i0);
+  renderChances(i0);
+  checkNotify(best,bestI);
+  renderLuz();
+  compareZones();
+}
+
+function renderChances(i0){
+  const arr = SETAS.map(s=>({s, c:M.speciesChance(s.id,s.m,DATA,i0)}));
+  const ed = arr.filter(x=>x.s.t==="exc"||x.s.t==="buena").sort((a,b)=>b.c-a.c).filter(x=>x.c>=8).slice(0,7);
+  $("#spChances").innerHTML = ed.length ? ed.map(x=>
+    '<div class="hbar" data-goto="'+x.s.id+'"><span class="nm">'+esc(shortName(x.s))+'</span><span class="tr"><i style="width:'+x.c+'%;background:'+scoreColor(x.c)+'"></i></span><span class="v">'+x.c+'</span></div>'
+  ).join("")+'<div class="note">Probabilidad orientativa según los días que tarda cada una en salir tras la lluvia, la temperatura que le gusta y su temporada. Toca una para ver su ficha.</div>'
+  : '<p class="muted" style="margin:0">Ahora mismo no se esperan setas comestibles. Mira los próximos días.</p>';
+  const bad = arr.filter(x=>x.s.t==="mortal" && x.c>=35).sort((a,b)=>b.c-a.c).slice(0,3);
+  $("#spAlert").innerHTML = bad.length ? '<div class="danger" style="margin-top:10px">☠️ <b>Ojo: también es buen momento para '+bad.map(x=>esc(shortName(x.s))).join(", ")+'.</b> Revisa siempre la base del pie (volva) y el color de las láminas.</div>' : "";
+}
+
+function renderWhy(c,i0){
+  const lastTxt = c.lastBig==null ? "ninguna en 40 días" : (i0-c.lastBig===0?"hoy":"hace "+(i0-c.lastBig)+" días")+" ("+Math.round(DATA.p[c.lastBig])+" mm)";
+  const pct = x => Math.round(x*100)+"%";
+  $("#why").innerHTML =
+    "<span>Lluvia últimos 20 días</span><b>"+Math.round(c.r20)+" mm</b>"+
+    "<span>Última lluvia fuerte (≥10 mm)</span><b>"+lastTxt+"</b>"+
+    "<span>Agua útil para que salgan</span><b>"+pct(c.water)+"</b>"+
+    (c.sm!=null?"<span>Humedad del suelo (modelo)</span><b>"+(c.sm<0.12?"seco":c.sm<0.18?"algo seco":c.sm<0.28?"húmedo":"muy húmedo")+"</b>":"")+
+    "<span>Temperatura media (5 días)</span><b>"+c.tmean.toFixed(1)+" °C</b>"+
+    "<span>Heladas (4 días)</span><b>"+c.frost+"</b>"+
+    "<span>Días de levante fuerte (4 días)</span><b>"+c.lev+"</b>"+
+    "<span>Época del año</span><b>"+MES[c.month]+" ("+pct(M.SEASON[c.month])+")</b>";
+  $("#consejo").innerHTML = adviceFor(c,i0);
+}
+
+function adviceFor(c,i0){
+  const out=[], d = c.lastBig==null?null:i0-c.lastBig;
+  if(c.r20<15) out.push("Ha llovido poco. Las setas necesitan unos 30–40 mm acumulados para empezar a salir.");
+  else if(d!=null && d<6){
+    const a=D2(DATA.time[c.lastBig]), f1=new Date(a), f2=new Date(a); f1.setDate(a.getDate()+7); f2.setDate(a.getDate()+15);
+    const o={day:"numeric",month:"short"};
+    out.push("Llovió fuerte hace "+d+" días. Lo normal es que salgan entre el <b>"+f1.toLocaleDateString("es-ES",o)+"</b> y el <b>"+f2.toLocaleDateString("es-ES",o)+"</b>. Primero barbudas, champiñones y gallipiernos; luego boletos y rebozuelos.");
+  }
+  else if(d!=null && d<=16) out.push("Estás en la ventana buena (7–16 días tras la lluvia). Ve a por boletos, tanas y rebozuelos.");
+  else if(d!=null && d>22) out.push("Hace tiempo que no llueve fuerte. Quedará algo en umbrías y canutos; si no llueve pronto, la oleada se acaba.");
+  if(c.lev>=2) out.push("Ha habido levante: el suelo se seca rápido. Busca en umbrías, vaguadas y orillas de arroyos.");
+  if(c.tmean>22) out.push("Hace calor: las setas se pasan o se agusanan en horas. Sal muy temprano.");
+  if(c.tmean<8) out.push("Hace frío: crecen despacio. Busca en solanas abrigadas.");
+  if(c.frost>0) out.push("Ha helado: revisa bien las setas, las heladas se estropean.");
+  if(c.month>=6 && c.month<=7) out.push("Es verano: fuera de temporada salvo tormentas fuertes.");
+  return out.length? '<div class="ok">'+out.join("<br><br>")+'</div>' : "";
+}
+
+/* sitios recomendados y mis sitios: una sola descarga para todos */
+let lastCompareKey="", SITE_ROWS=null, objetivo="todas";
+function siteRank(r){
+  const ids = objetivo==="todas" ? r.sp : r.sp.filter(id=>id===objetivo);
+  if(objetivo!=="todas" && !ids.length) return {score:-1, top:[]};
+  const ch = ids.map(id=>{ const s=SETAS.find(x=>x.id===id); return {id, c:M.speciesChance(id,s.m,r.D,r.i0)}; }).sort((a,b)=>b.c-a.c);
+  const best2 = ch.slice(0,2), spAvg = best2.length? best2.reduce((a,x)=>a+x.c,0)/best2.length : 0;
+  const score = objetivo==="todas" ? Math.round(0.5*r.s+0.5*spAvg) : (ch[0]?ch[0].c:0);
+  return {score, top:ch.filter(x=>x.c>=8).slice(0,4)};
+}
+function renderObjetivo(){
+  const opts=[["todas","Lo que haya"]].concat(EDIBLES().filter(s=>SITIOS.some(x=>x.sp.includes(s.id))).map(s=>[s.id,shortName(s)]));
+  $("#fObjetivo").innerHTML = opts.map(([k,l])=>'<button data-k="'+k+'" class="'+(k===objetivo?'on':'')+'">'+esc(l)+'</button>').join("");
+}
+function renderPlan(){
+  const el=$("#planTxt"); if(!el) return;
+  const rows=rankedSites();
+  if(!rows.length){ el.textContent = DATA? "Calculando los sitios…" : "Sin datos del tiempo ahora mismo."; $("#planBtns").innerHTML=""; return; }
+  const b=rows[0], s=b.site, sc=b.rk.score;
+  const sp=b.rk.top.slice(0,3).map(x=>shortName(SETAS.find(z=>z.id===x.id)));
+  // ¿hay un día claramente mejor esta semana?
+  let futBest=null; rows.forEach(r=>{ if(!futBest||r.best>futBest.best) futBest=r; });
+  let txt;
+  if(sc>=45) txt='<b style="color:'+scoreColor(sc)+'">Sí, sal hoy.</b> Vete a <b>'+esc(s.n)+'</b> ('+esc(s.mun)+'), con una nota de <b>'+sc+'</b>.'+(sp.length?' Busca sobre todo <b>'+esc(sp.join(", "))+'</b>.':'');
+  else if(futBest && futBest.best>=45 && futBest.bestDay!==futBest.D.time[futBest.i0]) txt='<b style="color:#c98a1b">Hoy no merece mucho la pena.</b> Lo mejor de la semana: el <b>'+fmtDate(futBest.bestDay)+'</b> en <b>'+esc(futBest.site.n)+'</b> (nota '+futBest.best+').';
+  else txt='<b style="color:#b33a2b">Esta semana viene floja.</b> Si sales, prueba en <b>'+esc(s.n)+'</b> y busca en umbrías y junto a los arroyos.';
+  if(s.ruta && sc>=45) txt+='<div class="muted" style="margin-top:6px">🥾 '+esc(s.ruta.km)+' · '+esc(s.ruta.dif)+' · 🅿️ '+esc(s.ruta.park)+'</div>';
+  if(!TRAILS.length){ const c=store.get("trails_v1",null); if(c&&c.list) TRAILS=c.list; }
+  if(TRAILS.length && sc>=45){ const nt=trailsNear([s.lat,s.lon],1500)[0]; if(nt) txt+='<div class="muted" style="margin-top:4px">Sendero: <b>'+esc(nt.t.name)+'</b> ('+fmtDist(nt.t.len)+')</div>'; }
+  el.innerHTML=txt;
+  const tgt = sc>=45 ? s : (futBest? futBest.site : s);
+  $("#planBtns").innerHTML='<a class="b" style="text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+tgt.lat+','+tgt.lon+'" target="_blank" rel="noopener">🚗 Llévame</a><button class="b2" data-mapa="'+tgt.id+'">🗺️ Verlo en el mapa</button>';
+}
+function renderSites(){
+  if(!SITE_ROWS) return;
+  renderPlan();
+  const rows = SITE_ROWS.map(r=>Object.assign({},r,{rk:siteRank(r)})).filter(r=>r.rk.score>=0).sort((a,b)=>b.rk.score-a.rk.score);
+  if(!rows.length){ $("#zonas").innerHTML='<p class="muted" style="margin:0">Ningún sitio de la lista es típico para esa seta.</p>'; return; }
+  updateSiteMarkers();
+  const total=rows.length; rows.splice(3);
+  $("#zonas").innerHTML = rows.map((r,k)=>{
+    const s=r.site, dir="https://www.google.com/maps/dir/?api=1&destination="+r.lat+","+r.lon;
+    const hunt = s.caza && huntingDay(r.D.time[r.i0]);
+    const bestTxt = r.best>r.s+5 ? "Mejor el "+fmtDate(r.bestDay)+" (índice "+r.best+")" : "Hoy es de los mejores días de la semana";
+    const top = r.rk.top.length ? r.rk.top.map(x=>{ const sp=SETAS.find(z=>z.id===x.id); return '<span class="pill t-'+sp.t+'" data-goto="'+x.id+'">'+esc(shortName(sp))+' '+x.c+'%</span>'; }).join("") : '<span class="muted">Poco probable ahora</span>';
+    const bad = (s.peligro||["phalloides"]).map(id=>{ const sp=SETAS.find(z=>z.id===id); return sp?{sp,c:M.speciesChance(id,sp.m,r.D,r.i0)}:null; }).filter(x=>x&&x.c>=35);
+    return '<div class="zone" data-k="'+k+'"><div class="sc" style="background:'+scoreColor(r.rk.score)+'">'+r.rk.score+'</div>'+
+      '<div class="tx"><b>'+(k<3&&r.rk.score>=45?["🥇 ","🥈 ","🥉 "][k]:"")+esc(s.n)+'</b><small>'+esc(s.mun||"Tu sitio")+' · '+bestTxt+'</small></div></div>'+
+      '<div class="detail hidden" id="z-'+k+'" style="margin:0 0 10px">'+
+        '<div style="margin-bottom:6px"><b>Qué buscar hoy:</b><br>'+top+'</div>'+
+        (s.hab?'<p style="margin:6px 0">'+esc(s.hab)+'</p>':'')+
+        (s.tip?'<p style="margin:6px 0"><b>Consejo:</b> '+esc(s.tip)+'</p>':'')+
+        (hunt?'<div class="warn" style="margin:6px 0">🎯 Fin de semana en temporada de caza: mira si hay carteles de montería antes de entrar.</div>':'')+
+        (bad.length?'<div class="warn" style="margin:6px 0">☠️ Buen momento también para '+bad.map(x=>esc(shortName(x.sp))).join(", ")+' en este tipo de monte.</div>':'')+
+        (s.horario?'<p class="muted" style="margin:6px 0">Horario del recinto: '+esc(s.horario)+'</p>':'')+
+        '<div class="row" style="margin-top:6px"><a class="b2" style="text-decoration:none" href="'+dir+'" target="_blank" rel="noopener">🚗 Cómo llegar</a>'+
+        (s.id?'<button class="b2" data-mapa="'+s.id+'">🗺️ En el mapa</button>':'')+'<button class="b2" data-ver="'+k+'">🌦️ Previsión</button></div>'+
+      '</div>';
+  }).join("")+'<button class="b big" id="btnVerMapa" style="margin-top:10px">🗺️ Ver los '+total+' sitios y los senderos en el mapa</button>';
+  $("#zonas")._rows = rows;
+}
+async function compareZones(){
+  const mios = store.get("sitios",[]).slice(0,12).map(s=>({n:"⭐ "+s.nombre, mun:"", sp:(s.setas&&s.setas.length)?s.setas:["tentullo","rebozuelo","gallipierno","tana","trompeta"], lat:s.lat, lon:s.lon, caza:true, hab:"", tip:""}));
+  const all = SITIOS.concat(mios);
+  const key = all.map(l=>l.lat.toFixed(3)+","+l.lon.toFixed(3)).join("|")+new Date().toDateString();
+  if(key===lastCompareKey){ renderSites(); return; } lastCompareKey=key;
+  try{
+    const url = M.weatherURL(all.map(l=>l.lat.toFixed(3)).join(","), all.map(l=>l.lon.toFixed(3)).join(","), false);
+    let j = await fetchJSON(url,15000); if(!Array.isArray(j)) j=[j];
+    SITE_ROWS = j.map((r,k)=>{ const D=M.buildData(r,all[k].n), i0=M.todayIndex(D), b=M.bestAhead(D,i0,8);
+      return {site:all[k], sp:all[k].sp, lat:all[k].lat, lon:all[k].lon, s:M.scoreDay(D,i0).score, best:b.best, bestDay:D.time[b.bestI], i0, D}; });
+    store.set("lastSites",{t:Date.now(),rows:SITE_ROWS});
+    renderSites();
+  }catch(e){
+    const c=store.get("lastSites",null);
+    if(c&&c.rows){ SITE_ROWS=c.rows; renderSites(); $("#zonas").insertAdjacentHTML("afterbegin",'<p class="note" style="margin-top:0">Sin conexión: datos guardados.</p>'); }
+    else $("#zonas").textContent="No se pudo comparar ahora (sin conexión).";
+    lastCompareKey="";
+  }
+}
+
+/* modo manual */
+function manualScore(){
+  const R=+$("#mLluvia").value||0, d=+$("#mDias").value||0, T=+$("#mTemp").value||15, L=+$("#mLev").value||0, H=+$("#mHel").value;
+  const month=new Date().getMonth();
+  const water = 1-Math.exp(-(R*M.lagCurve(Math.max(1,d)))/30);
+  const s = Math.round(100*water*M.tempFactor(T)*(H?0.7:1)*clamp(1-0.12*Math.min(L,4),0.4,1)*Math.sqrt(M.SEASON[month]));
+  renderGauge(s); const [v,vt]=verdictOf(s);
+  $("#verdict").textContent=v; $("#verdict").style.color=scoreColor(s); $("#verdictTxt").textContent=vt;
+  const tip = d<6 ? "Si la lluvia fue fuerte, espera unos "+(7-d)+"–"+(15-d)+" días." : d<=16 ? "Estás en la ventana buena." : "La lluvia queda lejos: busca en umbrías.";
+  $("#why").innerHTML = "<span>Estimación manual</span><b>"+s+"/100</b>";
+  $("#consejo").innerHTML = '<div class="ok">'+tip+'</div>';
+}
+
+/* ===================== AVISOS ===================== */
+let swReg=null;
+function notifSupported(){ return "Notification" in window; }
+function conf(){ return {notif:store.get("notif",false), threshold:+store.get("umbral",65), lat:CURLOC&&CURLOC.lat, lon:CURLOC&&CURLOC.lon, label:CURLOC&&CURLOC.n, lastNotified:store.get("lastNotified","")}; }
+function syncConf(){ try{ if(swReg && swReg.active) swReg.active.postMessage({type:"conf",conf:conf()}); }catch(e){} }
+async function registerPeriodic(){
+  try{
+    if(!swReg || !("periodicSync" in swReg)) return false;
+    const st = await navigator.permissions.query({name:"periodic-background-sync"});
+    if(st.state!=="granted") return false;
+    await swReg.periodicSync.register("check-setas",{minInterval:12*60*60*1000});
+    return true;
+  }catch(e){ return false; }
+}
+async function updateNotifState(){
+  const on = store.get("notif",false);
+  if(!notifSupported()){ $("#notifState").textContent="Este navegador no permite avisos. En iPhone, instala la app en la pantalla de inicio (iOS 16.4 o superior)."; $("#btnNotif").disabled=true; return; }
+  const granted = Notification.permission==="granted";
+  $("#btnNotif").textContent = on && granted ? "Desactivar avisos" : "Activar avisos";
+  if(Notification.permission==="denied"){ $("#notifState").textContent="Avisos bloqueados: actívalos en Ajustes > Apps > Setas CdG > Notificaciones."; return; }
+  if(on && granted){
+    const bg = await registerPeriodic();
+    $("#notifState").textContent = bg ? "✓ Activados. La app revisa el tiempo en segundo plano (más o menos dos veces al día, cuando Android lo permite) y también cada vez que la abres."
+                                      : "✓ Activados. Te aviso cada vez que abras la app. Para que vigile también con la app cerrada, instálala en la pantalla de inicio (Android, Chrome).";
+  } else $("#notifState").textContent="";
+}
+async function toggleNotif(){
+  if(!notifSupported()) return;
+  if(store.get("notif",false)){ store.set("notif",false); try{ swReg && swReg.periodicSync && swReg.periodicSync.unregister("check-setas"); }catch(e){} }
+  else { try{ const p=await Notification.requestPermission(); store.set("notif",p==="granted"); }catch(e){} }
+  syncConf(); updateNotifState();
+}
+function notify(title,body){
+  try{
+    if(swReg) return swReg.showNotification(title,{body,icon:"icon-192.png",badge:"icon-192.png",tag:"setas-aviso"});
+    new Notification(title,{body});
+  }catch(e){}
+}
+function checkNotify(best,bestI){
+  if(!store.get("notif",false) || !notifSupported() || Notification.permission!=="granted") return;
+  if(best < +store.get("umbral",65)) return;
+  const key = DATA.label+DATA.time[bestI];
+  if(store.get("lastNotified","")===key) return;
+  store.set("lastNotified",key); syncConf();
+  notify("🍄 Buen día para setas","Índice "+best+"/100 el "+fmtDate(DATA.time[bestI])+" en "+DATA.label+".");
+}
+
+/* ===================== MAPA (todo lo del campo) ===================== */
+let map=null, baseIdx=0, bases=[], trailsLayer=null, siteMks=[], mineMks=[];
+let meMk=null, meAcc=null, carMk=null, carLine=null, trackLine=null, following=true, firstFix=true;
+let watchId=null, myPos=null, myAcc=null, heading=null, compassOn=false, recording=false, wakeLock=null, sheetMode=null, selSitio=new Set();
+let BASE_NAMES=["Topo","Satélite","Calles"], GL=false, mapStarting=false, pendingAfter=null;
+
+function sizeMap(){
+  const h = window.innerHeight - document.querySelector("header").offsetHeight - document.querySelector("nav").offsetHeight;
+  $("#map").style.height = Math.max(300,h)+"px";
+  if(map) map.invalidateSize();
+}
+function openMap(after){
+  sizeMap();
+  const go=()=>{ map.invalidateSize(); startGPS(); renderLuz(); renderCoche(); renderTrack(); renderSitios(); updateSiteMarkers(); renderMapBest(); loadTrails(); updateFollow(); const f=pendingAfter||(map&&!mapStarting?after:null); pendingAfter=null; if(f) setTimeout(f,50); };
+  if(map) return go();
+  if(mapStarting){ if(after) pendingAfter=after; return; } mapStarting=true; if(after) pendingAfter=after;
+  $("#mapMsg").textContent="Cargando mapa…";
+  loadGL(ok=>{ initMap(ok); mapStarting=false; if($("#mapMsg").textContent==="Cargando mapa…") $("#mapMsg").textContent=""; go(); });
+  if(!navigator.onLine) $("#mapMsg").textContent="Sin conexión: solo se ven las zonas del mapa que ya abriste antes.";
+}
+function initMap(gl){
+  GL=!!gl;
+  const sat="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+  const topo="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", osm="https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+  if(GL){
+    map = new GLMap($("#map"),{center:[36.36,-5.55], zoom:9.6, minZoom:7, maxZoom:18});
+    bases = [
+      map.addTileLayer(sat,{maxZoom:18,attribution:"Imágenes © Esri"}),
+      map.addTileLayer(topo,{maxZoom:17,attribution:"© OpenStreetMap · OpenTopoMap"}),
+      map.addTileLayer(osm,{maxZoom:19,attribution:"© OpenStreetMap"})
+    ];
+    BASE_NAMES=["Satélite","Topo","Calles"];
+    map.addHillshade();
+    $("#mb3d").classList.remove("hidden"); $("#mapZoom").classList.add("hidden");
+  } else {
+    map = new MiniMap($("#map"),{center:[36.33,-5.52], zoom:10, minZoom:7, maxZoom:18});
+    bases = [ map.addTileLayer(topo,{maxZoom:17,attribution:"© OpenStreetMap · SRTM | OpenTopoMap"}),
+              map.addTileLayer(sat,{maxZoom:18,attribution:"Imágenes © Esri"}),
+              map.addTileLayer(osm,{maxZoom:19,attribution:"© OpenStreetMap"}) ];
+  }
+  baseIdx = Math.min(store.get("base",0), bases.length-1);
+  bases.forEach((L,k)=>map.setLayerVisible(L,k===baseIdx));
+  $("#mbCapa small").textContent=BASE_NAMES[baseIdx];
+  trailsLayer = map.addTileLayer("https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png",{maxZoom:18,opacity:0.95,attribution:"Senderos © Waymarked Trails"});
+  if(!store.get("trails",false)) map.setLayerVisible(trailsLayer,false);
+  if(GL && store.get("3d",true)){ map.set3D(true); $("#mb3d").classList.add("on"); }
+  map.on("dragstart",()=>{ following=false; $("#mbYo").classList.remove("on"); });
+  updateSiteMarkers();
+  // si a los 8 s no ha cargado ninguna tesela, avisar (vista previa de Claude o sin conexión)
+  setTimeout(()=>{ if(!(map.tileOK>0) && !store.get("noTilesSeen",false)) $("#mapNoTiles").classList.remove("hidden"); },8000);
+}
+/* tarjetas de los mejores sitios, abajo del mapa */
+function rankedSites(){
+  return (SITE_ROWS||[]).filter(r=>r.site&&r.site.id).map(r=>Object.assign({},r,{rk:siteRank(r)})).filter(r=>r.rk.score>=0).sort((a,b)=>b.rk.score-a.rk.score);
+}
+function renderMapBest(){
+  const el=$("#mapBest"); if(!el) return;
+  const rows=rankedSites().slice(0,5);
+  el.innerHTML = rows.map((r,k)=>{
+    const sp=r.rk.top.slice(0,2).map(x=>shortName(SETAS.find(z=>z.id===x.id))).join(", ")||"poco ahora";
+    return '<div class="bestc" data-site="'+r.site.id+'"><div class="sc" style="background:'+scoreColor(r.rk.score)+'">'+r.rk.score+'</div><div class="tx"><b>'+(k<3?["🥇","🥈","🥉"][k]+" ":"")+esc(r.site.n)+'</b><span>'+esc(sp)+(r.site.ruta?' · '+esc(r.site.ruta.km.split(".")[0].split("(")[0]):'')+'</span></div></div>';
+  }).join("");
+}
+function goSite(id){
+  const s=SITIOS.find(x=>x.id===id); if(!s||!map) return;
+  following=false; $("#mbYo").classList.remove("on");
+  if(GL) map.flyTo([s.lat,s.lon],14.6,map.is3D?64:0,-20); else map.setView([s.lat,s.lon],14);
+  openSiteSheet(id);
+}
+/* sitios recomendados en el mapa, coloreados con la nota de hoy */
+function updateSiteMarkers(){
+  if(!map) return;
+  siteMks.forEach(m=>m.remove()); siteMks=[];
+  const rows = (SITE_ROWS||[]).filter(r=>r.site && r.site.id).map(r=>Object.assign({},r,{rk:siteRank(r)}));
+  renderMapBest();
+  SITIOS.forEach(s=>{
+    const r = rows.find(x=>x.site.id===s.id);
+    const sc = r? r.rk.score : null;
+    siteMks.push(map.marker([s.lat,s.lon],'<div class="mk" style="background:'+(sc==null?"#8a806c":scoreColor(Math.max(0,sc)))+'"><b>'+(sc==null||sc<0?"·":sc)+'</b></div><div class="mkl">'+esc(s.n.split(" (")[0].replace("Área recreativa ","").replace("Sendero ",""))+'</div>',{anchor:[19,44],onClick:()=>openSiteSheet(s.id),z:2}));
+  });
+}
+function openSiteSheet(id){
+  const s = SITIOS.find(x=>x.id===id); if(!s) return;
+  const r = (SITE_ROWS||[]).find(x=>x.site && x.site.id===id);
+  const rk = r? siteRank(r) : null;
+  const top = rk && rk.top.length ? rk.top.map(x=>{ const sp=SETAS.find(z=>z.id===x.id); return '<span class="pill t-'+sp.t+'" data-goto="'+x.id+'">'+esc(shortName(sp))+' '+x.c+'%</span>'; }).join("") :
+    s.sp.map(id=>{ const sp=SETAS.find(z=>z.id===id); return '<span class="pill" data-goto="'+id+'">'+esc(shortName(sp))+'</span>'; }).join("");
+  const hunt = s.caza && r && huntingDay(r.D.time[r.i0]);
+  const dist = myPos? " · a "+fmtDist(haversine(myPos,[s.lat,s.lon]))+" en línea recta" : "";
+  openSheet("site",
+    '<h2>'+esc(s.n)+'</h2><div class="muted">'+esc(s.mun)+dist+'</div>'+
+    (rk?'<div class="row" style="margin:8px 0"><div class="zone" style="border:0;padding:0"><div class="sc" style="background:'+scoreColor(Math.max(0,rk.score))+'">'+Math.max(0,rk.score)+'</div></div><div class="muted">'+(r.best>r.s+5?"Mejor el <b>"+fmtDate(r.bestDay)+"</b>":"Hoy es de los mejores días de la semana")+'</div></div>':'')+
+    '<div><b>Qué buscar:</b><br>'+top+'</div>'+
+    (s.ruta?'<div class="ruta"><div><b>🥾 Recorrido</b>'+esc(s.ruta.km)+'</div><div><b>📈 Dificultad</b>'+esc(s.ruta.dif)+'</div><div><b>⏱️ Tiempo</b>'+esc(s.ruta.t)+'</div><div><b>🅿️ Aparcar</b>'+esc(s.ruta.park)+'</div><div style="margin-top:4px">'+esc(s.ruta.via)+'</div></div>':'')+
+    '<p style="margin:8px 0">'+esc(s.hab)+'</p><p style="margin:8px 0"><b>Consejo:</b> '+esc(s.tip)+'</p>'+
+    (hunt?'<div class="warn">🎯 Fin de semana en temporada de caza: mira si hay carteles de montería.</div>':'')+
+    (TRAILS.length?(()=>{ const nt=trailsNear([s.lat,s.lon],2000).slice(0,4); return nt.length?'<div style="margin-top:8px"><b>🥾 Senderos que pasan por aquí</b>'+nt.map(x=>'<div class="zone" data-trail="'+x.t.id+'"><div class="sc" style="background:'+x.t.color+';font-size:.75rem">'+(x.t.len/1000).toFixed(1)+'<br>km</div><div class="tx"><b>'+esc(x.t.name)+'</b><small>'+esc(x.t.net)+(x.d>150?' · a '+fmtDist(x.d):' · pasa por el sitio')+'</small></div></div>').join("")+'</div>':''; })():(trailsLoading?'<p class="muted">Cargando senderos…</p>':''))+
+    '<div class="row" style="margin-top:10px">'+
+      '<a class="b" style="text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+s.lat+','+s.lon+'" target="_blank" rel="noopener">🚗 Llevarme en coche</a>'+
+      '<button class="b2" data-zoom="'+s.lat+','+s.lon+'">'+(GL?'⛰️ Verlo en 3D':'🥾 Ver senderos aquí')+'</button>'+
+    '</div>'+
+    '<p class="note">Las líneas de colores del mapa son los senderos señalizados (OpenStreetMap). Toca una para ver su recorrido y desnivel. Algunos senderos del parque natural piden autorización previa a la Junta, y mucho terreno alrededor es privado: no salgas de las zonas públicas sin permiso.</p>');
+  $("#sheet").dataset.cursite=id;
+}
+function openSheet(mode,html){ sheetMode=mode; $("#sheet").dataset.cursite=""; $("#sheet").dataset.curtrail=""; $("#sheetBody").innerHTML=html; $("#sheet").classList.remove("hidden"); }
+function closeSheet(){ sheetMode=null; $("#sheet").classList.add("hidden"); }
+
+/* GPS */
+function startGPS(){
+  if(!navigator.geolocation){ $("#mapMsg").textContent="Este dispositivo no da la ubicación."; return; }
+  if(watchId!=null) return;
+  watchId = navigator.geolocation.watchPosition(onPos, err=>{
+    $("#mapMsg").textContent = err.code===1 ? "Permite la ubicación para verte en el mapa (ajustes del navegador)." : "Buscando señal GPS…";
+  }, {enableHighAccuracy:true, maximumAge:5000, timeout:25000});
+}
+function stopGPS(){ if(watchId!=null && !recording){ navigator.geolocation.clearWatch(watchId); watchId=null; } }
+function onPos(p){
+  myPos=[p.coords.latitude,p.coords.longitude]; myAcc=p.coords.accuracy;
+  if(!compassOn && p.coords.heading!=null && !isNaN(p.coords.heading) && p.coords.speed>0.5) heading=p.coords.heading;
+  if($("#mapMsg").textContent.indexOf("GPS")>=0 || $("#mapMsg").textContent.indexOf("ubicación")>=0) $("#mapMsg").textContent="";
+  if(recording) addTrackPoint(myPos);
+  if(map){
+    if(!meMk){ meAcc=map.circle(myPos,myAcc); meMk=map.marker(myPos,'<div class="me"></div>',{anchor:[9,9],z:10}); }
+    else { meMk.setLatLng(myPos); meAcc.set(myPos,myAcc); }
+    const inArea = myPos[0]>35.8 && myPos[0]<36.9 && myPos[1]>-6.1 && myPos[1]<-5.0;
+    if(firstFix && inArea && !sheetMode){ if(GL) map.flyTo(myPos,15,map.is3D?55:0); else map.setView(myPos,15); firstFix=false; following=true; $("#mbYo").classList.add("on"); }
+    else if(following) map.panTo(myPos);
+  }
+  renderCoche(); updateFollow();
+  if(sheetMode==="sos") showSos();
+}
+function oneShotPos(cb){
+  if(myPos) return cb(myPos);
+  if(!navigator.geolocation) return cb(null);
+  navigator.geolocation.getCurrentPosition(p=>{ myPos=[p.coords.latitude,p.coords.longitude]; cb(myPos); },()=>cb(null),{enableHighAccuracy:true,timeout:15000});
+}
+
+/* luz que queda */
+function renderLuz(){
+  const el=$("#tLuz"); if(!el) return;
+  if(!DATA){ el.textContent="☀️ —"; return; }
+  const i0=M.todayIndex(DATA), ss=DATA.sunset[i0], sr=DATA.sunrise[i0]; if(!ss) return;
+  const now=new Date(), tSet=new Date(ss), tRise=new Date(sr);
+  if(now<tRise){ el.textContent="🌙 Amanece "+sr.slice(11,16); el.style.color=""; return; }
+  const ms=tSet-now;
+  if(ms<=0){ el.textContent="🌙 Ya es de noche"; el.style.color="#b33a2b"; return; }
+  const h=Math.floor(ms/3600000), m=Math.floor(ms%3600000/60000);
+  el.textContent="☀️ "+(h?h+" h ":"")+m+" min de luz"; el.style.color = ms<3600000?"#b33a2b":"";
+}
+
+/* coche */
+function drawCompass(rot,hasH){
+  let ticks=""; for(let a=0;a<360;a+=30) ticks+='<line x1="100" y1="12" x2="100" y2="'+(a%90?20:26)+'" stroke="#b9ad97" stroke-width="2" transform="rotate('+a+' 100 100)"/>';
+  return '<svg class="compass" viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#f3ecdf" stroke="#e3d9c6" stroke-width="2"/>'+
+    '<g transform="rotate('+(hasH?-heading:0)+' 100 100)">'+ticks+'<text x="100" y="42" text-anchor="middle" font-size="16" font-weight="800" fill="#b33a2b">N</text></g>'+
+    '<g transform="rotate('+rot+' 100 100)"><path d="M100 30 L128 120 L100 104 L72 120 Z" fill="#2f3b26"/></g><circle cx="100" cy="100" r="6" fill="#fff" stroke="#2f3b26" stroke-width="2"/></svg>';
+}
+function renderCoche(){
+  const car=store.get("coche",null);
+  $("#mbCoche").classList.toggle("on",!!car);
+  if(map){
+    if(car){
+      if(!carMk) carMk=map.marker([car.lat,car.lon],'<div class="mk2">🚗</div>',{anchor:[16,16],onClick:showCarSheet,z:5}); else carMk.setLatLng([car.lat,car.lon]);
+      if(myPos){ const pts=[myPos,[car.lat,car.lon]]; if(!carLine) carLine=map.polyline(pts,{color:"#2f3b26",weight:3,dash:"6 8",opacity:.85}); else carLine.setPoints(pts); }
+    } else { if(carMk){ carMk.remove(); carMk=null; } if(carLine){ carLine.remove(); carLine=null; } }
+  }
+  if(car && myPos){
+    const d=haversine(myPos,[car.lat,car.lon]);
+    $("#tCoche").classList.remove("hidden"); $("#tCoche").textContent="🚗 "+(d<25?"aquí":fmtDist(d));
+  } else $("#tCoche").classList.add("hidden");
+  if(sheetMode==="car") showCarSheet();
+}
+function showCarSheet(){
+  const car=store.get("coche",null); if(!car) return;
+  let body='<h2>🚗 Volver al coche</h2>';
+  if(!myPos) body+='<p class="muted">Esperando GPS…</p>';
+  else {
+    const dist=haversine(myPos,[car.lat,car.lon]), br=bearing(myPos,[car.lat,car.lon]), hasH=heading!=null;
+    body+='<div class="center">'+drawCompass(hasH?br-heading:br,hasH)+'<p class="bignum">'+(dist<25?"¡Estás en el coche!":fmtDist(dist))+'</p>'+
+      '<div class="muted">Al '+cardinal(br)+' ('+Math.round(br)+'°). '+(hasH?"La flecha apunta al coche.":"Sin brújula, la flecha va con el norte arriba. Actívala o echa a andar.")+'</div></div>';
+  }
+  body+='<div class="row" style="justify-content:center;margin-top:10px"><button class="b2" id="btnBrujula">🧭 '+(compassOn?"Brújula activa":"Activar brújula")+'</button>'+
+    '<a class="b2" style="text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+car.lat+','+car.lon+'&travelmode=walking" target="_blank" rel="noopener">🗺️ Google Maps a pie</a>'+
+    '<button class="b2" id="btnCocheDel">Borrar coche</button></div>'+
+    '<p class="note">La línea discontinua del mapa une tu posición con el coche. El GPS funciona sin cobertura.</p>';
+  openSheet("car",body);
+}
+function onOrient(e){
+  let h=null;
+  if(e.webkitCompassHeading!=null) h=e.webkitCompassHeading; else if(e.absolute && e.alpha!=null) h=(360-e.alpha)%360;
+  if(h!=null){ heading=(h+((screen.orientation&&screen.orientation.angle)||0))%360; compassOn=true; if(sheetMode==="car") showCarSheet(); }
+}
+async function enableCompass(){
+  try{
+    if(typeof DeviceOrientationEvent!=="undefined" && typeof DeviceOrientationEvent.requestPermission==="function"){
+      const r=await DeviceOrientationEvent.requestPermission(); if(r!=="granted") return; window.addEventListener("deviceorientation",onOrient,true);
+    } else if("ondeviceorientationabsolute" in window) window.addEventListener("deviceorientationabsolute",onOrient,true);
+    else window.addEventListener("deviceorientation",onOrient,true);
+    setTimeout(()=>{ if(!compassOn) $("#mapMsg").textContent="Este móvil no deja usar la brújula aquí. Al andar, la flecha se orienta con el GPS."; },3000);
+  }catch(e){}
+}
+
+/* grabar ruta (miguitas de pan) */
+function getTrack(){ return store.get("track",[]); }
+function trackLen(tr){ let d=0; for(let k=1;k<tr.length;k++) d+=haversine(tr[k-1],tr[k]); return d; }
+function addTrackPoint(p){
+  const tr=getTrack(); const last=tr[tr.length-1];
+  if(!last || haversine(last,p)>=8){ tr.push([+p[0].toFixed(6),+p[1].toFixed(6)]); store.set("track",tr); renderTrack(); }
+}
+function renderTrack(){
+  const tr=getTrack();
+  $("#mbRuta").classList.toggle("rec",recording);
+  $("#tRuta").classList.toggle("hidden",!tr.length && !recording);
+  $("#tRuta").textContent=(recording?"⏺️ ":"🥾 ")+fmtDist(trackLen(tr));
+  if(map){
+    if(tr.length>1){ if(!trackLine) trackLine=map.polyline(tr,{color:"#d0342c",weight:4,opacity:.9}); else trackLine.setPoints(tr); }
+    else if(trackLine){ trackLine.remove(); trackLine=null; }
+  }
+}
+async function setRecording(on){
+  recording=on;
+  if(on){ startGPS(); try{ if("wakeLock" in navigator) wakeLock=await navigator.wakeLock.request("screen"); }catch(e){} }
+  else { try{ wakeLock && wakeLock.release(); }catch(e){} wakeLock=null; }
+  renderTrack();
+}
+function showRutaSheet(){
+  const tr=getTrack();
+  openSheet("ruta",'<h2>🥾 Mi ruta</h2><p class="muted">Va dibujando en rojo por dónde pasas, para saber volver por el mismo camino. Mientras grabas, la pantalla se queda encendida; si la apagas, el móvil deja de apuntar el recorrido.</p>'+
+    '<p><b>Recorrido:</b> '+fmtDist(trackLen(tr))+' · '+tr.length+' puntos</p>'+
+    '<div class="row"><button class="b" id="btnRec">'+(recording?"⏹️ Parar":"⏺️ Empezar a grabar")+'</button>'+
+    (tr.length?'<button class="b2" id="btnRecFit">Ver ruta entera</button><button class="b2" id="btnRecDel">Borrar ruta</button>':'')+'</div>');
+}
+
+/* mis sitios */
+function renderSitioChips(){ const el=$("#sSetas"); if(el) el.innerHTML = EDIBLES().map(s=>'<button data-id="'+s.id+'" class="'+(selSitio.has(s.id)?'on':'')+'">'+esc(shortName(s))+'</button>').join(""); }
+function renderSitios(){
+  if(!map) return;
+  mineMks.forEach(m=>m.remove()); mineMks=[];
+  store.get("sitios",[]).forEach((s,k)=>{
+    mineMks.push(map.marker([s.lat,s.lon],'<div class="mk2">⭐</div>',{anchor:[15,15],z:3,onClick:()=>{
+      const sp=(s.setas||[]).map(id=>{ const x=SETAS.find(z=>z.id===id); return x?shortName(x):id; }).join(", ");
+      openSheet("mine",'<h2>⭐ '+esc(s.nombre)+'</h2><div class="muted">'+esc(sp||"—")+' · guardado el '+esc(s.fecha||"")+(myPos?' · a '+fmtDist(haversine(myPos,[s.lat,s.lon])):"")+'</div>'+
+        '<div class="row" style="margin-top:10px"><a class="b" style="text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+s.lat+','+s.lon+'" target="_blank" rel="noopener">🚗 Llevarme</a><button class="b2" data-del-sitio="'+k+'">Borrar</button></div>');
+    }}));
+  });
+}
+function showSitioSheet(){
+  selSitio.clear();
+  openSheet("addsite",'<h2>⭐ Guardar este sitio</h2><p class="muted">Se guarda tu posición actual. Saldrá en el mapa y en “¿Dónde ir?” con su propia nota.</p>'+
+    '<div class="form"><label>Nombre</label><input id="sNombre" placeholder="p. ej. Canuto de los tentullos"><label>Qué salió</label><div class="wrapchips" id="sSetas"></div></div>'+
+    '<div style="margin-top:10px"><button class="b" id="btnSitio">Guardar aquí</button> <span id="sitioTxt" class="muted"></span></div>');
+  renderSitioChips();
+}
+function showSos(){
+  openSheet("sos",'<h2>🆘 Emergencia</h2><p class="muted">Llama al 112 y dales estas coordenadas:</p><p class="bignum" style="font-size:1.4rem">'+(myPos?myPos[0].toFixed(5)+", "+myPos[1].toFixed(5):"Buscando GPS…")+'</p>'+
+    (myAcc?'<p class="muted center">Precisión ±'+Math.round(myAcc)+' m</p>':'')+
+    '<div class="row" style="justify-content:center"><button class="b2" id="btnCopyCoords">Copiar coordenadas</button><a class="b" style="text-decoration:none" href="tel:112">📞 Llamar al 112</a></div>');
+}
+
+/* ===================== RECORRIDOS (senderos reales de OpenStreetMap) ===================== */
+const TRAIL_BBOX=[35.98,-5.86,36.62,-5.25]; // S,O,N,E: Campo de Gibraltar, Alcalá y La Sauceda
+const OVERPASS=["https://overpass-api.de/api/interpreter","https://overpass.private.coffee/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
+const NET={iwn:["Gran Recorrido internacional","#b0281f"],nwn:["Gran Recorrido (GR)","#d63031"],rwn:["Pequeño Recorrido (PR)","#e67e22"],lwn:["Sendero local (SL)","#7d3cc8"]};
+let TRAILS=[], trailsLoading=false, selTrail=null, followTrail=null, wasOff=false;
+
+function simplify(pts,tol){ // Douglas-Peucker en grados
+  if(pts.length<3) return pts;
+  const keep=new Uint8Array(pts.length); keep[0]=keep[pts.length-1]=1;
+  const st=[[0,pts.length-1]];
+  while(st.length){ const [a,b]=st.pop(); let md=0,mi=-1; const [y1,x1]=pts[a],[y2,x2]=pts[b], dx=x2-x1, dy=y2-y1, L=dx*dx+dy*dy;
+    for(let i=a+1;i<b;i++){ const [y,x]=pts[i]; let t=L?((x-x1)*dx+(y-y1)*dy)/L:0; t=Math.max(0,Math.min(1,t)); const ex=x1+t*dx-x, ey=y1+t*dy-y, d=ex*ex+ey*ey; if(d>md){md=d;mi=i;} }
+    if(mi>=0 && md>tol*tol){ keep[mi]=1; st.push([a,mi],[mi,b]); } }
+  return pts.filter((_,i)=>keep[i]);
+}
+function segLen(seg){ let d=0; for(let k=1;k<seg.length;k++) d+=haversine(seg[k-1],seg[k]); return d; }
+function parseTrails(j){
+  const out=[];
+  (j.elements||[]).forEach(el=>{
+    if(el.type!=="relation"||!el.members) return;
+    const tags=el.tags||{};
+    const segs=el.members.filter(m=>m.type==="way"&&m.geometry&&m.geometry.length>1).map(m=>simplify(m.geometry.map(g=>[+g.lat.toFixed(5),+g.lon.toFixed(5)]),0.00007));
+    if(!segs.length) return;
+    const len=segs.reduce((a,s)=>a+segLen(s),0);
+    if(len<300) return;
+    let s=90,w=180,n=-90,e=-180; segs.forEach(sg=>sg.forEach(p=>{ s=Math.min(s,p[0]); n=Math.max(n,p[0]); w=Math.min(w,p[1]); e=Math.max(e,p[1]); }));
+    const net=NET[tags.network]||["Sendero","#2d6cdf"];
+    out.push({id:"r"+el.id, name:tags.name||tags["name:es"]||(tags.ref?"Sendero "+tags.ref:"Sendero sin nombre"), ref:tags.ref||"", net:net[0], color:net[1],
+      from:tags.from||"", to:tags.to||"", desc:tags.description||"", len, segs, bb:[s,w,n,e]});
+  });
+  return out.sort((a,b)=>b.len-a.len);
+}
+async function loadTrails(force){
+  if(trailsLoading) return;
+  const c=store.get("trails_v1",null);
+  if(!force && c && c.list && Date.now()-c.t<14*864e5){ TRAILS=c.list; drawTrails(); return; }
+  if(!navigator.onLine){ if(c&&c.list){ TRAILS=c.list; drawTrails(); } return; }
+  trailsLoading=true; $("#mapMsg").textContent="Cargando senderos de la comarca…";
+  const q='[out:json][timeout:60];relation["route"~"^(hiking|foot|walking)$"]('+TRAIL_BBOX.join(",")+');out tags geom;';
+  for(const url of OVERPASS){
+    try{
+      const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),45000);
+      const r=await fetch(url,{method:"POST",body:"data="+encodeURIComponent(q),headers:{"Content-Type":"application/x-www-form-urlencoded"},signal:ctrl.signal});
+      clearTimeout(to); if(!r.ok) continue;
+      TRAILS=parseTrails(await r.json());
+      if(!store.set("trails_v1",{t:Date.now(),list:TRAILS})) console.warn("sin espacio para guardar senderos");
+      break;
+    }catch(e){}
+  }
+  trailsLoading=false;
+  if($("#mapMsg").textContent.indexOf("senderos")>=0) $("#mapMsg").textContent = TRAILS.length? "" : "No se pudieron cargar los senderos ahora. Prueba más tarde con conexión.";
+  drawTrails();
+}
+function trailsFC(){
+  return {type:"FeatureCollection",features:TRAILS.map(t=>({type:"Feature",properties:{id:t.id,color:t.color},geometry:{type:"MultiLineString",coordinates:t.segs.map(s=>s.map(p=>[p[1],p[0]]))}}))};
+}
+function drawTrails(){
+  if(!map||!TRAILS.length||!map.setTrails) return;
+  map.setTrails(trailsFC(), id=>openTrailSheet(id));
+  if(selTrail) map.highlightTrail(selTrail);
+  if(sheetMode==="site" && $("#sheet").dataset.cursite) openSiteSheet($("#sheet").dataset.cursite);
+}
+/* distancia de un punto a un recorrido (m) y lo que queda aprox. */
+function nearestOnTrail(t,p){
+  const kx=111320*Math.cos(p[0]*Math.PI/180), ky=110540;
+  let best={d:1e12,along:0,pt:null}, acc=0;
+  t.segs.forEach(sg=>{
+    for(let k=1;k<sg.length;k++){
+      const a=sg[k-1], b=sg[k];
+      const ax=(a[1]-p[1])*kx, ay=(a[0]-p[0])*ky, bx=(b[1]-p[1])*kx, by=(b[0]-p[0])*ky;
+      const dx=bx-ax, dy=by-ay, L=dx*dx+dy*dy; let u=L?-(ax*dx+ay*dy)/L:0; u=Math.max(0,Math.min(1,u));
+      const ex=ax+u*dx, ey=ay+u*dy, d=Math.hypot(ex,ey), sl=Math.sqrt(L);
+      if(d<best.d) best={d,along:acc+u*sl,pt:[a[0]+u*(b[0]-a[0]),a[1]+u*(b[1]-a[1])]};
+      acc+=sl;
+    }
+  });
+  return best;
+}
+function trailsNear(p,maxM){
+  return TRAILS.map(t=>({t,d:nearestOnTrail(t,p).d})).filter(x=>x.d<=maxM).sort((a,b)=>a.d-b.d);
+}
+function trailEnds(t){ const f=t.segs[0][0], l=t.segs[t.segs.length-1]; return [f,l[l.length-1]]; }
+function trailStart(t){
+  const [a,b]=trailEnds(t); if(!myPos) return a;
+  return haversine(myPos,a)<=haversine(myPos,b)?a:b;
+}
+function allPts(t){ return [].concat(...t.segs); }
+
+/* perfil de desnivel con las teselas de relieve (Terrarium) */
+const demCache=new Map();
+function demTile(z,x,y){
+  const k=z+"/"+x+"/"+y; if(demCache.has(k)) return demCache.get(k);
+  const pr=new Promise(res=>{ const img=new Image(); img.crossOrigin="anonymous";
+    img.onload=()=>{ try{ const c=document.createElement("canvas"); c.width=c.height=256; const g=c.getContext("2d"); g.drawImage(img,0,0); res(g.getImageData(0,0,256,256).data); }catch(e){ res(null); } };
+    img.onerror=()=>res(null); img.src="https://s3.amazonaws.com/elevation-tiles-prod/terrarium/"+k+".png"; });
+  demCache.set(k,pr); return pr;
+}
+async function elevAt(lat,lon){
+  const z=13, n=Math.pow(2,z), s=Math.sin(lat*Math.PI/180);
+  const fx=(lon+180)/360*n, fy=(0.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n;
+  const x=Math.floor(fx), y=Math.floor(fy), d=await demTile(z,x,y); if(!d) return null;
+  const px=Math.min(255,Math.floor((fx-x)*256)), py=Math.min(255,Math.floor((fy-y)*256)), i=(py*256+px)*4;
+  return d[i]*256+d[i+1]+d[i+2]/256-32768;
+}
+async function trailProfile(t){
+  if(t.prof) return t.prof;
+  const pts=[]; let acc=0; const step=Math.max(40,t.len/160);
+  t.segs.forEach(sg=>{ let left=0; for(let k=1;k<sg.length;k++){ const a=sg[k-1],b=sg[k],L=haversine(a,b); let u=left; while(u<L){ const r=u/L; pts.push({p:[a[0]+r*(b[0]-a[0]),a[1]+r*(b[1]-a[1])],dist:acc+u}); u+=step; } left=u-L; acc+=L; } });
+  if(!pts.length) return null;
+  const el=await Promise.all(pts.map(q=>elevAt(q.p[0],q.p[1])));
+  const ok=pts.map((q,i)=>({d:q.dist,e:el[i]})).filter(q=>q.e!=null && q.e>-50);
+  if(ok.length<3) return null;
+  const sm=ok.map((q,i)=>{ const w=ok.slice(Math.max(0,i-2),i+3); return {d:q.d,e:w.reduce((a,b)=>a+b.e,0)/w.length}; });
+  let up=0,down=0; for(let i=1;i<sm.length;i++){ const de=sm[i].e-sm[i-1].e; if(de>0) up+=de; else down-=de; }
+  const es=sm.map(q=>q.e); t.prof={pts:sm,up:Math.round(up),down:Math.round(down),min:Math.round(Math.min(...es)),max:Math.round(Math.max(...es))};
+  return t.prof;
+}
+function profileSVG(pr){
+  const W=320,H=90,P=4, maxD=pr.pts[pr.pts.length-1].d||1, rng=Math.max(20,pr.max-pr.min);
+  const xy=pr.pts.map(q=>[P+(W-2*P)*q.d/maxD, H-P-(H-2*P)*(q.e-pr.min)/rng]);
+  const line=xy.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;background:#f3ecdf;border-radius:10px">'+
+    '<polygon points="'+P+','+(H-P)+' '+line+' '+(W-P)+','+(H-P)+'" fill="#4c5f3a" opacity=".25"/>'+
+    '<polyline points="'+line+'" fill="none" stroke="#2f3b26" stroke-width="2"/>'+
+    '<text x="6" y="14" font-size="11" fill="#6f6553">'+pr.max+' m</text><text x="6" y="'+(H-8)+'" font-size="11" fill="#6f6553">'+pr.min+' m</text>'+
+    '<text x="'+(W-6)+'" y="'+(H-8)+'" font-size="11" fill="#6f6553" text-anchor="end">'+fmtDist(maxD)+'</text></svg>';
+}
+function siteNear(t){
+  let best=null; SITIOS.forEach(s=>{ const d=nearestOnTrail(t,[s.lat,s.lon]).d; if(d<2500 && (!best||d<best.d)) best={s,d}; }); return best;
+}
+function selectTrail(id,fit){
+  selTrail=id; if(map&&map.highlightTrail) map.highlightTrail(id);
+  const t=TRAILS.find(x=>x.id===id); if(t&&fit&&map){ following=false; $("#mbYo").classList.remove("on"); map.fitBounds(allPts(t),50); }
+}
+function openTrailSheet(id){
+  const t=TRAILS.find(x=>x.id===id); if(!t) return;
+  selectTrail(id,false);
+  const near=siteNear(t), st=trailStart(t);
+  let tip="";
+  if(near){ const r=(SITE_ROWS||[]).find(x=>x.site&&x.site.id===near.s.id); const rk=r?siteRank(r):null;
+    tip='<div class="ok" style="margin:8px 0">🍄 Pasa junto a <b>'+esc(near.s.n)+'</b>'+(rk?' (nota de hoy <b>'+Math.max(0,rk.score)+'</b>)':'')+'. Busca: '+esc((rk&&rk.top.length?rk.top.map(x=>shortName(SETAS.find(z=>z.id===x.id))):near.s.sp.slice(0,3).map(id=>shortName(SETAS.find(z=>z.id===id)))).join(", "))+'.</div>'; }
+  const distTo = myPos? '<div><b>📍 Desde aquí</b>'+fmtDist(nearestOnTrail(t,myPos).d)+' hasta el sendero</div>':'';
+  openSheet("trail",'<h2>🥾 '+esc(t.name)+'</h2><div class="muted">'+esc(t.net)+(t.ref?' · '+esc(t.ref):'')+'</div>'+
+    '<div class="ruta"><div><b>📏 Longitud</b>'+fmtDist(t.len)+(t.segs.length>3?' (en total, contando todos sus tramos)':'')+'</div>'+
+    (t.from||t.to?'<div><b>🚩 Recorrido</b>'+esc([t.from,t.to].filter(Boolean).join(" → "))+'</div>':'')+distTo+
+    '<div id="profBox" class="muted" style="margin-top:6px">Calculando desnivel…</div></div>'+
+    (t.desc?'<p style="margin:6px 0">'+esc(t.desc)+'</p>':'')+tip+
+    '<div class="row" style="margin-top:8px">'+
+      '<button class="b" id="btnFollow">'+(followTrail===id?'⏹️ Dejar de seguir':'▶️ Seguir esta ruta')+'</button>'+
+      '<button class="b2" id="btnFitTrail">🔍 Verla entera</button>'+
+      '<a class="b2" style="text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+st[0]+','+st[1]+'" target="_blank" rel="noopener">🚗 Ir al inicio</a>'+
+    '</div><p class="note">Trazado de OpenStreetMap: puede no estar completo o haber cambiado. Algunos senderos del parque natural piden autorización previa a la Junta.</p>');
+  $("#sheet").dataset.curtrail=id;
+  trailProfile(t).then(pr=>{ const b=$("#profBox"); if(!b||$("#sheet").dataset.curtrail!==id) return;
+    b.innerHTML = pr ? '<div style="color:var(--ink)"><b>⛰️ Desnivel</b>sube ~'+pr.up+' m · baja ~'+pr.down+' m · de '+pr.min+' a '+pr.max+' m</div>'+profileSVG(pr) : 'No se pudo calcular el desnivel (sin conexión).'; });
+}
+function showTrailList(){
+  const ref = myPos || (map&&map.getCenter?map.getCenter():[36.3,-5.5]);
+  const list = TRAILS.map(t=>({t,d:nearestOnTrail(t,ref).d})).sort((a,b)=>a.d-b.d).slice(0,25);
+  openSheet("trails",'<h2>🥾 Senderos '+(myPos?'cerca de ti':'de la zona')+'</h2>'+
+    (TRAILS.length? list.map(x=>'<div class="zone" data-trail="'+x.t.id+'"><div class="sc" style="background:'+x.t.color+';font-size:.75rem">'+(x.t.len>=10000?Math.round(x.t.len/1000):(x.t.len/1000).toFixed(1))+'<br>km</div><div class="tx"><b>'+esc(x.t.name)+'</b><small>'+esc(x.t.net)+' · a '+fmtDist(x.d)+'</small></div></div>').join("")
+      : '<p class="muted">'+(trailsLoading?'Cargando senderos…':'Aún no hay senderos cargados. Necesitas conexión la primera vez.')+'</p>')+
+    '<div class="row" style="margin-top:10px"><button class="b2" id="btnRasterTrails">'+(trailsLayer&&trailsLayer.visible?'Ocultar':'Mostrar')+' marcas de senderos</button><button class="b2" id="btnReloadTrails">↻ Actualizar senderos</button></div>'+
+    '<p class="note">Senderos señalizados de OpenStreetMap en toda la comarca. Toca uno en la lista o en el mapa.</p>');
+}
+function updateFollow(){
+  const el=$("#tSeguir"); if(!el) return;
+  if(!followTrail){ el.classList.add("hidden"); return; }
+  const t=TRAILS.find(x=>x.id===followTrail); if(!t){ el.classList.add("hidden"); return; }
+  el.classList.remove("hidden");
+  if(!myPos){ el.textContent="🥾 Esperando GPS…"; return; }
+  const r=nearestOnTrail(t,myPos), left=Math.max(0,t.len-r.along);
+  if(r.d<=60){ el.textContent="✅ En el sendero · quedan ~"+fmtDist(left); el.style.color=""; if(wasOff){ wasOff=false; } }
+  else { el.textContent="⚠️ Fuera del sendero: "+fmtDist(r.d); el.style.color="#b33a2b";
+    if(!wasOff && r.d>90){ wasOff=true; try{ navigator.vibrate && navigator.vibrate([300,150,300]); }catch(e){} } }
+}
+
+/* ===================== DIBUJOS ===================== */
+function mushSVG(g){
+  const {s,cap,stem,under,ring,volva,warts,spines,small} = g;
+  let b = "";
+  const tr = small?' transform="translate(9.6 19) scale(0.7)"':'';
+  if(s==="boleto"){
+    b += '<path d="M24 40 Q22 56 20 58 L44 58 Q42 56 40 40 Z" fill="'+stem+'"/>';
+    b += '<path d="M10 40 Q12 34 32 34 Q52 34 54 40 Z" fill="'+under+'"/>';
+    b += '<path d="M8 40 Q8 14 32 14 Q56 14 56 40 Z" fill="'+cap+'"/>';
+  } else if(s==="parasol"){
+    b += '<rect x="30" y="22" width="4" height="36" fill="'+stem+'"/>';
+    for(let y=30;y<56;y+=5) b+='<rect x="30" y="'+y+'" width="4" height="2" fill="#8a6a4a" opacity=".6"/>';
+    if(ring) b += '<rect x="27" y="27" width="10" height="3" rx="1.5" fill="'+ring+'"/>';
+    b += '<path d="M6 24 Q32 18 58 24 Z" fill="'+under+'"/>';
+    b += '<path d="M4 24 Q10 8 32 6 Q54 8 60 24 Z" fill="'+cap+'"/>';
+    b += '<circle cx="32" cy="9" r="3" fill="#6e4f33"/>';
+    for(let n=0;n<10;n++){ const x=12+n*4.2, y=14+((n*7)%5); b+='<circle cx="'+x+'" cy="'+y+'" r="1.2" fill="#6e4f33" opacity=".7"/>'; }
+  } else if(s==="embudo"){
+    b += '<path d="M28 36 L26 58 L38 58 L36 36 Z" fill="'+stem+'"/>';
+    b += '<path d="M10 22 Q32 26 54 22 L38 38 L26 38 Z" fill="'+under+'"/>';
+    for(let n=0;n<5;n++) b+='<path d="M'+(16+n*8)+' 24 L'+(28+n*2)+' 37" stroke="#00000030" stroke-width="1"/>';
+    b += '<path d="M8 22 Q10 14 32 16 Q54 14 56 22 Q32 28 8 22 Z" fill="'+cap+'"/>';
+  } else if(s==="trompeta"){
+    b += '<path d="M14 10 Q32 18 50 10 Q40 30 36 58 L28 58 Q24 30 14 10 Z" fill="'+cap+'"/>';
+    b += '<ellipse cx="32" cy="12" rx="18" ry="4" fill="#111"/>';
+  } else if(s==="coprino"){
+    b += '<rect x="29" y="40" width="6" height="18" fill="'+stem+'"/>';
+    b += '<path d="M20 44 Q18 10 32 6 Q46 10 44 44 Z" fill="'+cap+'"/>';
+    for(let n=0;n<8;n++) b+='<path d="M'+(24+(n%3)*6)+' '+(14+n*3.5)+' l3 2" stroke="#b9ad97" stroke-width="1.5"/>';
+    b += '<path d="M20 44 L44 44 L42 47 L22 47 Z" fill="#555"/>';
+  } else if(s==="repisa"){
+    b += '<rect x="0" y="0" width="10" height="64" fill="#6b5a45"/>';
+    b += '<path d="M10 20 Q50 12 56 32 Q50 46 10 44 Z" fill="'+cap+'"/>';
+    b += '<path d="M10 40 Q46 44 54 34 Q50 46 10 46 Z" fill="'+under+'"/>';
+  } else if(s==="trufa"){
+    b += '<rect x="0" y="30" width="64" height="34" fill="#a68a63" opacity=".5"/>';
+    b += '<ellipse cx="32" cy="42" rx="16" ry="13" fill="'+cap+'"/>';
+    b += '<path d="M20 30 l6 -8 M40 30 l4 -9" stroke="#6b5a45" stroke-width="2"/>';
+  } else {
+    b += '<path d="M28 34 L27 56 L37 56 L36 34 Z" fill="'+stem+'"/>';
+    if(volva) b += '<path d="M22 58 Q22 50 27 49 L37 49 Q42 50 42 58 Z" fill="#f4f0e4" stroke="#d9d1bf"/>';
+    if(ring) b += '<path d="M25 37 Q32 44 39 37 L37 41 Q32 46 27 41 Z" fill="'+ring+'"/>';
+    b += '<path d="M8 32 Q32 38 56 32 L36 34 L28 34 Z" fill="'+under+'"/>';
+    if(spines) for(let n=0;n<9;n++) b+='<path d="M'+(12+n*5)+' 33 l0 3" stroke="#c99a5a" stroke-width="1.5"/>';
+    else for(let n=0;n<9;n++) b+='<path d="M'+(12+n*5)+' 33 L'+(28+n*1)+' 34.5" stroke="#00000022" stroke-width="1"/>';
+    b += '<path d="M6 32 Q6 10 32 10 Q58 10 58 32 Q32 37 6 32 Z" fill="'+cap+'"/>';
+    if(warts) [[18,20],[26,15],[36,16],[44,22],[30,24],[22,27],[40,28]].forEach(([x,y])=> b+='<circle cx="'+x+'" cy="'+y+'" r="2" fill="#fff"/>');
+  }
+  return '<svg viewBox="0 0 64 64" aria-hidden="true"><g'+tr+'>'+b+'</g></svg>';
+}
+
+/* ===================== FOTOS REALES (Wikimedia Commons, licencias libres) ===================== */
+const WIKI = {tentullo:"Boletus aereus",reticulado:"Boletus reticulatus",tana:"Amanita caesarea",gallipierno:"Macrolepiota procera",niscalo:"Lactarius deliciosus",
+  rebozuelo:"Cantharellus cibarius",trompeta:"Craterellus cornucopioides",lengua:"Hydnum repandum",cardo:"Pleurotus eryngii",champi:"Agaricus campestris",
+  pieazul:"Lepista nuda",barbuda:"Coprinus comatus",higado:"Fistulina hepatica",criadilla:"Terfezia arenaria",phalloides:"Amanita phalloides",verna:"Amanita verna",
+  lepiotas:"Lepiota brunneoincarnata",galerina:"Galerina marginata",cortinarius:"Cortinarius orellanus",pantherina:"Amanita pantherina",muscaria:"Amanita muscaria",
+  satanas:"Rubroboletus satanas",omphalotus:"Omphalotus olearius",entoloma:"Entoloma sinuatum",hypholoma:"Hypholoma fasciculare"};
+const WIKI_ALT = {satanas:"Boletus satanas",pieazul:"Clitocybe nuda",verna:"Amanita virosa",criadilla:"Terfezia"};
+const BAD_IMG = /drawing|illustrat|stamp|map|spore|micro|bulliard|sowerby|atlas|plate|herbar|\.svg|\.gif|\.tif|icon|diagram|chart|painting|lámina|lamina/i;
+const photoMem = {};
+function stripHTML(h){ const d=document.createElement("div"); d.innerHTML=h||""; return (d.textContent||"").trim().replace(/\s+/g," ").slice(0,60); }
+async function commonsQuery(params){
+  const url="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url|extmetadata|mime&iiurlwidth=720&"+params;
+  const r=await fetch(url); if(!r.ok) return [];
+  const j=await r.json(); const pages=j.query&&j.query.pages?Object.values(j.query.pages):[];
+  return pages.filter(p=>p.imageinfo&&p.imageinfo[0]&&/jpeg|png/.test(p.imageinfo[0].mime)&&!BAD_IMG.test(p.title)).map(p=>{ const ii=p.imageinfo[0], m=ii.extmetadata||{};
+    return {src:ii.thumburl||ii.url, page:ii.descriptionurl, by:stripHTML(m.Artist&&m.Artist.value)||"Autor en Wikimedia", lic:(m.LicenseShortName&&m.LicenseShortName.value)||"licencia libre"}; });
+}
+async function speciesPhotos(id){
+  if(photoMem[id]) return photoMem[id];
+  const c=store.get("ph_"+id,null);
+  if(c && c.l && c.l.length && Date.now()-c.t<30*864e5) return (photoMem[id]=c.l);
+  let list=[];
+  try{
+    for(const name of [WIKI[id],WIKI_ALT[id]].filter(Boolean)){
+      list=list.concat(await commonsQuery("generator=categorymembers&gcmtype=file&gcmlimit=40&gcmtitle="+encodeURIComponent("Category:"+name)));
+      if(list.length>=4) break;
+    }
+    if(list.length<3){
+      for(const lang of ["es","en"]){
+        try{ const r=await fetch("https://"+lang+".wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(WIKI[id].replace(/ /g,"_")));
+          if(r.ok){ const j=await r.json(); const im=j.originalimage||j.thumbnail; if(im && !list.some(x=>x.src===im.source)) list.unshift({src:im.source.replace(/\/\d+px-/,"/720px-"),page:j.content_urls&&j.content_urls.desktop.page,by:"Wikipedia ("+lang+")",lic:"ver la página"}); break; } }catch(e){}
+      }
+    }
+    if(list.length<3) list=list.concat(await commonsQuery("generator=search&gsrnamespace=6&gsrlimit=12&gsrsearch="+encodeURIComponent(WIKI[id]+" filetype:bitmap")));
+  }catch(e){}
+  const seen=new Set(); list=list.filter(x=>!seen.has(x.src)&&seen.add(x.src)).slice(0,6);
+  if(list.length) store.set("ph_"+id,{t:Date.now(),l:list});
+  return (photoMem[id]=list);
+}
+function galleryHTML(id,list,n){
+  if(!list||!list.length) return '<div class="muted" style="margin:6px 0">📷 Sin fotos ahora (hace falta conexión la primera vez).</div>';
+  return '<div class="gal">'+list.slice(0,n||6).map((p,k)=>'<figure data-ph="'+id+'" data-k="'+k+'"><img src="'+esc(p.src)+'" alt="Foto de '+esc(shortName(SETAS.find(s=>s.id===id)))+'" loading="lazy"><figcaption>'+esc(p.by)+' · '+esc(p.lic)+'</figcaption></figure>').join("")+'</div>';
+}
+async function fillGallery(id){
+  const box=document.getElementById("g-"+id); if(!box) return;
+  box.innerHTML='<div class="muted">📷 Cargando fotos…</div>';
+  box.innerHTML=galleryHTML(id,await speciesPhotos(id));
+}
+/* visor a pantalla completa */
+let viewer={id:null,k:0};
+function openViewer(id,k){
+  const list=photoMem[id]; if(!list||!list[k]) return; viewer={id,k};
+  const p=list[k], s=SETAS.find(x=>x.id===id);
+  $("#viewer").classList.remove("hidden");
+  $("#viewerBody").innerHTML='<img src="'+esc(p.src.replace(/\/720px-/,"/1280px-"))+'" onerror="this.onerror=null;this.src=\''+esc(p.src)+'\'" alt=""><div class="vcap"><b>'+esc(shortName(s))+'</b> <span class="pill t-'+s.t+'">'+TIPOS[s.t]+'</span><br>Foto: '+esc(p.by)+' · '+esc(p.lic)+' · <a href="'+esc(p.page||"#")+'" target="_blank" rel="noopener">Wikimedia Commons</a><br><span style="opacity:.8">'+(k+1)+' de '+list.length+'</span></div>';
+}
+/* comparaciones de confusiones peligrosas */
+const PARES = [
+  ["tana","muscaria","Tana: láminas y pie AMARILLOS. Matamoscas: láminas y pie BLANCOS (aunque la lluvia le quite las verrugas)."],
+  ["tana","phalloides","No cojas nunca tanas cerradas en huevo: por dentro la tana es amarilla y la oronja verde, blanca. Ante la duda, fuera."],
+  ["champi","verna","Champiñón: láminas rosas que pasan a marrón chocolate y sin bolsa en la base. Oronja blanca: láminas siempre blancas y volva (saco) en la base."],
+  ["gallipierno","lepiotas","Gallipierno: sombrero de más de 10 cm, anillo doble que se mueve y pie atigrado. Lepiotas mortales: menos de 10 cm."],
+  ["rebozuelo","omphalotus","Rebozuelo: pliegues gruesos como venas y sale del suelo. Seta del olivo: láminas finas de verdad y en matas sobre madera o raíces."],
+  ["tentullo","satanas","Tentullo: poros blancos o amarillo-verdosos y carne que no azulea. Boleto de Satanás: poros rojos, pie rojizo y carne que azulea."],
+  ["pieazul","cortinarius","Pie azul: sin telilla y esporada rosada. Cortinarios: telilla bajo el sombrero y esporada color óxido. Algunos son mortales."],
+  ["champi","entoloma","Champiñón: láminas rosas→chocolate y anillo. Entoloma lívido: sin anillo, láminas amarillentas→rosadas y olor a harina."]
+];
+function paresDe(id){ return PARES.filter(p=>p[0]===id||p[1]===id); }
+async function openCompare(a,b,txt){
+  const A=SETAS.find(s=>s.id===a), B=SETAS.find(s=>s.id===b);
+  $("#viewer").classList.remove("hidden"); viewer={id:null,k:0};
+  const col=(s,id)=>'<div class="cmpc"><div class="cmph '+(s.t==="mortal"||s.t==="tox"?"bad":"good")+'">'+(s.t==="mortal"?"☠️ ":s.t==="tox"?"⚠️ ":"✅ ")+esc(shortName(s))+'</div><div id="cg-'+id+'" class="muted">📷 Cargando…</div><ul>'+s.claves.slice(0,3).map(c=>'<li>'+esc(c)+'</li>').join("")+'</ul></div>';
+  $("#viewerBody").innerHTML='<div class="cmp"><h2 style="color:#fff;margin:0 0 8px">⚖️ No las confundas</h2><div class="cmpk">'+esc(txt)+'</div><div class="cmpg">'+col(A,a)+col(B,b)+'</div><p style="opacity:.75;font-size:.78rem">Fotos de Wikimedia Commons (licencias libres). Las fotos ayudan, pero no bastan para identificar: revisa siempre la base del pie, las láminas y el olor, y consulta a un experto.</p></div>';
+  for(const id of [a,b]){ const l=await speciesPhotos(id); const el=document.getElementById("cg-"+id); if(el) el.outerHTML = l.length? '<div class="cmpimgs">'+l.slice(0,3).map((p,k)=>'<img src="'+esc(p.src)+'" data-ph="'+id+'" data-k="'+k+'" alt="">').join("")+'</div>' : '<div class="muted">Sin fotos (sin conexión)</div>'; }
+}
+/* miniaturas de la lista: foto real cuando la tarjeta aparece en pantalla */
+let thumbObs=null;
+function observeThumbs(){
+  if(!("IntersectionObserver" in window)) return;
+  if(thumbObs) thumbObs.disconnect();
+  thumbObs=new IntersectionObserver(ents=>ents.forEach(async en=>{ if(!en.isIntersecting) return; thumbObs.unobserve(en.target);
+    const id=en.target.dataset.id; const l=await speciesPhotos(id); if(l.length){ const im=document.createElement("img"); im.className="thumb"; im.src=l[0].src; im.alt=""; im.onload=()=>{ const sv=en.target.querySelector("svg"); if(sv) sv.replaceWith(im); }; } }),{rootMargin:"200px"});
+  document.querySelectorAll("#listaSetas .sp").forEach(el=>thumbObs.observe(el));
+}
+
+/* ===================== FICHAS ===================== */
+let fTipo="todas", fMes=0;
+const norm = t => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+function monthsBar(m){
+  const now=new Date().getMonth()+1;
+  return '<div class="months">'+MES.map((x,i)=>'<span class="'+(m.includes(i+1)?'y':'')+(now===i+1?' now':'')+'">'+x[0]+'</span>').join("")+'</div>';
+}
+function lagText(id){ const r=M.RULES[id]; return r? "Suele salir "+r.lag[0]+"–"+r.lag[1]+" días después de una lluvia fuerte, con medias de "+r.t[0]+"–"+r.t[1]+" °C." : ""; }
+function renderSetas(){
+  const q = norm($("#buscar").value.trim());
+  const list = SETAS.filter(s=>{
+    if(fTipo==="comest" && !(s.t==="exc"||s.t==="buena")) return false;
+    if(fTipo==="facil" && !(EXTRA[s.id] && EXTRA[s.id].nv===1)) return false;
+    if(fTipo==="peligro" && !(s.t==="tox"||s.t==="mortal")) return false;
+    if(fMes && !s.m.includes(fMes)) return false;
+    if(q && !norm(s.n+" "+s.sci).includes(q)) return false;
+    return true;
+  });
+  $("#listaSetas").innerHTML = list.length? list.map(s=>{
+    const x=EXTRA[s.id];
+    return '<div class="card" id="c-'+s.id+'"><div class="sp" data-id="'+s.id+'">'+mushSVG(s.svg)+
+    '<div style="flex:1"><h3>'+esc(s.n)+'</h3><div class="sci">'+esc(s.sci)+'</div>'+
+    '<span class="pill t-'+s.t+'">'+TIPOS[s.t]+'</span>'+(x?'<span class="pill n-'+x.nv+'">'+NIVEL[x.nv]+'</span>':'')+monthsBar(s.m)+'</div></div>'+
+    '<div class="detail hidden" id="d-'+s.id+'">'+
+      '<div id="g-'+s.id+'"></div>'+
+      (paresDe(s.id).length?'<div style="margin:4px 0 8px">'+paresDe(s.id).map(p=>{ const o=SETAS.find(z=>z.id===(p[0]===s.id?p[1]:p[0])); return '<button class="pairbtn" data-cmp="'+p[0]+','+p[1]+'">⚖️ <span>Compárala con <b>'+esc(shortName(o))+'</b> '+(o.t==="mortal"?"☠️":o.t==="tox"?"⚠️":"✅")+'</span></button>'; }).join("")+'</div>':'')+
+      '<b>Dónde:</b> '+esc(s.hab)+
+      '<p class="muted" style="margin:6px 0">⏱️ '+esc(lagText(s.id))+'</p>'+
+      '<h3>Cómo reconocerla</h3><ul>'+s.claves.map(c=>'<li>'+esc(c)+'</li>').join("")+'</ul>'+
+      (x&&x.min?'<div class="ok" style="margin-bottom:8px"><b>Para cogerla con seguridad:</b> '+esc(x.min)+'</div>':'')+
+      '<div class="'+(s.t==="mortal"?"danger":"warn")+'"><b>'+(s.t==="mortal"||s.t==="tox"?"Se confunde con":"Cuidado, se confunde con")+':</b> '+esc(s.conf)+'</div>'+
+      '<p><b>Consejo:</b> '+esc(s.tip)+'</p>'+
+      (x?'<p><b>En la cocina:</b> '+esc(x.coc)+'</p>':'')+
+    '</div></div>'; }).join("") : '<p class="muted">Nada con esos filtros.</p>';
+  setTimeout(observeThumbs,0);
+}
+function buildFilters(){
+  const tipos=[["todas","Todas"],["comest","Comestibles"],["facil","Para empezar"],["peligro","Tóxicas y mortales"]];
+  $("#fTipo").innerHTML = tipos.map(([k,l])=>'<button data-k="'+k+'" class="'+(k===fTipo?'on':'')+'">'+l+'</button>').join("");
+  $("#fMes").innerHTML = '<button data-m="0" class="'+(fMes===0?'on':'')+'">Todo el año</button>'+MES.map((x,i)=>'<button data-m="'+(i+1)+'" class="'+(fMes===i+1?'on':'')+'">'+x+'</button>').join("");
+}
+function openSpecies(id){
+  fTipo="todas"; fMes=0; $("#buscar").value=""; buildFilters(); renderSetas(); show("setas");
+  const d=$("#d-"+id); if(d){ d.classList.remove("hidden"); fillGallery(id); const c=$("#c-"+id); if(c) setTimeout(()=>c.scrollIntoView({behavior:"smooth",block:"start"}),50); }
+}
+
+/* comprobador */
+const CHECKS = [
+  {k:"volva",  t:"Tiene una bolsa o saco (volva) o un bulbo en la base del pie", w:3},
+  {k:"lamb",   t:"Las láminas son blancas", w:2},
+  {k:"anillo", t:"Tiene anillo o falda en el pie", w:1},
+  {k:"verde",  t:"Sombrero verdoso, amarillento-oliva o totalmente blanco", w:2},
+  {k:"peq",    t:"Parece un gallipierno pero mide menos de 10 cm", w:3},
+  {k:"rojo",   t:"Es un boleto (poros) con poros rojos o naranjas", w:3},
+  {k:"azul",   t:"Al cortarla la carne se vuelve azul intenso", w:1},
+  {k:"madera", t:"Crece en grupo apretado saliendo de madera o tocones", w:2},
+  {k:"leche",  t:"Suelta leche blanca (si buscabas níscalos)", w:1},
+  {k:"huevo",  t:"Está cerrada como un huevo y no ves láminas", w:3},
+  {k:"parda",  t:"Pequeña, parda o naranja-óxido y no sabes qué es", w:2}
+];
+function renderChecks(){ $("#checks").innerHTML = CHECKS.map(c=>'<label class="chk"><input type="checkbox" data-c="'+c.k+'"> '+esc(c.t)+'</label>').join(""); evalChecks(); }
+function evalChecks(){
+  const on=[...document.querySelectorAll("#checks input:checked")].map(i=>i.dataset.c), has=k=>on.includes(k);
+  let msg;
+  if(has("volva") && (has("lamb")||has("verde")) || has("peq") || has("huevo"))
+    msg='<div class="danger"><b>PELIGRO DE MUERTE.</b> Volva con láminas blancas, seta en “huevo” o lepiota pequeña: así son las amanitas y lepiotas mortales. No la comas, no la mezcles con otras setas y lávate las manos.</div>';
+  else if(on.length){
+    const w=on.reduce((a,k)=>a+CHECKS.find(c=>c.k===k).w,0);
+    msg = w>=3 ? '<div class="warn"><b>Señales de alarma.</b> Muy probablemente tóxica o confundible. No la consumas.</div>'
+               : '<div class="warn">Hay alguna señal sospechosa. Que la revise un experto antes de comerla.</div>';
+  } else msg='<div class="muted">Sin señales marcadas. Ojo: eso no significa que sea comestible.</div>';
+  $("#checkRes").innerHTML = msg;
+}
+
+function renderCal(){
+  const now=new Date().getMonth()+1;
+  let h='<tr><th>Seta</th>'+MES.map((m,i)=>'<th class="c"'+(now===i+1?' style="color:var(--cap)"':'')+'>'+m[0]+'</th>').join("")+'</tr>';
+  SETAS.forEach(s=>{
+    const col = s.t==="mortal"?"#7a0f14":s.t==="tox"?"#c96a28":"#4c5f3a";
+    h+='<tr><td>'+esc(shortName(s))+(s.t==="mortal"?" ☠️":s.t==="tox"?" ⚠️":"")+'</td>'+
+      MES.map((m,i)=>'<td class="c">'+(s.m.includes(i+1)?'<span class="dot" style="background:'+col+'"></span>':'')+'</td>').join("")+'</tr>';
+  });
+  $("#calTabla").innerHTML=h;
+}
+
+/* ===================== DIARIO ===================== */
+let gpsPos=null, fotoData=null, selDiario=new Set();
+function renderDiarioChips(){
+  $("#dSetasChips").innerHTML = EDIBLES().map(s=>'<button data-id="'+s.id+'" class="'+(selDiario.has(s.id)?'on':'')+'">'+esc(shortName(s))+'</button>').join("");
+}
+function seasonOf(iso){ const d=D2(iso); return d.getMonth()>=8 ? d.getFullYear() : d.getFullYear()-1; }
+function renderStats(){
+  const L=store.get("diario",[]), now=new Date(), seas=now.getMonth()>=8?now.getFullYear():now.getFullYear()-1;
+  const cur=L.filter(e=>e.fecha && seasonOf(e.fecha)===seas);
+  const kg=cur.reduce((a,e)=>a+(+e.kg||0),0);
+  const cnt={}; cur.forEach(e=>(e.ids||[]).forEach(id=>cnt[id]=(cnt[id]||0)+1));
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+  const topN = top ? shortName(SETAS.find(s=>s.id===top[0])||{n:top[0]}) : "—";
+  $("#stats").innerHTML='<div><b>'+cur.length+'</b><span>salidas esta temporada</span></div><div><b>'+kg.toFixed(1)+'</b><span>kg esta temporada</span></div><div><b style="font-size:.95rem">'+esc(topN)+'</b><span>la que más</span></div>';
+}
+function renderDiario(){
+  const L=store.get("diario",[]);
+  renderStats();
+  $("#entradas").innerHTML = L.length? L.map((e,k)=>({e,k})).reverse().map(({e,k})=>{
+    const sp=(e.ids||[]).map(id=>{ const x=SETAS.find(z=>z.id===id); return x?shortName(x):id; }).concat(e.setas?[e.setas]:[]).join(", ");
+    const w=e.w? '<br><span class="muted">Tiempo: índice '+e.w.s+' · '+e.w.r20+' mm en 20 días · '+(e.w.d==null?"sin lluvia fuerte reciente":"lluvia fuerte hace "+e.w.d+" días")+' ('+esc(e.w.z)+')</span>':'';
+    return '<div class="entry"><b>'+esc(e.fecha?D2(e.fecha).toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short",year:"numeric"}):"")+'</b> · '+esc(e.sitio||"")+(e.kg?' · '+esc(e.kg)+' kg':'')+'<br>'+esc(sp||"—")+
+     (e.notas?'<br><span class="muted">'+esc(e.notas)+'</span>':'')+w+
+     (e.gps?'<br><a href="https://www.google.com/maps/dir/?api=1&destination='+e.gps[0]+','+e.gps[1]+'" target="_blank" rel="noopener">🗺️ Llevarme</a>':'')+
+     (e.foto?'<img src="'+e.foto+'" alt="Foto de la salida">':'')+
+     '<div style="margin-top:6px"><button class="b2" data-del="'+k+'" style="padding:3px 10px;font-size:.78rem">Borrar</button></div></div>';
+  }).join("") : "Aún no hay salidas.";
+}
+function compressImage(file,cb){
+  const img=new Image(), url=URL.createObjectURL(file);
+  img.onload=()=>{ const max=640, sc=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement("canvas");
+    c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc); c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    URL.revokeObjectURL(url); cb(c.toDataURL("image/jpeg",0.6)); };
+  img.onerror=()=>{ URL.revokeObjectURL(url); cb(null); };
+  img.src=url;
+}
+function weatherSnapshot(){
+  if(!DATA||!CUR) return null;
+  const i0=M.todayIndex(DATA);
+  return {s:CUR.score, r20:Math.round(CUR.r20), d:CUR.lastBig==null?null:i0-CUR.lastBig, z:DATA.label};
+}
+
+/* ===================== NAVEGACIÓN E INICIO ===================== */
+const VIEWS=["hoy","mapa","setas","guia","diario"];
+function show(v){
+  if(!VIEWS.includes(v)) v="hoy";
+  VIEWS.forEach(x=>$("#v-"+x).classList.toggle("hidden",x!==v));
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  document.body.classList.toggle("mapmode",v==="mapa");
+  if(v==="mapa"){ openMap(); } else { stopGPS(); }
+  window.scrollTo(0,0);
+}
+function currentZone(){ return ZONAS.find(z=>z.id===$("#zona").value) || ZONAS[0]; }
+
+function init(){
+  $("#zona").innerHTML = ZONAS.map(z=>'<option value="'+z.id+'">'+z.n+'</option>').join("")+'<option value="aqui">📍 Mi ubicación</option>';
+  const zSaved = store.get("zona","barrios");
+  if(ZONAS.find(z=>z.id===zSaved)) $("#zona").value = zSaved;
+  const loadZ = ()=>{ if($("#zona").value==="aqui") return useGeo(); const z=currentZone(); store.set("zona",z.id); loadWeather(z); };
+  function useGeo(){
+    if(!navigator.geolocation){ $("#estado").textContent="Tu dispositivo no da la ubicación."; return; }
+    $("#estado").textContent="Buscando tu ubicación…"; $("#zona").value="aqui";
+    navigator.geolocation.getCurrentPosition(p=>loadWeather({n:"Mi ubicación",lat:+p.coords.latitude.toFixed(3),lon:+p.coords.longitude.toFixed(3)}),
+      ()=>{ $("#estado").textContent="No se pudo obtener la ubicación (permiso denegado o no disponible aquí)."; },{timeout:10000});
+  }
+  $("#zona").addEventListener("change",loadZ);
+  $("#btnReload").addEventListener("click",()=>{ lastCompareKey=""; CURLOC && $("#zona").value==="aqui" ? loadWeather(CURLOC) : loadZ(); });
+  $("#btnGeo").addEventListener("click",useGeo);
+  $("#btnManual").addEventListener("click",manualScore);
+  $("#zonas").addEventListener("click",e=>{
+    const g=e.target.closest("[data-goto]"); if(g){ openSpecies(g.dataset.goto); return; }
+    if(e.target.id==="btnVerMapa"){ show("mapa"); return; }
+    const mp=e.target.closest("[data-mapa]"); if(mp){ const id=mp.dataset.mapa; show("mapa"); openMap(()=>goSite(id)); return; }
+    const v=e.target.closest("[data-ver]");
+    if(v){ const r=$("#zonas")._rows[+v.dataset.ver]; loadWeather({n:r.site.n,lat:r.lat,lon:r.lon}); window.scrollTo({top:0,behavior:"smooth"}); return; }
+    const z=e.target.closest(".zone"); if(z){ $("#z-"+z.dataset.k).classList.toggle("hidden"); }
+  });
+  $("#planBtns").addEventListener("click",e=>{ const mp=e.target.closest("[data-mapa]"); if(mp){ const id=mp.dataset.mapa; show("mapa"); openMap(()=>goSite(id)); } });
+  renderObjetivo();
+  $("#fObjetivo").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; objetivo=b.dataset.k; renderObjetivo(); renderSites(); });
+  $("#spChances").addEventListener("click",e=>{ const h=e.target.closest("[data-goto]"); if(h) openSpecies(h.dataset.goto); });
+
+  $("#umbral").value = String(store.get("umbral",65));
+  $("#umbral").addEventListener("change",()=>{ store.set("umbral",+$("#umbral").value); syncConf(); });
+  $("#btnNotif").addEventListener("click",toggleNotif);
+
+  document.querySelectorAll("#nav button").forEach(b=>b.addEventListener("click",()=>{ show(b.dataset.v); try{ history.replaceState(null,"","#"+b.dataset.v); }catch(e){} }));
+  $("#fTipo").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; fTipo=b.dataset.k; buildFilters(); renderSetas(); });
+  $("#fMes").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; fMes=+b.dataset.m; buildFilters(); renderSetas(); });
+  $("#buscar").addEventListener("input",renderSetas);
+  $("#listaSetas").addEventListener("click",e=>{
+    const f=e.target.closest("figure[data-ph]"); if(f){ $("#viewer").classList.remove("cmpmode"); openViewer(f.dataset.ph,+f.dataset.k); return; }
+    const c=e.target.closest("[data-cmp]"); if(c){ const [a,b]=c.dataset.cmp.split(","); const pr=PARES.find(p=>p[0]===a&&p[1]===b); $("#viewer").classList.add("cmpmode"); openCompare(a,b,pr[2]); return; }
+    const sp=e.target.closest(".sp"); if(!sp) return; const d=$("#d-"+sp.dataset.id); d.classList.toggle("hidden"); if(!d.classList.contains("hidden")) fillGallery(sp.dataset.id); });
+  $("#viewerX").addEventListener("click",()=>{ $("#viewer").classList.add("hidden"); $("#viewer").classList.remove("cmpmode"); });
+  $("#vPrev").addEventListener("click",()=>{ if(viewer.id){ const n=photoMem[viewer.id].length; openViewer(viewer.id,(viewer.k-1+n)%n); } });
+  $("#vNext").addEventListener("click",()=>{ if(viewer.id){ const n=photoMem[viewer.id].length; openViewer(viewer.id,(viewer.k+1)%n); } });
+  $("#viewerBody").addEventListener("click",e=>{ const im=e.target.closest("[data-ph]"); if(im && $("#viewer").classList.contains("cmpmode")){ $("#viewer").classList.remove("cmpmode"); openViewer(im.dataset.ph,+im.dataset.k); } });
+  $("#pares").addEventListener("click",e=>{ const c=e.target.closest("[data-cmp]"); if(!c) return; const [a,b]=c.dataset.cmp.split(","); const pr=PARES.find(p=>p[0]===a&&p[1]===b); $("#viewer").classList.add("cmpmode"); openCompare(a,b,pr[2]); });
+  $("#checks").addEventListener("change",evalChecks);
+
+  /* mapa */
+  window.addEventListener("resize",()=>{ if(!$("#v-mapa").classList.contains("hidden")) sizeMap(); });
+  $("#sheetX").addEventListener("click",closeSheet);
+  $("#mbYo").addEventListener("click",()=>{ following=true; $("#mbYo").classList.add("on"); startGPS(); if(map&&myPos) map.setView(myPos,Math.max(map.getZoom(),15)); else $("#mapMsg").textContent="Buscando señal GPS…"; });
+  $("#mbCapa").addEventListener("click",()=>{ if(!map) return; map.setLayerVisible(bases[baseIdx],false); baseIdx=(baseIdx+1)%bases.length; map.setLayerVisible(bases[baseIdx],true); $("#mbCapa small").textContent=BASE_NAMES[baseIdx]; store.set("base",baseIdx); });
+  $("#mb3d").addEventListener("click",()=>{ if(!map||!GL) return; const on=!map.is3D; map.set3D(on); store.set("3d",on); $("#mb3d").classList.toggle("on",on); });
+  $("#mapBest").addEventListener("click",e=>{ const c=e.target.closest("[data-site]"); if(c) goSite(c.dataset.site); });
+  $("#btnNoTiles").addEventListener("click",()=>{ store.set("noTilesSeen",true); $("#mapNoTiles").classList.add("hidden"); });
+  $("#mbInfo").addEventListener("click",()=>openSheet("info",'<h2>❔ Cómo usar el mapa</h2>'+
+    '<div class="ruta" style="line-height:1.7">'+
+    '<div><span class="dot" style="background:#3f7d3a"></span> <b>70–100</b> muy buen sitio hoy</div>'+
+    '<div><span class="dot" style="background:#7e9a2f"></span> <b>45–69</b> merece la pena</div>'+
+    '<div><span class="dot" style="background:#c98a1b"></span> <b>25–44</b> flojo</div>'+
+    '<div><span class="dot" style="background:#b33a2b"></span> <b>0–24</b> mejor otro día</div></div>'+
+    '<ul class="list"><li><b>Líneas de colores:</b> senderos reales (morado = local SL, naranja = PR, rojo = GR). Tócalas para ver longitud, desnivel y el botón “Seguir esta ruta”, que te avisa si te sales.</li><li><b>Línea amarilla:</b> el sendero que has elegido.</li><li><b>Línea roja gruesa:</b> tu ruta grabada.</li><li><b>Línea discontinua:</b> el camino recto hasta tu coche.</li><li><b>Punto azul:</b> tú.</li>'+
+    (GL?'<li><b>⛰️ 3D:</b> enciende el relieve. Con dos dedos: gira, inclina y acerca. La brújula de abajo devuelve el norte.</li>':'')+
+    '<li><b>🗺️:</b> cambia entre satélite, topográfico y calles.</li><li><b>Tarjetas de abajo:</b> los mejores sitios de hoy. Desliza y toca uno.</li></ul>'+
+    '<p class="note">Antes de salir, abre en casa la zona a la que vas con wifi: así se queda guardada para verla sin cobertura.</p>'));
+  $("#mbSend").addEventListener("click",()=>{ if(!map) return; if(!TRAILS.length) loadTrails(); showTrailList(); });
+  $("#mzIn").addEventListener("click",()=>map&&map.zoomIn()); $("#mzOut").addEventListener("click",()=>map&&map.zoomOut());
+  $("#mbCoche").addEventListener("click",()=>{
+    if(store.get("coche",null)) return showCarSheet();
+    $("#mapMsg").textContent="Guardando dónde está el coche…";
+    oneShotPos(p=>{ if(!p){ $("#mapMsg").textContent="No se pudo obtener la ubicación."; return; } store.set("coche",{lat:p[0],lon:p[1],t:Date.now()}); $("#mapMsg").textContent="🚗 Coche guardado. Toca 🚗 para volver a él."; setTimeout(()=>{ if($("#mapMsg").textContent.indexOf("Coche guardado")>=0) $("#mapMsg").textContent=""; },4000); renderCoche(); });
+  });
+  $("#mbRuta").addEventListener("click",showRutaSheet);
+  $("#mbSitio").addEventListener("click",showSitioSheet);
+  $("#mbSos").addEventListener("click",()=>{ startGPS(); showSos(); });
+  $("#sheetBody").addEventListener("click",async e=>{
+    const t=e.target;
+    const g=t.closest("[data-goto]"); if(g){ openSpecies(g.dataset.goto); return; }
+    const z=t.closest("[data-zoom]"); if(z){ const [la,lo]=z.dataset.zoom.split(",").map(Number); if(!trailsLayer.visible){ map.setLayerVisible(trailsLayer,true); $("#mbSend").classList.add("on"); store.set("trails",true); } following=false; $("#mbYo").classList.remove("on"); if(GL){ if(!map.is3D){ map.set3D(true); $("#mb3d").classList.add("on"); store.set("3d",true); } map.flyTo([la,lo],14.8,66,-25); } else map.setView([la,lo],14); closeSheet(); return; }
+    const tr=t.closest("[data-trail]"); if(tr){ selectTrail(tr.dataset.trail,true); openTrailSheet(tr.dataset.trail); return; }
+    if(t.id==="btnFollow"){ const id=$("#sheet").dataset.curtrail; followTrail = followTrail===id?null:id; wasOff=false; if(followTrail){ startGPS(); selectTrail(id,false); } updateFollow(); openTrailSheet(id); return; }
+    if(t.id==="btnFitTrail"){ selectTrail($("#sheet").dataset.curtrail,true); closeSheet(); return; }
+    if(t.id==="btnReloadTrails"){ loadTrails(true); closeSheet(); return; }
+    if(t.id==="btnRasterTrails"){ const on=!trailsLayer.visible; map.setLayerVisible(trailsLayer,on); store.set("trails",on); showTrailList(); return; }
+    if(t.id==="btnBrujula"){ enableCompass(); return; }
+    if(t.id==="btnCocheDel"){ store.set("coche",null); closeSheet(); renderCoche(); return; }
+    if(t.id==="btnRec"){ await setRecording(!recording); showRutaSheet(); return; }
+    if(t.id==="btnRecDel"){ store.set("track",[]); renderTrack(); showRutaSheet(); return; }
+    if(t.id==="btnRecFit"){ const tr=getTrack(); if(tr.length>1){ following=false; map.fitBounds(tr,40); } closeSheet(); return; }
+    if(t.id==="btnCopyCoords"){ try{ await navigator.clipboard.writeText(myPos?myPos[0].toFixed(5)+", "+myPos[1].toFixed(5):""); t.textContent="Copiado ✓"; }catch(err){ t.textContent="No se pudo copiar"; } return; }
+    const ds=t.closest("[data-del-sitio]"); if(ds){ const L2=store.get("sitios",[]); L2.splice(+ds.dataset.delSitio,1); store.set("sitios",L2); renderSitios(); closeSheet(); lastCompareKey=""; return; }
+    const chip=t.closest("#sSetas button"); if(chip){ selSitio.has(chip.dataset.id)?selSitio.delete(chip.dataset.id):selSitio.add(chip.dataset.id); renderSitioChips(); return; }
+    if(t.id==="btnSitio"){
+      const nombre=($("#sNombre").value||"").trim()||"Sitio "+(store.get("sitios",[]).length+1);
+      $("#sitioTxt").textContent="Buscando posición…";
+      oneShotPos(p=>{ if(!p){ $("#sitioTxt").textContent="Sin ubicación."; return; }
+        const L2=store.get("sitios",[]); L2.push({nombre,lat:p[0],lon:p[1],setas:[...selSitio],fecha:new Date().toLocaleDateString("es-ES")}); store.set("sitios",L2);
+        renderSitios(); lastCompareKey=""; closeSheet(); $("#mapMsg").textContent="⭐ Sitio guardado"; setTimeout(()=>{ $("#mapMsg").textContent=""; },3000); });
+    }
+  });
+  if(getTrack().length) renderTrack();
+
+  /* diario */
+  { const n=new Date(); $("#dFecha").value = n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0"); }
+  $("#dSetasChips").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; selDiario.has(b.dataset.id)?selDiario.delete(b.dataset.id):selDiario.add(b.dataset.id); renderDiarioChips(); });
+  $("#dFoto").addEventListener("change",e=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; $("#gpsTxt").textContent="Preparando foto…"; compressImage(f,d=>{ fotoData=d; $("#gpsTxt").textContent=d?"Foto lista ✓":"No se pudo leer la foto."; }); });
+  $("#btnGps").addEventListener("click",()=>{ $("#gpsTxt").textContent="Buscando…"; myPos=null; oneShotPos(p=>{ gpsPos=p; $("#gpsTxt").textContent=p?"Ubicación añadida ✓":"No disponible aquí."; }); });
+  $("#btnGuardar").addEventListener("click",()=>{
+    const e={fecha:$("#dFecha").value,sitio:$("#dSitio").value.trim(),ids:[...selDiario],setas:$("#dSetasOtra").value.trim(),kg:$("#dKg").value,notas:$("#dNotas").value.trim(),gps:gpsPos,foto:fotoData,w:weatherSnapshot()};
+    if(!e.sitio && !e.ids.length && !e.setas){ $("#gpsTxt").textContent="Escribe al menos el sitio o las setas."; return; }
+    const L=store.get("diario",[]); L.push(e);
+    if(!store.set("diario",L)){ e.foto=null; L[L.length-1]=e; if(!store.set("diario",L)){ $("#gpsTxt").textContent="Memoria llena: borra fotos antiguas."; return; } $("#gpsTxt").textContent="Guardado sin foto (memoria llena)."; }
+    else $("#gpsTxt").textContent="Guardado ✓";
+    ["#dSitio","#dSetasOtra","#dKg","#dNotas","#dFoto"].forEach(s=>$(s).value=""); gpsPos=null; fotoData=null; selDiario.clear(); renderDiarioChips(); renderDiario();
+  });
+  $("#entradas").addEventListener("click",e=>{ const b=e.target.closest("[data-del]"); if(!b) return; const L=store.get("diario",[]); L.splice(+b.dataset.del,1); store.set("diario",L); renderDiario(); });
+  $("#btnExport").addEventListener("click",async()=>{
+    const data=JSON.stringify({v:2,diario:store.get("diario",[]).map(e=>Object.assign({},e,{foto:null})),sitios:store.get("sitios",[])});
+    try{ if(navigator.share){ await navigator.share({title:"Copia Setas CdG",text:data}); $("#expTxt").textContent="Compartido ✓"; return; } }catch(e){}
+    try{ await navigator.clipboard.writeText(data); $("#expTxt").textContent="Copiado. Pégalo en una nota o en WhatsApp para guardarlo."; }catch(e){ $("#expTxt").textContent="No se pudo copiar aquí."; }
+  });
+  $("#btnImportShow").addEventListener("click",()=>$("#importBox").classList.toggle("hidden"));
+  $("#btnImport").addEventListener("click",()=>{
+    try{ const o=JSON.parse($("#importTxt").value);
+      const D=store.get("diario",[]).concat(o.diario||[]), S=store.get("sitios",[]).concat(o.sitios||[]);
+      store.set("diario",D); store.set("sitios",S); renderDiario(); renderSitios(); $("#expTxt").textContent="Importado ✓"; $("#importTxt").value=""; lastCompareKey="";
+    }catch(e){ $("#expTxt").textContent="La copia no es válida."; }
+  });
+
+  $("#mochila").innerHTML = MOCHILA.map(m=>'<label class="chk"><input type="checkbox"> '+esc(m)+'</label>').join("");
+  $("#zonasInfo").innerHTML = '<h3>Sitios recomendados</h3>'+SITIOS.map(s=>'<p style="margin:0 0 8px"><b>'+esc(s.n)+'</b> <span class="muted">('+esc(s.mun)+')</span><br>'+esc(s.hab)+' <a href="https://www.google.com/maps/dir/?api=1&destination='+s.lat+','+s.lon+'" target="_blank" rel="noopener">Cómo llegar</a></p>').join("")+
+    '<h3>Tipos de monte</h3>'+ZONAS_INFO.map(([a,b])=>'<p style="margin:0 0 6px"><b>'+esc(a)+':</b> '+esc(b)+'</p>').join("")+
+    '<p class="note">Antes de ir, comprueba que no es finca privada, que no hay montería ese día y que no es zona de reserva del parque natural.</p>';
+
+  $("#pares").innerHTML = PARES.map(p=>{ const A=SETAS.find(s=>s.id===p[0]), B=SETAS.find(s=>s.id===p[1]); return '<button class="pairbtn" data-cmp="'+p[0]+','+p[1]+'">✅ <b>'+esc(shortName(A))+'</b> <span class="muted">vs</span> '+(B.t==="mortal"?"☠️":"⚠️")+' <b>'+esc(shortName(B))+'</b></button>'; }).join("");
+  buildFilters(); renderSetas(); renderChecks(); renderCal(); renderDiario(); renderDiarioChips(); renderSitioChips(); renderCoche();
+  show((location.hash||"#hoy").slice(1));
+  window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
+  renderGauge(null);
+  /* primera vez: elige sola la zona más cercana por GPS */
+  if(!store.get("zonaElegida",false) && navigator.geolocation){
+    $("#estado").textContent="Buscando tu zona…";
+    navigator.geolocation.getCurrentPosition(p=>{
+      const me=[p.coords.latitude,p.coords.longitude];
+      let best=ZONAS[0], bd=1e12; ZONAS.forEach(z=>{ const d=haversine(me,[z.lat,z.lon]); if(d<bd){bd=d;best=z;} });
+      store.set("zonaElegida",true);
+      if(bd<25000){ $("#zona").value=best.id; store.set("zona",best.id); loadWeather(best); }
+      else loadZ();
+    },()=>{ store.set("zonaElegida",true); loadZ(); },{timeout:8000});
+  } else loadZ();
+  $("#zona").addEventListener("change",()=>store.set("zonaElegida",true));
+  /* se actualiza sola al volver a la app si los datos tienen más de 2 horas */
+  let lastLoad=Date.now();
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible" && Date.now()-lastLoad>2*3600*1000){ lastLoad=Date.now(); lastCompareKey=""; CURLOC?loadWeather(CURLOC):loadZ(); } });
+  setInterval(renderLuz,60000);
+
+  /* app instalable y trabajo en segundo plano */
+  let deferred=null;
+  window.addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferred=e; $("#btnInstall").classList.remove("hidden"); });
+  $("#btnInstall").addEventListener("click",async()=>{ if(!deferred) return; deferred.prompt(); try{ await deferred.userChoice; }catch(e){} deferred=null; $("#btnInstall").classList.add("hidden"); });
+  if("serviceWorker" in navigator && location.protocol==="https:"){
+    navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(r=>{ swReg=r; syncConf(); updateNotifState(); }).catch(()=>updateNotifState());
+  } else updateNotifState();
+}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
