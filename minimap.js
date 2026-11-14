@@ -105,8 +105,8 @@
     e.setAttribute("stroke-linecap", "round"); e.setAttribute("stroke-linejoin", "round"); e.setAttribute("opacity", st.opacity || 0.9);
     if (st.dash) e.setAttribute("stroke-dasharray", st.dash);
     this.svg.appendChild(e);
-    const v = { type: "line", pts, e }, self = this;
-    v.setPoints = function (p) { v.pts = p; self._drawVec(v); };
+    const v = { type: "line", pts, e, bb: bbox(pts) }, self = this;
+    v.setPoints = function (p) { v.pts = p; v.bb = bbox(p); self._drawVec(v); };
     v.remove = function () { e.remove(); self.vectors = self.vectors.filter(x => x !== v); };
     this.vectors.push(v); this._drawVec(v); return v;
   };
@@ -120,7 +120,15 @@
     v.remove = function () { e.remove(); self.vectors = self.vectors.filter(x => x !== v); };
     this.vectors.push(v); this._drawVec(v); return v;
   };
+  function bbox(pts) { let a = 90, b = 180, c = -90, d = -180; for (const p of pts) { if (p[0] < a) a = p[0]; if (p[0] > c) c = p[0]; if (p[1] < b) b = p[1]; if (p[1] > d) d = p[1]; } return [a, b, c, d]; }
+  P._viewBB = function () { const a = this.toLatLng(0, this.h), b = this.toLatLng(this.w, 0); return [a[0], a[1], b[0], b[1]]; };
   P._drawVec = function (v) {
+    if (v.type === "line" && v.bb) {
+      const V = this._vb || this._viewBB(), m = 0.01;
+      const out = v.bb[2] < V[0] - m || v.bb[0] > V[2] + m || v.bb[3] < V[1] - m || v.bb[1] > V[3] + m || (v.minZoom && this.z < v.minZoom);
+      if (out) { if (!v.hidden) { v.e.style.display = "none"; v.hidden = true; } return; }
+      if (v.hidden) { v.e.style.display = ""; v.hidden = false; }
+    }
     if (v.type === "line") v.e.setAttribute("points", v.pts.map(p => this.toScreen(p[0], p[1]).map(n => n.toFixed(1)).join(",")).join(" "));
     else { const p = this.toScreen(v.ll[0], v.ll[1]); v.e.setAttribute("cx", p[0]); v.e.setAttribute("cy", p[1]); v.e.setAttribute("r", Math.max(0, v.r / this.metersPerPixel(v.ll[0]))); }
   };
@@ -129,7 +137,7 @@
     if (!this.w) return;
     this.layers.forEach(L => this._renderLayer(L));
     this.markers.forEach(m => this._placeMk(m));
-    this.vectors.forEach(v => this._drawVec(v));
+    this._vb = this._viewBB(); this.vectors.forEach(v => this._drawVec(v)); this._vb = null;
     // barra de escala
     const lat = this.getCenter()[0], mpp = this.metersPerPixel(lat);
     const steps = [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000];
@@ -212,9 +220,9 @@
     fc.features.forEach(f => {
       f.geometry.coordinates.forEach(line => {
         const pts = line.map(c => [c[1], c[0]]);
-        const hit = this.polyline(pts, { color: "#000", weight: 20, opacity: 0.001 });
+        const hit = this.polyline(pts, { color: "#000", weight: 20, opacity: 0.001 }); hit.minZoom = 10;
         hit.e.setAttribute("data-rid", f.properties.id); hit.e.style.pointerEvents = "stroke";
-        const v = this.polyline(pts, { color: f.properties.color, weight: 3.5, opacity: 0.95 });
+        const v = this.polyline(pts, { color: f.properties.color, weight: 3.5, opacity: 0.95 }); v.minZoom = 10;
         v.rid = f.properties.id; v.color = f.properties.color; hit.rid = f.properties.id; hit.isHit = true;
         this._trails.push(hit, v);
       });
