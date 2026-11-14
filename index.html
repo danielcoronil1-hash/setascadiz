@@ -197,6 +197,13 @@ body.mapmode main{max-width:none;padding:0}
 .hero .pcard span{color:#fff}
 .hero .b{background:#f0b429;color:#2b2418;font-weight:800}
 .hero .b2{background:rgba(255,255,255,.92)}
+.chatcard{background:linear-gradient(180deg,#f3f7ec,#fffdf8)}
+#chatLog{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.msg{max-width:88%;padding:8px 11px;border-radius:14px;font-size:.92rem;line-height:1.4}
+.msg.me{align-self:flex-end;background:#2f3b26;color:#fff;border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
+.b2.sm{padding:5px 10px;font-size:.82rem}
+.chatrow{display:flex;gap:6px}.chatrow input{flex:1;min-width:0}
 .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}
 .quick button{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:10px 4px;font:inherit;font-size:.74rem;line-height:1.15;color:var(--ink);cursor:pointer;box-shadow:0 1px 3px #0001}
 .quick button span{display:block;font-size:1.6rem;margin-bottom:4px}
@@ -257,7 +264,7 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
 </head>
 <body>
 <header>
-  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v10</p></div>
+  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v11</p></div>
   <div style="display:flex;gap:6px"><button id="btnInstall" class="hidden">Instalar app</button><button id="btnShare" title="Compartir la app">📤 Compartir</button></div>
 </header>
 
@@ -288,6 +295,15 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
     <button data-go="quiz"><span>🔎</span>¿Qué seta<br>es?</button>
     <button data-go="salida"><span>📲</span>Aviso<br>que salgo</button>
     <button data-go="foto" class="qfoto"><span>📷</span>Foto a<br>una seta</button>
+  </div>
+
+  <div class="card chatcard">
+    <h2>💬 Pregúntame</h2>
+    <div id="chatLog"><div class="msg bot">¡Hola! Pregúntame lo que quieras sobre salir a por setas: si mañana es buen día, qué día te recomiendo, dónde ir, cuándo salen las tanas…</div></div>
+    <div class="chips" id="chatSug">
+      <button>¿Mañana es buen día?</button><button>¿Qué día me recomiendas?</button><button>¿Dónde voy hoy?</button><button>¿Y el fin de semana?</button><button>¿Cuándo salen las tanas?</button><button>¿Va a llover?</button><button>¿Hay levante mañana?</button><button>¿A qué hora anochece?</button>
+    </div>
+    <form id="chatForm" class="chatrow"><input id="chatIn" placeholder="Escribe tu pregunta…" autocomplete="off"><button class="b" type="submit">Enviar</button></form>
   </div>
 
   <div class="card">
@@ -846,6 +862,7 @@ async function loadWeather(loc){
       DATA=c.DATA; renderWeather();
       $("#estado").textContent = "Sin conexión: datos guardados del "+new Date(c.t).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+" ("+DATA.label+").";
     }else{
+      if(!/vercel\.app$|localhost$/.test(location.hostname)){ startDemo(loc); return; }
       $("#estado").textContent = "No se pudo descargar el tiempo. Usa el modo manual.";
       $("#cardManual").classList.remove("hidden");
       renderGauge(null); $("#days").innerHTML=""; $("#why").innerHTML="";
@@ -1014,6 +1031,7 @@ async function compareZones(){
   }catch(e){
     const c=await big.get("lastSites",null);
     if(c&&c.rows){ SITE_ROWS=c.rows; renderSites(); $("#zonas").insertAdjacentHTML("afterbegin",'<p class="note" style="margin-top:0">Sin conexión: datos guardados.</p>'); }
+    else if(DEMO) renderSites();
     else $("#zonas").textContent="No se pudo comparar ahora (sin conexión).";
     lastCompareKey="";
   }
@@ -1915,6 +1933,147 @@ function fotoClick(e){
   return false;
 }
 
+/* ===================== MODO DEMOSTRACIÓN (solo si no se puede descargar el tiempo y no hay datos guardados) ===================== */
+let DEMO=false;
+function demoData(label,seed){
+  const time=[],p=[],tmax=[],tmin=[],wspd=[],wdir=[],et0=[],sunrise=[],sunset=[],wcode=[];
+  const now=new Date(); const rnd=k=>{ const x=Math.sin((k+1)*12.9898+(seed||0)*78.233)*43758.5453; return x-Math.floor(x); };
+  for(let k=-31;k<=7;k++){
+    const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+k), iso=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    time.push(iso);
+    let r=0; if(k===-10) r=26; else if(k===-9) r=18; else if(k===-4) r=6; else if(k===2) r=14; else if(k===3) r=9; else if(rnd(k)>0.85) r=Math.round(rnd(k+50)*5);
+    p.push(r); tmax.push(Math.round(17+rnd(k+7)*5)); tmin.push(Math.round(8+rnd(k+9)*4));
+    const lev = (k===5||k===6); wspd.push(lev?42:12+Math.round(rnd(k+3)*12)); wdir.push(lev?95:250);
+    et0.push(1.6); sunrise.push(iso+"T08:0"+(5+(k%3+3)%3)); sunset.push(iso+"T18:1"+(5-(k%3+3)%3));
+    wcode.push(r>=8?63:r>=1?61:(rnd(k+11)>0.5?1:3));
+  }
+  return {time,p,tmax,tmin,wspd,wdir,et0,sunrise,sunset,wcode,soil:null,label:(label||"")+" (ejemplo)"};
+}
+function startDemo(loc){
+  DEMO=true; DATA=demoData(loc.n,1);
+  SITE_ROWS = SITIOS.map((s,k)=>{ const D=demoData(s.n,k+2); const i0=M.todayIndex(D), b=M.bestAhead(D,i0,8); return {site:s, sp:s.sp, lat:s.lat, lon:s.lon, s:M.scoreDay(D,i0).score, best:b.best, bestDay:D.time[b.bestI], i0, D}; });
+  renderWeather(); renderSites();
+  $("#estado").innerHTML='🧪 <b>Modo demostración:</b> aquí no se puede descargar el tiempo real, así que se usan <b>datos de ejemplo</b> para que pruebes la app. En la app instalada salen los datos reales.';
+}
+
+/* ===================== 💬 PREGÚNTAME (respuestas con los datos del tiempo y de los sitios) ===================== */
+const DIAS=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+function normTxt(s){ return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[¿?¡!.,]/g," "); }
+function dayOffsets(q){
+  if(/pasado manana/.test(q)) return [2];
+  if(/\bmanana\b/.test(q)) return [1];
+  if(/\bhoy\b|\bahora\b/.test(q)) return [0];
+  if(/finde|fin de semana/.test(q)){ const w=new Date().getDay(); const toSat=(6-w+7)%7, toSun=(7-w)%7; return [toSat,toSun].filter(x=>x<=7); }
+  for(let k=0;k<7;k++){ const name=normTxt(DIAS[k]).trim(); if(new RegExp("\\b"+name+"\\b").test(q)){ const w=new Date().getDay(); return [((k-w+7)%7)||(/que viene|proximo/.test(q)?7:0)]; } }
+  return null;
+}
+function dayName(off){ if(off===0) return "hoy"; if(off===1) return "mañana"; if(off===2) return "pasado mañana"; const d=new Date(); d.setDate(d.getDate()+off); return "el "+DIAS[d.getDay()]+" "+d.getDate(); }
+function sitesAt(off,spId){
+  return (SITE_ROWS||[]).filter(r=>r.site&&r.site.id&&r.i0+off<r.D.time.length).map(r=>{
+    const i=r.i0+off, ids=spId? r.sp.filter(x=>x===spId) : r.sp;
+    if(!ids.length) return null;
+    const ch=ids.map(id=>{ const s=SETAS.find(x=>x.id===id); return {id,c:M.speciesChance(id,s.m,r.D,i)}; }).sort((a,b)=>b.c-a.c);
+    const gen=M.scoreDay(r.D,i).score, b2=ch.slice(0,2), avg=b2.length?b2.reduce((a,x)=>a+x.c,0)/b2.length:0;
+    return {r, i, score: spId? ch[0].c : Math.round(0.5*gen+0.5*avg), top:ch.filter(x=>x.c>=8).slice(0,3), rain:r.D.p[i]||0};
+  }).filter(Boolean).sort((a,b)=>b.score-a.score);
+}
+function spNames(top){ return top.map(x=>shortName(SETAS.find(z=>z.id===x.id))).join(", "); }
+function verdictWord(s){ return s>=70?"muy buen día 🟢":s>=45?"buen día 🟢":s>=25?"día flojo 🟠":"mal día 🔴"; }
+function findSpecies(q){
+  const alias={tana:"tana",oronja:"tana",cesares:"tana",tentullo:"tentullo",boleto:"tentullo",boletus:"tentullo",galamperna:"gallipierno",gallipierno:"gallipierno",parasol:"gallipierno",niscalo:"niscalo",rebozuelo:"rebozuelo",cantarela:"rebozuelo",trompeta:"trompeta",champinon:"champi",cardo:"cardo","pie azul":"pieazul",barbuda:"barbuda","lengua de vaca":"lengua",criadilla:"criadilla",turma:"criadilla",higado:"higado"};
+  for(const k in alias) if(q.includes(k)) return alias[k];
+  return null;
+}
+function answer(raw){
+  const q=normTxt(raw);
+  if(!DATA) return "Todavía no tengo los datos del tiempo. Espera unos segundos o pulsa ↻ arriba.";
+  const offs=dayOffsets(q), i0=M.todayIndex(DATA);
+  const sp=findSpecies(q);
+  // lluvia
+  if(/llov|lluvia|agua|llueve/.test(q)){
+    const list=(offs||[0,1,2,3,4,5,6]).filter(o=>i0+o<DATA.time.length);
+    const rainy=list.filter(o=>(DATA.p[i0+o]||0)>=1);
+    let past=0; for(let k=1;k<=10;k++) past+=DATA.p[i0-k]||0;
+    let t= offs ? list.map(o=>"🌧️ "+cap(dayName(o))+": "+((DATA.p[i0+o]||0)>=1? Math.round(DATA.p[i0+o])+" mm":"no se espera lluvia")).join("\n")
+               : (rainy.length? "Se espera lluvia "+rainy.map(o=>dayName(o)+" ("+Math.round(DATA.p[i0+o])+" mm)").join(", ")+"." : "No se espera lluvia en los próximos 7 días.");
+    t+="\nEn los últimos 10 días han caído "+Math.round(past)+" mm en "+DATA.label.replace(" (ejemplo)","")+".";
+    if(rainy.length && !offs) t+="\n💡 Las setas suelen salir 7–15 días después de una lluvia fuerte.";
+    return t;
+  }
+  if(/levante|viento|poniente/.test(q)){
+    const list=(offs||[0,1,2,3,4,5,6]).filter(o=>i0+o<DATA.time.length);
+    const lev=list.filter(o=>M.isLevante(DATA.wdir[i0+o],DATA.wspd[i0+o]));
+    return lev.length? "💨 Levante fuerte "+lev.map(dayName).join(", ")+". Seca el suelo: busca en umbrías y canutos." : "No se espera levante fuerte "+(offs?dayName(offs[0]):"esta semana")+". 👍";
+  }
+  if(/caza|monteria|cacer/.test(q)){
+    const m=new Date().getMonth(), season=(m>=9||m<=1);
+    return season? "🎯 Estamos en temporada de caza (octubre–febrero). Sobre todo los fines de semana hay monterías y batidas: si ves carteles de cacería, no entres, y lleva ropa de color vivo. La app marca con 🎯 esos días." : "Ahora no es temporada de monterías, pero mira siempre los carteles.";
+  }
+  if(/anochece|amanece|luz|sol|hora/.test(q)){
+    const o=(offs||[0])[0], i=i0+o, sr=DATA.sunrise[i], ss=DATA.sunset[i];
+    return sr? "☀️ "+cap(dayName(o))+" amanece a las "+sr.slice(11,16)+" y anochece a las "+ss.slice(11,16)+". Solo se puede recoger entre esas horas." : "No tengo ese dato ahora.";
+  }
+  if(/temperatura|frio|calor|grados/.test(q)){
+    const o=(offs||[0])[0], i=i0+o;
+    return "🌡️ "+cap(dayName(o))+": máxima "+Math.round(DATA.tmax[i])+"°, mínima "+Math.round(DATA.tmin[i])+"°."+(DATA.tmin[i]<1?" ❄️ Puede helar.":"");
+  }
+  // seta concreta
+  if(sp){
+    const s=SETAS.find(x=>x.id===sp);
+    const days=[0,1,2,3,4,5,6].map(o=>({o,best:sitesAt(o,sp)[0]})).filter(x=>x.best);
+    if(!days.length) return "La "+shortName(s)+" no suele salir en los sitios que tengo.";
+    const today=days[0], top=days.slice().sort((a,b)=>b.best.score-a.best.score)[0];
+    let t="🍄 "+shortName(s)+": hoy "+today.best.score+"% en "+today.best.r.site.n+".";
+    if(top.o!==0 && top.best.score>today.best.score+5) t+="\nMejor "+dayName(top.o)+": "+top.best.score+"% en "+top.best.r.site.n+".";
+    t+="\n"+lagText(sp);
+    if(s.t==="mortal"||s.t==="tox") t="⚠️ Ojo: la "+shortName(s)+" es "+TIPOS[s.t].toLowerCase()+".\n"+t;
+    return {text:t, sp};
+  }
+  // ¿qué día?
+  if(/que dia|cuando|mejor dia|recomiend|esta semana|que dias/.test(q) && !(offs&&offs.length===1)){
+    const cand=(offs||[0,1,2,3,4,5,6]).map(o=>({o,b:sitesAt(o)[0]})).filter(x=>x.b).sort((a,b)=>b.b.score-a.b.score);
+    if(!cand.length) return "No tengo datos suficientes ahora.";
+    const b=cand[0];
+    let t="📅 El mejor día es "+dayName(b.o)+": nota "+b.b.score+" en "+b.b.r.site.n+" ("+b.b.r.site.mun+")."+(b.b.top.length?"\nBusca: "+spNames(b.b.top)+".":"");
+    if(cand[1]) t+="\nDespués: "+dayName(cand[1].o)+" (nota "+cand[1].b.score+").";
+    if(huntingDay(DATA.time[i0+b.o])) t+="\n🎯 Es fin de semana de caza: ojo con las monterías.";
+    return {text:t, site:b.b.r.site.id};
+  }
+  // ¿dónde?
+  if(/donde|sitio|zona|lugar|ir a/.test(q)){
+    const o=(offs||[0])[0], l=sitesAt(o).slice(0,3);
+    if(!l.length) return "No tengo datos de los sitios ahora.";
+    return {text:"📍 Mejores sitios "+dayName(o)+":\n"+l.map((x,k)=>["🥇","🥈","🥉"][k]+" "+x.r.site.n+" — nota "+x.score+(x.top.length?" ("+spNames(x.top)+")":"")).join("\n"), site:l[0].r.site.id};
+  }
+  // ¿es buen día? (por defecto)
+  if(offs || /buen dia|merece|salgo|salir|ir|bien|setas/.test(q)){
+    const list=(offs||[0]);
+    const lines=list.map(o=>{ const sc=M.scoreDay(DATA,i0+o).score, b=sitesAt(o)[0];
+      let s="• "+cap(dayName(o))+": "+verdictWord(sc)+" (nota "+sc+" en "+DATA.label.replace(" (ejemplo)","")+")";
+      if(b && b.score>=35) s+=". Lo mejor: "+b.r.site.n+" ("+b.score+")"+(b.top.length?", busca "+spNames(b.top):"");
+      if((DATA.p[i0+o]||0)>=10) s+=". 🌧️ Llueve fuerte ese día.";
+      if(huntingDay(DATA.time[i0+o])) s+=". 🎯 Ojo con las monterías.";
+      return s; });
+    const best=[0,1,2,3,4,5,6].map(o=>({o,sc:M.scoreDay(DATA,i0+o).score})).filter(x=>i0+x.o<DATA.time.length).sort((a,b)=>b.sc-a.sc)[0];
+    let t=lines.join("\n");
+    if(best && !list.includes(best.o) && best.sc>Math.max(...list.map(o=>M.scoreDay(DATA,i0+o).score))+8) t+="\n💡 Mejor aún "+dayName(best.o)+" (nota "+best.sc+").";
+    return t;
+  }
+  return "No te he entendido del todo 🙂. Prueba con algo como:\n• ¿Mañana es buen día?\n• ¿Qué día me recomiendas?\n• ¿Dónde voy el sábado?\n• ¿Cuándo salen las tanas?\n• ¿Va a llover esta semana?\n• ¿Hay levante mañana?\n• ¿A qué hora anochece?";
+}
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+function askChat(text){
+  text=(text||"").trim(); if(!text) return;
+  const log=$("#chatLog");
+  log.insertAdjacentHTML("beforeend",'<div class="msg me">'+esc(text)+'</div>');
+  const a=answer(text), txt=typeof a==="string"?a:a.text;
+  let extra="";
+  if(a && a.site) extra='<button class="b2 sm" data-mapa="'+a.site+'">🗺️ Ver el sitio</button>';
+  if(a && a.sp) extra='<button class="b2 sm" data-goto="'+a.sp+'">🍄 Ver la ficha</button>';
+  log.insertAdjacentHTML("beforeend",'<div class="msg bot">'+esc(txt).replace(/\n/g,"<br>")+(extra?'<div style="margin-top:6px">'+extra+'</div>':'')+'</div>');
+  log.scrollTop=log.scrollHeight; $("#chatIn").value="";
+}
+
 /* ===================== DIBUJOS ===================== */
 function mushSVG(g){
   const {s,cap,stem,under,ring,volva,warts,spines,small} = g;
@@ -2396,6 +2555,9 @@ function init(){
   setInterval(renderLuz,60000);
   { const doy=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5); const tp=TIPS[doy%TIPS.length]; $("#tipDay").innerHTML='<div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:1.8rem">'+tp[0]+'</span><span>'+esc(tp[1])+'</span></div>'; }
   $("#btnFotoSetas").addEventListener("click",showFotoModal);
+  $("#chatForm").addEventListener("submit",e=>{ e.preventDefault(); askChat($("#chatIn").value); });
+  $("#chatSug").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) askChat(b.textContent); });
+  $("#chatLog").addEventListener("click",e=>{ const g=e.target.closest("[data-goto]"); if(g){ openSpecies(g.dataset.goto); return; } const mp=e.target.closest("[data-mapa]"); if(mp){ const id=mp.dataset.mapa; show("mapa"); openMap(()=>goSite(id)); } });
   $("#btnShare").addEventListener("click",shareApp); $("#btnShare2").addEventListener("click",shareApp);
   $("#modalX").addEventListener("click",()=>{ closeModal(); });
   $("#modal").addEventListener("click",e=>{ if(e.target.id==="modal"){ closeModal(); return; } });
