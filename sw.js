@@ -1,6 +1,6 @@
 /* Service worker: funciona sin cobertura y vigila el tiempo en segundo plano (Android, app instalada) */
 importScripts("score.js");
-const CACHE = "setas-cdg-v5";
+const CACHE = "setas-cdg-v5-1";
 const TILES = "setas-tiles";
 const TILE_HOSTS = /tile\.opentopomap\.org|tile\.openstreetmap\.org|arcgisonline\.com|waymarkedtrails\.org|elevation-tiles-prod|upload\.wikimedia\.org/;
 const LIB_HOSTS = /unpkg\.com/;
