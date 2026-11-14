@@ -6,7 +6,7 @@
   function GLMap(el, opt) {
     const self = this;
     this.el = el; this.loaded = false; this.q = []; this.handlers = {}; this._n = 0; this.is3D = false;
-    this.tileOK = 0; this.tileErr = 0;
+    this.tileOK = 0; this.tileErr = 0; this.src = {};
     const style = {
       version: 8,
       sources: {
@@ -27,8 +27,8 @@
     m.on("load", () => { self.loaded = true; const q = self.q; self.q = []; q.forEach(f => { try { f(); } catch (e) { console.warn(e); } }); });
     m.on("dragstart", () => self._emit("dragstart"));
     m.on("rotatestart", () => self._emit("dragstart"));
-    m.on("data", e => { if (e.dataType === "source" && e.tile) self.tileOK++; });
-    m.on("error", () => { self.tileErr++; });
+    m.on("data", e => { if (e.dataType === "source" && e.tile) { self.tileOK++; const k = e.sourceId; (self.src[k] = self.src[k] || { ok: 0, err: 0 }).ok++; } });
+    m.on("error", e => { self.tileErr++; const k = e && e.sourceId; if (k) (self.src[k] = self.src[k] || { ok: 0, err: 0 }).err++; });
   }
   const P = GLMap.prototype;
   P.on = function (ev, fn) { (this.handlers[ev] = this.handlers[ev] || []).push(fn); };
@@ -54,10 +54,11 @@
     const L = { id, visible: true, attribution: o.attribution || "" };
     this._do(() => {
       this.map.addSource(id, { type: "raster", tiles, tileSize: 256, maxzoom: o.maxZoom || 18, attribution: o.attribution || "" });
-      this.map.addLayer({ id, type: "raster", source: id, layout: { visibility: L.visible ? "visible" : "none" }, paint: { "raster-opacity": o.opacity == null ? 1 : o.opacity, "raster-fade-duration": 200 } });
+      this.map.addLayer({ id, type: "raster", source: id, layout: { visibility: L.visible ? "visible" : "none" }, paint: { "raster-opacity": o.opacity == null ? 1 : o.opacity, "raster-fade-duration": 200 } }, (o.before && this.map.getLayer(o.before)) ? o.before : undefined);
     });
     return L;
   };
+  P.layerStats = function (L) { return this.src[L.id] || { ok: 0, err: 0 }; };
   P.setLayerVisible = function (L, v) { L.visible = v; this._do(() => { if (this.map.getLayer(L.id)) this.map.setLayoutProperty(L.id, "visibility", v ? "visible" : "none"); }); };
   P.addHillshade = function () {
     this._do(() => this.map.addLayer({ id: "hill", type: "hillshade", source: "hs", paint: { "hillshade-exaggeration": 0.45, "hillshade-shadow-color": "#2a2416", "hillshade-highlight-color": "#fffaf0" } }));

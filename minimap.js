@@ -53,7 +53,7 @@
   /* capas de teselas */
   P.addTileLayer = function (url, o) {
     o = o || {};
-    const L = { url, sub: o.subdomains || "abc", maxZoom: o.maxZoom || 18, opacity: o.opacity == null ? 1 : o.opacity, attribution: o.attribution || "", visible: true, pane: div("mm-layer"), tiles: new Map(), z: 0 };
+    const L = { url, provider: o.provider || null, ok: 0, err: 0, sub: o.subdomains || "abc", maxZoom: o.maxZoom || 18, opacity: o.opacity == null ? 1 : o.opacity, attribution: o.attribution || "", visible: true, pane: div("mm-layer"), tiles: new Map(), z: 0 };
     L.pane.style.opacity = L.opacity;
     const before = o.below ? this.tilePane.firstChild : null;
     this.tilePane.insertBefore(L.pane, before);
@@ -78,8 +78,8 @@
       let img = L.tiles.get(key + "@" + tx);
       if (!img) {
         img = new Image(); img.className = "mm-tile"; img.draggable = false; img.alt = "";
-        img.onload = () => { img.classList.add("ok"); this.tileOK = (this.tileOK || 0) + 1; }; img.onerror = () => { img.style.visibility = "hidden"; this.tileErr = (this.tileErr || 0) + 1; };
-        img.src = this._tileURL(L, zi, wx, ty); L.pane.appendChild(img); L.tiles.set(key + "@" + tx, img);
+        img.onload = () => { img.classList.add("ok"); this.tileOK = (this.tileOK || 0) + 1; L.ok++; }; img.onerror = () => { img.style.visibility = "hidden"; this.tileErr = (this.tileErr || 0) + 1; L.err++; };
+        if (L.provider) { const im2 = img; L.provider(zi, wx, ty).then(u => { if (u) im2.src = u; else im2.style.visibility = "hidden"; }).catch(() => { im2.style.visibility = "hidden"; }); } else img.src = this._tileURL(L, zi, wx, ty); L.pane.appendChild(img); L.tiles.set(key + "@" + tx, img);
       }
       img.style.width = img.style.height = (s + 0.5) + "px";
       img.style.transform = "translate(" + (ox + tx * s) + "px," + (oy + ty * s) + "px)";
@@ -195,6 +195,7 @@
     el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
     el.addEventListener("wheel", e => { e.preventDefault(); const p = rel(e); this._zoomAround(this.z + (e.deltaY < 0 ? 0.5 : -0.5), p[0], p[1]); }, { passive: false });
   };
+  P.layerStats = function (L) { return { ok: L.ok, err: L.err }; };
   P.set3D = function () {}; P.setHillshade = function () {}; P.addHillshade = function () {};
   P.flyTo = function (ll, z) { this.setView(ll, Math.min(z, 16)); };
   P.zoomIn = function () { this._zoomAround(Math.round(this.z) + 1, this.w / 2, this.h / 2); };
