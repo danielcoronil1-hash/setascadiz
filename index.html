@@ -27,6 +27,12 @@ header p{margin:1px 0 0;font-size:.75rem;opacity:.8}
 #btnShare{font:inherit;font-size:.8rem;border:0;background:#f0b429;color:#2b2418;font-weight:800;border-radius:99px;padding:6px 12px;cursor:pointer;white-space:nowrap}
 #modal{position:fixed;inset:0;z-index:2500;background:rgba(10,10,8,.55);overflow-y:auto;-webkit-overflow-scrolling:touch}
 #modal .mbox{position:relative;background:var(--bg);min-height:100%;margin-top:calc(env(safe-area-inset-top) + 36px);border-radius:20px 20px 0 0;padding:16px 14px calc(30px + env(safe-area-inset-bottom));max-width:760px;margin-left:auto;margin-right:auto}
+.fotoMain{width:100%;max-height:300px;object-fit:cover;border-radius:16px;display:block;margin:4px 0 10px;background:#e9e1cf}
+.cautel{background:#fff6d6;border:2px solid #e7c75a;color:#4a3a00;border-radius:12px;padding:10px 12px;font-size:.92rem}
+.fres{border:1px solid var(--line);border-radius:14px;padding:8px;margin:8px 0;background:var(--card)}
+.fcomp{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.fcomp img{width:100%;height:120px;object-fit:cover;border-radius:10px;background:#efe6d4}
+.quick button.qfoto{background:#2f3b26;color:#fff;border-color:#2f3b26}
 #modalX{position:sticky;top:6px;float:right;z-index:3;border:0;background:#2f3b26;color:#fff;border-radius:99px;width:38px;height:38px;font-size:1.05rem;cursor:pointer;box-shadow:0 2px 6px #0004}
 .mhead{margin:0 46px 8px 0}.mhead h2{margin:0;font-size:1.25rem}.mhead .sci{font-style:italic;color:var(--muted);font-size:.85rem;margin-bottom:4px}
 #modal .gal figure{flex-basis:86%}
@@ -251,7 +257,7 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
 </head>
 <body>
 <header>
-  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v9</p></div>
+  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v10</p></div>
   <div style="display:flex;gap:6px"><button id="btnInstall" class="hidden">Instalar app</button><button id="btnShare" title="Compartir la app">📤 Compartir</button></div>
 </header>
 
@@ -281,7 +287,7 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
     <button data-go="mapa"><span>🗺️</span>Mapa y<br>senderos</button>
     <button data-go="quiz"><span>🔎</span>¿Qué seta<br>es?</button>
     <button data-go="salida"><span>📲</span>Aviso<br>que salgo</button>
-    <button data-go="diario"><span>📓</span>Mi<br>diario</button>
+    <button data-go="foto" class="qfoto"><span>📷</span>Foto a<br>una seta</button>
   </div>
 
   <div class="card">
@@ -370,6 +376,7 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
   <div class="danger" style="margin-bottom:12px">
     <b>Regla de oro:</b> si no estás 100 % seguro, no se come. En Los Alcornocales sale la <b>oronja verde (Amanita phalloides)</b>, que mata. Enseña lo que recojas a un micólogo o a una asociación micológica antes de cocinarlo. Las fotos son de Wikimedia Commons y ayudan a reconocerlas, pero ninguna foto basta para identificar con seguridad.
   </div>
+  <button class="b big" id="btnFotoSetas" style="margin-bottom:12px">📷 Hacer foto a una seta y ver qué es</button>
   <div class="card">
     <h2>🔎 ¿Qué seta es?</h2>
     <p class="muted" style="margin:0 0 6px">Contesta unas preguntas mirando la seta y te digo a cuáles se parece, avisándote si alguna es peligrosa.</p>
@@ -1840,6 +1847,74 @@ function closeTopOverlay(){
   return false;
 }
 
+/* ===================== FOTO A UNA SETA (identificación guiada + aviso de peligro) ===================== */
+let fotoId={file:null,url:null,step:0,ans:{}};
+function showFotoModal(){
+  if(fotoId.url) try{ URL.revokeObjectURL(fotoId.url); }catch(e){}
+  fotoId={file:null,url:null,step:0,ans:{}};
+  openModal('<h2>📷 Foto a una seta</h2><div id="fotoBox"></div>');
+  renderFoto();
+}
+function fotoTips(){ return '<ul class="list" style="font-size:.9rem;margin:6px 0 10px"><li>Saca la seta <b>entera</b>, con la base del pie.</li><li>Que se vea el <b>sombrero</b>, lo de <b>debajo</b> (láminas o poros) y la <b>base</b>.</li><li>Con buena luz y sin flash, si puedes.</li></ul>'; }
+function renderFoto(){
+  const box=$("#fotoBox"); if(!box) return;
+  if(!fotoId.url){
+    box.innerHTML='<p class="muted">Haz la foto y contesta unas preguntas: te digo a qué setas se parece y si puede ser peligrosa.</p>'+fotoTips()+
+      '<label class="b big" style="display:block;text-align:center;cursor:pointer">📷 Hacer foto<input type="file" id="fotoIn" accept="image/*" capture="environment" style="display:none"></label>'+
+      '<label class="b2" style="display:block;text-align:center;margin-top:8px;cursor:pointer">🖼️ Elegir de la galería<input type="file" id="fotoIn2" accept="image/*" style="display:none"></label>'+
+      '<div class="danger" style="margin-top:12px">Ninguna app ni foto sirve para saber con seguridad si una seta se puede comer. Antes de comerla, que la vea un experto con la seta delante.</div>';
+    return;
+  }
+  const qs=QS.filter(q=>!q.when||q.when(fotoId.ans));
+  let html='<img src="'+fotoId.url+'" class="fotoMain" alt="Tu foto">';
+  if(fotoId.step<qs.length){
+    const q=qs[fotoId.step];
+    html+='<div class="muted">Mirando la seta — pregunta '+(fotoId.step+1)+' de '+qs.length+'</div><h3 style="margin:4px 0 8px">'+esc(q.q)+'</h3>'+
+      q.o.map(o=>'<button class="pairbtn" data-fa="'+q.k+'" data-v="'+o[0]+'">'+esc(o[1])+'</button>').join("")+
+      '<button class="pairbtn" data-fa="'+q.k+'" data-v="nose" style="color:var(--muted)">No lo sé</button>'+
+      '<div class="row" style="margin-top:6px">'+(fotoId.step?'<button class="b2" id="fBack">‹ Atrás</button>':'')+'<button class="b2" id="fRetake">📷 Otra foto</button></div>';
+    box.innerHTML=html; return;
+  }
+  const res=quizScore(fotoId.ans), top=res.slice(0,3);
+  const danger4=res.slice(0,4).filter(x=>x.s.t==="mortal"||x.s.t==="tox"), mortal=danger4.some(x=>x.s.t==="mortal");
+  let verdict;
+  if(mortal) verdict='<div class="danger"><div style="font-size:1.15rem;font-weight:800">☠️ PELIGRO: puede ser una seta MORTAL</div>Se parece a: <b>'+danger4.filter(x=>x.s.t==="mortal").map(x=>esc(shortName(x.s))).join(", ")+'</b>.<br><br><b>Qué hacer:</b> no la comas, no la mezcles con otras setas en la cesta y lávate las manos. Si alguien ya la ha comido, llama al <b>112</b> o al <b>91 562 04 20</b> (Información Toxicológica, 24 h) y guarda la seta.</div>';
+  else if(danger4.length) verdict='<div class="warn" style="border-width:2px"><div style="font-size:1.1rem;font-weight:800">⚠️ Cuidado: puede ser tóxica</div>Se parece a: <b>'+danger4.map(x=>esc(shortName(x.s))).join(", ")+'</b>.<br><br><b>Qué hacer:</b> no la comas. Guárdala aparte y enséñasela a alguien que sepa.</div>';
+  else verdict='<div class="cautel"><div style="font-size:1.05rem;font-weight:800">🤔 Podría ser '+esc(shortName(top[0].s))+' ('+TIPOS[top[0].s.t].toLowerCase()+')</div>Pero <b>no la comas todavía</b>: compárala con las fotos y con la seta con la que se confunde, llévala aparte en la cesta y que la revise un experto antes de cocinarla.</div>';
+  html+=verdict+'<h3>Se parece a…</h3>'+top.map((x,i)=>'<div class="fres"><div class="fcomp"><img src="'+fotoId.url+'" alt="Tu foto"><img data-photo="'+x.s.id+'" alt="Foto de referencia"></div>'+
+      '<div class="zone" data-goto="'+x.s.id+'" style="border:0"><div class="tx"><b>'+(i+1)+'. '+esc(shortName(x.s))+'</b><small><span class="pill t-'+x.s.t+'" style="margin:0">'+TIPOS[x.s.t]+'</span> · coincide '+Math.max(0,Math.round(100*x.sc/(3*Math.max(1,x.n))))+'% · toca para ver la ficha</small></div></div>'+
+      (paresDe(x.s.id).length?'<button class="pairbtn" data-cmp="'+paresDe(x.s.id)[0][0]+','+paresDe(x.s.id)[0][1]+'">⚖️ Ver con qué se confunde</button>':'')+'</div>').join("")+
+    '<h3>Que la reconozca alguien más</h3>'+
+    '<div class="row"><button class="b" id="fLens">🔎 Google Lens / iNaturalist</button><button class="b2" id="fWA">💬 Mandar a un experto</button></div>'+
+    '<p class="note">Se abre el menú de compartir del móvil: elige <b>Google Lens</b> (o “Buscar con Google”) o la app <b>iNaturalist</b> para que la reconozcan; o WhatsApp para mandarla a una asociación micológica o a alguien que sepa.</p>'+
+    '<div class="row" style="margin-top:8px"><button class="b2" id="fSave">📓 Guardar en el diario</button><button class="b2" id="fAgain">📷 Otra seta</button></div>'+
+    '<p class="note">Orientación basada en tus respuestas, no en un análisis automático de la foto.</p>';
+  box.innerHTML=html; fillMinis(box);
+}
+async function shareFoto(text){
+  const f=fotoId.file;
+  try{
+    if(f && navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f],text}); return; }
+  }catch(e){ if(e && e.name==="AbortError") return; }
+  // sin compartir archivos: abrir iNaturalist o WhatsApp con texto
+  window.open(text.indexOf("experto")>=0?"https://wa.me/?text="+encodeURIComponent(text):"https://www.inaturalist.org/observations/upload","_blank");
+}
+function fotoClick(e){
+  const t=e.target;
+  const fa=t.closest("[data-fa]"); if(fa){ fotoId.ans[fa.dataset.fa]=fa.dataset.v; fotoId.step++; renderFoto(); $("#modal").scrollTop=0; return true; }
+  if(t.id==="fBack"){ const qs=QS.filter(q=>!q.when||q.when(fotoId.ans)); fotoId.step=Math.max(0,fotoId.step-1); delete fotoId.ans[qs[fotoId.step].k]; renderFoto(); return true; }
+  if(t.id==="fRetake"||t.id==="fAgain"){ showFotoModal(); return true; }
+  if(t.id==="fLens"){ shareFoto("¿Qué seta es esta? (Campo de Gibraltar)"); return true; }
+  if(t.id==="fWA"){ const res=quizScore(fotoId.ans).slice(0,3).map(x=>shortName(x.s)).join(", "); shareFoto("Hola, ¿me ayudas a identificar esta seta? La he encontrado en el Campo de Gibraltar. Por lo que veo podría ser: "+res+". Pregunto a un experto antes de comerla."); return true; }
+  if(t.id==="fSave"){
+    const res=quizScore(fotoId.ans).slice(0,3);
+    compressImage(fotoId.file,d=>{ const L=store.get("diario",[]); const n=new Date(); const e2={fecha:n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0"),sitio:"Foto de identificación",ids:[],setas:"Posible: "+res.map(x=>shortName(x.s)).join(", "),notas:"Pendiente de revisar por un experto",gps:myPos,w:weatherSnapshot()};
+      if(d){ e2.fotoId="f"+Date.now(); big.set("foto:"+e2.fotoId,d); } L.push(e2); store.set("diario",L); renderDiario(); t.textContent="Guardada ✓"; });
+    return true;
+  }
+  return false;
+}
+
 /* ===================== DIBUJOS ===================== */
 function mushSVG(g){
   const {s,cap,stem,under,ring,volva,warts,spines,small} = g;
@@ -2320,10 +2395,13 @@ function init(){
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible" && Date.now()-lastLoad>2*3600*1000){ lastLoad=Date.now(); lastCompareKey=""; CURLOC?loadWeather(CURLOC):loadZ(); } });
   setInterval(renderLuz,60000);
   { const doy=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5); const tp=TIPS[doy%TIPS.length]; $("#tipDay").innerHTML='<div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:1.8rem">'+tp[0]+'</span><span>'+esc(tp[1])+'</span></div>'; }
+  $("#btnFotoSetas").addEventListener("click",showFotoModal);
   $("#btnShare").addEventListener("click",shareApp); $("#btnShare2").addEventListener("click",shareApp);
   $("#modalX").addEventListener("click",()=>{ closeModal(); });
   $("#modal").addEventListener("click",e=>{ if(e.target.id==="modal"){ closeModal(); return; } });
+  $("#modalBody").addEventListener("change",e=>{ if(e.target.id==="fotoIn"||e.target.id==="fotoIn2"){ const f=e.target.files&&e.target.files[0]; if(!f) return; fotoId.file=f; fotoId.url=URL.createObjectURL(f); fotoId.step=0; fotoId.ans={}; renderFoto(); } });
   $("#modalBody").addEventListener("click",e=>{
+    if($("#fotoBox") && fotoClick(e)) return;
     const f=e.target.closest("figure[data-ph]"); if(f){ $("#viewer").classList.remove("cmpmode"); openViewer(f.dataset.ph,+f.dataset.k); ovPush(); return; }
     const c=e.target.closest("[data-cmp]"); if(c){ const [a,b2]=c.dataset.cmp.split(","); const pr=PARES.find(p=>p[0]===a&&p[1]===b2); $("#viewer").classList.add("cmpmode"); openCompare(a,b2,pr[2]); ovPush(); return; }
     if(quizEl==="#quizM"){
@@ -2336,7 +2414,7 @@ function init(){
   window.addEventListener("popstate",()=>{ if(closeTopOverlay()) return; const v=(location.hash||"#hoy").slice(1); show(v); });
   document.querySelector(".quick").addEventListener("click",e=>{ const b=e.target.closest("[data-go]"); if(!b) return; const g=b.dataset.go;
     if(g==="mapa") show("mapa"); else if(g==="diario") show("diario"); else if(g==="salida") showSalida();
-    else if(g==="quiz") showQuizModal(); });
+    else if(g==="quiz") showQuizModal(); else if(g==="foto") showFotoModal(); });
   big.get("trails_v1",null).then(c=>{ if(c&&c.list&&!TRAILS.length){ TRAILS=c.list; renderPlan(); } });
 
   /* app instalable y trabajo en segundo plano */
