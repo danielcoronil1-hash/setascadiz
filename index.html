@@ -21,8 +21,16 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
 header{background:var(--moss);color:#f4efe4;padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:8px}
-header h1{margin:0;font-size:1.1rem}
+header h1{margin:0;font-size:1.05rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header>div:first-child{min-width:0}
 header p{margin:1px 0 0;font-size:.75rem;opacity:.8}
+#btnShare{font:inherit;font-size:.8rem;border:0;background:#f0b429;color:#2b2418;font-weight:800;border-radius:99px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+#modal{position:fixed;inset:0;z-index:2500;background:rgba(10,10,8,.55);overflow-y:auto;-webkit-overflow-scrolling:touch}
+#modal .mbox{position:relative;background:var(--bg);min-height:100%;margin-top:calc(env(safe-area-inset-top) + 36px);border-radius:20px 20px 0 0;padding:16px 14px calc(30px + env(safe-area-inset-bottom));max-width:760px;margin-left:auto;margin-right:auto}
+#modalX{position:sticky;top:6px;float:right;z-index:3;border:0;background:#2f3b26;color:#fff;border-radius:99px;width:38px;height:38px;font-size:1.05rem;cursor:pointer;box-shadow:0 2px 6px #0004}
+.mhead{margin:0 46px 8px 0}.mhead h2{margin:0;font-size:1.25rem}.mhead .sci{font-style:italic;color:var(--muted);font-size:.85rem;margin-bottom:4px}
+#modal .gal figure{flex-basis:86%}
+#modal .gal img{height:230px}
 #btnInstall{font:inherit;font-size:.8rem;border:1px solid #f4efe4;background:transparent;color:#f4efe4;border-radius:99px;padding:6px 12px;cursor:pointer;white-space:nowrap}
 main{max-width:760px;margin:0 auto;padding:14px 14px calc(90px + env(safe-area-inset-bottom))}
 nav{position:fixed;bottom:0;left:0;right:0;background:#fffdf8;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:6}
@@ -243,8 +251,8 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
 </head>
 <body>
 <header>
-  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v8</p></div>
-  <button id="btnInstall" class="hidden">Instalar app</button>
+  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v9</p></div>
+  <div style="display:flex;gap:6px"><button id="btnInstall" class="hidden">Instalar app</button><button id="btnShare" title="Compartir la app">📤 Compartir</button></div>
 </header>
 
 <main>
@@ -383,6 +391,7 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
 
 <!-- ======================= GUÍA ======================= -->
 <section id="v-guia" class="hidden">
+  <button class="b big" id="btnShare2" style="margin-bottom:12px">📤 Compartir la app con amigos</button>
   <div class="danger" style="margin-bottom:12px">
     <b>¿Malestar después de comer setas?</b> Llama al <b>112</b> o al Servicio de Información Toxicológica (24 h): <b>91 562 04 20</b>.
     Guarda los restos de las setas y apunta la hora de la comida y la de los síntomas. <b>Si empiezan más de 6 horas después, es lo más grave</b>: ve a urgencias aunque mejores.
@@ -482,6 +491,7 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
 
 </main>
 
+<div id="modal" class="hidden"><div class="mbox"><button id="modalX" aria-label="Cerrar">✕</button><div id="modalBody"></div></div></div>
 <div id="viewer" class="hidden"><button id="viewerX" aria-label="Cerrar">✕</button><button id="vPrev" aria-label="Anterior">‹</button><button id="vNext" aria-label="Siguiente">›</button><div id="viewerBody"></div></div>
 
 <nav id="nav">
@@ -1177,7 +1187,7 @@ function openSiteSheet(id){
     '<p class="note">Las líneas de colores del mapa son los senderos señalizados (OpenStreetMap). Toca una para ver su recorrido y desnivel. Algunos senderos del parque natural piden autorización previa a la Junta, y mucho terreno alrededor es privado: no salgas de las zonas públicas sin permiso.</p>');
   $("#sheet").dataset.cursite=id; fillMinis($("#sheetBody"));
 }
-function openSheet(mode,html){ sheetMode=mode; $("#sheet").dataset.cursite=""; $("#sheet").dataset.curtrail=""; $("#sheetBody").innerHTML=html; $("#sheet").classList.remove("hidden"); }
+function openSheet(mode,html){ if($("#sheet").classList.contains("hidden")) ovPush(); sheetMode=mode; $("#sheet").dataset.cursite=""; $("#sheet").dataset.curtrail=""; $("#sheetBody").innerHTML=html; $("#sheet").classList.remove("hidden"); }
 function closeSheet(){ sheetMode=null; $("#sheet").classList.add("hidden"); }
 
 /* GPS */
@@ -1633,7 +1643,7 @@ function showSalida(){
     '<div class="row"><a class="b" id="slWA" style="text-decoration:none" target="_blank" rel="noopener">💬 Enviar por WhatsApp</a><button class="b2" id="slShare">Compartir…</button><button class="b2" id="slCopy">Copiar</button></div>'+
     '<p class="note">Tú eliges a quién se lo mandas en WhatsApp: la app no envía nada sola.</p>';
   const host = $("#v-mapa").classList.contains("hidden") ? null : "sheet";
-  if(host){ openSheet("salida",html); } else { $("#viewer").classList.add("cmpmode"); $("#viewer").classList.remove("hidden"); $("#viewerBody").innerHTML='<div class="cmp" style="background:var(--card);color:var(--ink);border-radius:16px;padding:14px">'+html+'</div>'; }
+  if(host){ openSheet("salida",html); } else { openModal(html); }
   const upd=()=>{
     const tr=$("#slTrail");
     const o={site:$("#slSite").value, trail:tr?tr.value:"", hora:$("#slHora").value||def};
@@ -1686,7 +1696,7 @@ const QS=[
   {k:"c",q:"¿De qué color es el sombrero?",o:[["rojo","Rojo"],["naranja","Naranja"],["amarillo","Amarillo"],["marron","Marrón"],["blanco","Blanco o crema"],["verde","Verde u oliva"],["gris","Gris"],["negro","Negro"],["violeta","Violeta"]]},
   {k:"g",q:"¿Qué tamaño tiene el sombrero?",when:a=>a.b==="laminas",o:[["pequena","Menos de 10 cm"],["grande","Más de 10 cm"]]}
 ];
-let quiz={step:0,ans:{}};
+let quiz={step:0,ans:{}}, quizEl="#quiz";
 function quizScore(ans){
   return SETAS.map(s=>{ const A=ATTR[s.id]; if(!A) return null; let sc=0,n=0;
     for(const k in ans){ const v=ans[k]; if(v==="nose") continue; n++;
@@ -1697,7 +1707,7 @@ function quizScore(ans){
   }).filter(Boolean).sort((a,b)=>b.sc-a.sc);
 }
 function renderQuiz(){
-  const box=$("#quiz"); if(!box) return;
+  const box=$(quizEl); if(!box) return;
   const qs=QS.filter(q=>!q.when||q.when(quiz.ans));
   if(quiz.step<qs.length){
     const q=qs[quiz.step];
@@ -1776,6 +1786,58 @@ function openPathSheet(id){
     '<a class="b2" style="text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+p.pts[0][0]+','+p.pts[0][1]+'" target="_blank" rel="noopener">🚗 Ir hasta aquí</a></div>'+
     '<p class="note">Trazado de OpenStreetMap. Que haya un camino no significa que se pueda entrar: respeta vallas y carteles de finca privada.</p>');
   $("#sheet").dataset.curpath=id;
+}
+
+/* ===================== FICHA EMERGENTE (se abre encima, sin cambiar de pantalla) ===================== */
+function openModal(html){
+  $("#modalBody").innerHTML=html; $("#modal").classList.remove("hidden"); $("#modal").scrollTop=0; ovPush();
+}
+function closeModal(){ $("#modal").classList.add("hidden"); if(quizEl==="#quizM"){ quizEl="#quiz"; quiz={step:0,ans:{}}; renderQuiz(); } }
+function speciesModalHTML(id){
+  const s=SETAS.find(x=>x.id===id); if(!s) return "";
+  const x=EXTRA[s.id];
+  const ch = DATA ? M.speciesChance(s.id,s.m,DATA,M.todayIndex(DATA)) : null;
+  return '<div class="mhead'+(s.t==="mortal"?' mortal':'')+'"><h2>'+esc(s.n)+'</h2><div class="sci">'+esc(s.sci)+'</div>'+
+    '<span class="pill t-'+s.t+'">'+(s.t==="mortal"?"☠️ ":s.t==="tox"?"⚠️ ":"")+TIPOS[s.t]+'</span>'+(x?'<span class="pill n-'+x.nv+'">'+NIVEL[x.nv]+'</span>':'')+
+    (ch!=null?'<span class="pill" style="background:'+scoreColor(ch)+';color:#fff">Hoy '+ch+'%</span>':'')+'</div>'+
+    '<div id="g-m-'+s.id+'"><div class="muted">📷 Cargando fotos…</div></div>'+
+    (paresDe(s.id).length?'<div style="margin:4px 0 8px">'+paresDe(s.id).map(p=>{ const o=SETAS.find(z=>z.id===(p[0]===s.id?p[1]:p[0])); return '<button class="pairbtn" data-cmp="'+p[0]+','+p[1]+'">⚖️ <span>Compárala con <b>'+esc(shortName(o))+'</b> '+(o.t==="mortal"?"☠️":o.t==="tox"?"⚠️":"✅")+'</span></button>'; }).join("")+'</div>':'')+
+    monthsBar(s.m)+
+    '<p class="muted" style="margin:6px 0">⏱️ '+esc(lagText(s.id))+'</p>'+
+    '<p><b>Dónde:</b> '+esc(s.hab)+'</p>'+
+    '<h3>Cómo reconocerla</h3><ul>'+s.claves.map(c=>'<li>'+esc(c)+'</li>').join("")+'</ul>'+
+    (x&&x.min?'<div class="ok" style="margin-bottom:8px"><b>Para cogerla con seguridad:</b> '+esc(x.min)+'</div>':'')+
+    '<div class="'+(s.t==="mortal"?"danger":"warn")+'"><b>'+(s.t==="mortal"||s.t==="tox"?"Se confunde con":"Cuidado, se confunde con")+':</b> '+esc(s.conf)+'</div>'+
+    '<p><b>Consejo:</b> '+esc(s.tip)+'</p>'+(x?'<p><b>En la cocina:</b> '+esc(x.coc)+'</p>':'');
+}
+async function showSpeciesModal(id){
+  openModal(speciesModalHTML(id));
+  const l=await speciesPhotos(id); const box=document.getElementById("g-m-"+id); if(box) box.innerHTML=galleryHTML(id,l);
+}
+function showQuizModal(){
+  quiz={step:0,ans:{}}; quizEl="#quizM";
+  openModal('<h2>🔎 ¿Qué seta es?</h2><p class="muted" style="margin:0 0 6px">Contesta mirando la seta. Te digo a cuáles se parece y si alguna es peligrosa.</p><div id="quizM"></div>');
+  renderQuiz();
+}
+function shareApp(){
+  const url="https://setascadiz.vercel.app";
+  const txt="🍄 App para coger setas en el Campo de Gibraltar: te dice si merece la pena salir, a qué sitio ir, qué setas buscar (con fotos), los senderos y caminos, y te ayuda a volver al coche.\n👉 "+url+"\nPara instalarla: Android, en Chrome ⋮ → \"Añadir a pantalla de inicio\". iPhone, en Safari → Compartir → \"Añadir a pantalla de inicio\".\n⚠️ No comáis ninguna seta sin que la revise alguien que sepa.";
+  openModal('<h2>📤 Compartir la app</h2><p class="muted">Mándasela a quien quieras. Cuando yo la actualice, les llegará a todos. Su diario y sus sitios son solo suyos.</p>'+
+    '<div class="ruta" style="white-space:pre-wrap;font-size:.85rem">'+esc(txt)+'</div>'+
+    '<div class="row"><a class="b" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(txt)+'">💬 Enviar por WhatsApp</a>'+
+    '<button class="b2" id="shOther">Otras apps…</button><button class="b2" id="shCopy">Copiar enlace</button></div>'+
+    '<p class="note">Dirección de la app: <b>'+url+'</b></p>');
+  $("#shOther").addEventListener("click",async()=>{ try{ await navigator.share({title:"Setas Campo de Gibraltar",text:txt,url}); }catch(e){} });
+  $("#shCopy").addEventListener("click",async e=>{ try{ await navigator.clipboard.writeText(url); e.target.textContent="Copiado ✓"; }catch(err){ e.target.textContent=url; } });
+}
+/* botón Atrás del móvil: cierra lo que esté abierto en lugar de salir */
+let ovDepth=0;
+function ovPush(){ try{ history.pushState({ov:++ovDepth},"",location.hash||"#hoy"); }catch(e){} }
+function closeTopOverlay(){
+  if(!$("#viewer").classList.contains("hidden")){ $("#viewer").classList.add("hidden"); $("#viewer").classList.remove("cmpmode"); return true; }
+  if(!$("#modal").classList.contains("hidden")){ closeModal(); return true; }
+  if(!$("#sheet").classList.contains("hidden")){ closeSheet(); return true; }
+  return false;
 }
 
 /* ===================== DIBUJOS ===================== */
@@ -1980,7 +2042,8 @@ function buildFilters(){
   $("#fTipo").innerHTML = tipos.map(([k,l])=>'<button data-k="'+k+'" class="'+(k===fTipo?'on':'')+'">'+l+'</button>').join("");
   $("#fMes").innerHTML = '<button data-m="0" class="'+(fMes===0?'on':'')+'">Todo el año</button>'+MES.map((x,i)=>'<button data-m="'+(i+1)+'" class="'+(fMes===i+1?'on':'')+'">'+x+'</button>').join("");
 }
-function openSpecies(id){
+function openSpecies(id){ showSpeciesModal(id); }
+function openSpeciesInList(id){
   fTipo="todas"; fMes=0; $("#buscar").value=""; buildFilters(); renderSetas(); show("setas");
   const d=$("#d-"+id); if(d){ d.classList.remove("hidden"); fillGallery(id); const c=$("#c-"+id); if(c) setTimeout(()=>c.scrollIntoView({behavior:"smooth",block:"start"}),50); }
 }
@@ -2112,12 +2175,12 @@ function init(){
   $("#umbral").addEventListener("change",()=>{ store.set("umbral",+$("#umbral").value); syncConf(); });
   $("#btnNotif").addEventListener("click",toggleNotif);
 
-  document.querySelectorAll("#nav button").forEach(b=>b.addEventListener("click",()=>{ show(b.dataset.v); try{ history.replaceState(null,"","#"+b.dataset.v); }catch(e){} }));
+  document.querySelectorAll("#nav button").forEach(b=>b.addEventListener("click",()=>{ if(("#"+b.dataset.v)===(location.hash||"#hoy")){ show(b.dataset.v); return; } show(b.dataset.v); try{ history.pushState(null,"","#"+b.dataset.v); }catch(e){} }));
   $("#fTipo").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; fTipo=b.dataset.k; buildFilters(); renderSetas(); });
   $("#fMes").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; fMes=+b.dataset.m; buildFilters(); renderSetas(); });
   $("#buscar").addEventListener("input",renderSetas);
   $("#listaSetas").addEventListener("click",e=>{
-    const f=e.target.closest("figure[data-ph]"); if(f){ $("#viewer").classList.remove("cmpmode"); openViewer(f.dataset.ph,+f.dataset.k); return; }
+    const f=e.target.closest("figure[data-ph]"); if(f){ $("#viewer").classList.remove("cmpmode"); openViewer(f.dataset.ph,+f.dataset.k); ovPush(); return; }
     const bn=e.target.closest(".banner"); if(bn){ const id=bn.dataset.id; speciesPhotos(id).then(l=>{ if(l.length){ $("#viewer").classList.remove("cmpmode"); openViewer(id,0); } else { const d=$("#d-"+id); d.classList.remove("hidden"); fillGallery(id); } }); return; }
     const c=e.target.closest("[data-cmp]"); if(c){ const [a,b]=c.dataset.cmp.split(","); const pr=PARES.find(p=>p[0]===a&&p[1]===b); $("#viewer").classList.add("cmpmode"); openCompare(a,b,pr[2]); return; }
     const sp=e.target.closest(".sp"); if(!sp) return; const d=$("#d-"+sp.dataset.id); d.classList.toggle("hidden"); if(!d.classList.contains("hidden")) fillGallery(sp.dataset.id); });
@@ -2257,9 +2320,23 @@ function init(){
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible" && Date.now()-lastLoad>2*3600*1000){ lastLoad=Date.now(); lastCompareKey=""; CURLOC?loadWeather(CURLOC):loadZ(); } });
   setInterval(renderLuz,60000);
   { const doy=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5); const tp=TIPS[doy%TIPS.length]; $("#tipDay").innerHTML='<div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:1.8rem">'+tp[0]+'</span><span>'+esc(tp[1])+'</span></div>'; }
+  $("#btnShare").addEventListener("click",shareApp); $("#btnShare2").addEventListener("click",shareApp);
+  $("#modalX").addEventListener("click",()=>{ closeModal(); });
+  $("#modal").addEventListener("click",e=>{ if(e.target.id==="modal"){ closeModal(); return; } });
+  $("#modalBody").addEventListener("click",e=>{
+    const f=e.target.closest("figure[data-ph]"); if(f){ $("#viewer").classList.remove("cmpmode"); openViewer(f.dataset.ph,+f.dataset.k); ovPush(); return; }
+    const c=e.target.closest("[data-cmp]"); if(c){ const [a,b2]=c.dataset.cmp.split(","); const pr=PARES.find(p=>p[0]===a&&p[1]===b2); $("#viewer").classList.add("cmpmode"); openCompare(a,b2,pr[2]); ovPush(); return; }
+    if(quizEl==="#quizM"){
+      const b=e.target.closest("[data-qa]"); if(b){ quiz.ans[b.dataset.qa]=b.dataset.v; quiz.step++; renderQuiz(); $("#modal").scrollTop=0; return; }
+      if(e.target.id==="qBack"){ const qs=QS.filter(q=>!q.when||q.when(quiz.ans)); quiz.step=Math.max(0,quiz.step-1); delete quiz.ans[qs[quiz.step].k]; renderQuiz(); return; }
+      if(e.target.id==="qAgain"){ quiz={step:0,ans:{}}; renderQuiz(); return; }
+    }
+    const g=e.target.closest("[data-goto]"); if(g){ if(quizEl==="#quizM"){ quizEl="#quiz"; quiz={step:0,ans:{}}; renderQuiz(); } showSpeciesModal(g.dataset.goto); return; }
+  });
+  window.addEventListener("popstate",()=>{ if(closeTopOverlay()) return; const v=(location.hash||"#hoy").slice(1); show(v); });
   document.querySelector(".quick").addEventListener("click",e=>{ const b=e.target.closest("[data-go]"); if(!b) return; const g=b.dataset.go;
     if(g==="mapa") show("mapa"); else if(g==="diario") show("diario"); else if(g==="salida") showSalida();
-    else if(g==="quiz"){ show("setas"); setTimeout(()=>{ const q=$("#quiz"); if(q) q.scrollIntoView({behavior:"smooth",block:"center"}); },80); } });
+    else if(g==="quiz") showQuizModal(); });
   big.get("trails_v1",null).then(c=>{ if(c&&c.list&&!TRAILS.length){ TRAILS=c.list; renderPlan(); } });
 
   /* app instalable y trabajo en segundo plano */
