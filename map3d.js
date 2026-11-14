@@ -10,15 +10,15 @@
     const style = {
       version: 8,
       sources: {
-        dem: { type: "raster-dem", tiles: [DEM], tileSize: 256, maxzoom: 14, encoding: "terrarium", attribution: "Relieve: Mapzen/AWS Terrain Tiles" },
-        hs: { type: "raster-dem", tiles: [DEM], tileSize: 256, maxzoom: 14, encoding: "terrarium" }
+        dem: { type: "raster-dem", tiles: [DEM], tileSize: 256, maxzoom: 12, encoding: "terrarium", attribution: "Relieve: Mapzen/AWS Terrain Tiles" }
       },
       layers: [{ id: "bg", type: "background", paint: { "background-color": "#e8e2d4" } }]
     };
     this.map = new maplibregl.Map({
       container: el, style, center: [opt.center[1], opt.center[0]], zoom: opt.zoom || 10,
       minZoom: opt.minZoom || 7, maxZoom: opt.maxZoom || 18, maxPitch: 75,
-      attributionControl: false, dragRotate: true, touchPitch: true, pitchWithRotate: true
+      attributionControl: false, dragRotate: true, touchPitch: true, pitchWithRotate: true,
+      pixelRatio: Math.min(window.devicePixelRatio || 1, 1.75), fadeDuration: 0, antialias: false, maxTileCacheSize: 120, refreshExpiredTiles: false
     });
     const m = this.map;
     m.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
@@ -26,6 +26,7 @@
     m.addControl(new maplibregl.ScaleControl({ unit: "metric", maxWidth: 90 }), "bottom-left");
     m.on("load", () => { self.loaded = true; const q = self.q; self.q = []; q.forEach(f => { try { f(); } catch (e) { console.warn(e); } }); });
     m.on("dragstart", () => self._emit("dragstart"));
+    m.on("moveend", () => self._emit("moveend"));
     m.on("rotatestart", () => self._emit("dragstart"));
     m.on("data", e => { if (e.dataType === "source" && e.tile) { self.tileOK++; const k = e.sourceId; (self.src[k] = self.src[k] || { ok: 0, err: 0 }).ok++; } });
     m.on("error", e => { self.tileErr++; const k = e && e.sourceId; if (k) (self.src[k] = self.src[k] || { ok: 0, err: 0 }).err++; });
@@ -44,6 +45,21 @@
     pts.forEach(p => { a = Math.min(a, p[1]); b = Math.min(b, p[0]); c = Math.max(c, p[1]); d = Math.max(d, p[0]); });
     this.map.fitBounds([[a, b], [c, d]], { padding: pad || 40, maxZoom: 16, duration: 800 });
   };
+  P.getBounds = function () { const b = this.map.getBounds(); return [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]; };
+  P.setPaths = function (fc, onClick) {
+    const self = this;
+    this._do(() => {
+      const m = self.map;
+      if (m.getSource("paths")) { m.getSource("paths").setData(fc); return; }
+      m.addSource("paths", { type: "geojson", data: fc, tolerance: 0.6 });
+      const before = m.getLayer("trails-case") ? "trails-case" : undefined;
+      const w = (a, b) => ["interpolate", ["linear"], ["zoom"], 12, a, 16, b];
+      m.addLayer({ id: "paths-case", type: "line", source: "paths", minzoom: 12, layout: { "line-cap": "round" }, paint: { "line-color": "#fff", "line-width": w(1.5, 5), "line-opacity": 0.55 } }, before);
+      m.addLayer({ id: "paths-line", type: "line", source: "paths", minzoom: 12, layout: { "line-cap": "butt" }, paint: { "line-color": ["match", ["get", "k"], "track", "#a0522d", "#e8590c"], "line-width": w(0.8, 2.6), "line-dasharray": ["match", ["get", "k"], "track", ["literal", [3, 1.5]], ["literal", [1.5, 1.2]]] } }, before);
+      m.addLayer({ id: "paths-hit", type: "line", source: "paths", minzoom: 12, paint: { "line-color": "#000", "line-opacity": 0, "line-width": 16 } }, before);
+      m.on("click", "paths-hit", e => { if (e.features && e.features[0] && !(m.queryRenderedFeatures(e.point, { layers: ["trails-hit"] }) || []).length) onClick(e.features[0].properties.id); });
+    });
+  };
   P.zoomIn = function () { this.map.zoomIn(); };
   P.zoomOut = function () { this.map.zoomOut(); };
 
@@ -61,13 +77,13 @@
   P.layerStats = function (L) { return this.src[L.id] || { ok: 0, err: 0 }; };
   P.setLayerVisible = function (L, v) { L.visible = v; this._do(() => { if (this.map.getLayer(L.id)) this.map.setLayoutProperty(L.id, "visibility", v ? "visible" : "none"); }); };
   P.addHillshade = function () {
-    this._do(() => this.map.addLayer({ id: "hill", type: "hillshade", source: "hs", paint: { "hillshade-exaggeration": 0.45, "hillshade-shadow-color": "#2a2416", "hillshade-highlight-color": "#fffaf0" } }));
+    this._do(() => this.map.addLayer({ id: "hill", type: "hillshade", source: "dem", paint: { "hillshade-exaggeration": 0.4, "hillshade-shadow-color": "#2a2416", "hillshade-highlight-color": "#fffaf0" } }));
   };
   P.setHillshade = function (v) { this._do(() => { if (this.map.getLayer("hill")) this.map.setLayoutProperty("hill", "visibility", v ? "visible" : "none"); }); };
   P.set3D = function (on) {
     this.is3D = on;
     this._do(() => {
-      if (on) { this.map.setTerrain({ source: "dem", exaggeration: 1.6 }); this.map.easeTo({ pitch: 62, duration: 900 }); }
+      if (on) { this.map.setTerrain({ source: "dem", exaggeration: 1.3 }); this.map.easeTo({ pitch: 55, duration: 700 }); }
       else { this.map.setTerrain(null); this.map.easeTo({ pitch: 0, bearing: 0, duration: 700 }); }
     });
   };

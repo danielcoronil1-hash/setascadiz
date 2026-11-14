@@ -162,6 +162,47 @@ body.mapmode main{max-width:none;padding:0}
 .gl-mk{cursor:pointer}
 .ruta{background:#f3ecdf;border-radius:12px;padding:8px 10px;font-size:.88rem;margin:8px 0}
 .ruta b{display:inline-block;min-width:92px}
+.hero{position:relative;border-radius:20px;overflow:hidden;margin:0 0 12px;color:#fff;background:linear-gradient(135deg,#2f3b26,#5b4a2c);box-shadow:0 4px 14px #0003}
+.heroBg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .6s}
+.heroBg.ok{opacity:1}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,24,14,.55) 0%,rgba(20,24,14,.35) 35%,rgba(20,24,14,.88) 100%)}
+.heroIn{position:relative;z-index:1;padding:12px 14px 14px}
+.heroTop{display:flex;gap:6px}
+.heroTop select{flex:1;min-width:0;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);font-weight:700}
+.heroTop select option{color:#222}
+.heroTop button{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.18);color:#fff;border-radius:10px;padding:0 12px;font:inherit;cursor:pointer}
+.heroMain{display:flex;align-items:center;gap:12px;margin:14px 0 8px}
+.heroMain .ring{width:96px;height:96px;flex:none;filter:drop-shadow(0 2px 6px #0006)}
+.heroKick{font-size:.72rem;font-weight:800;letter-spacing:.6px;opacity:.85}
+.hero .verdict{font-size:1.45rem;text-shadow:0 2px 6px #0007;color:#fff!important}
+.hero #verdictTxt{font-size:.85rem;opacity:.92}
+.hero #planTxt{font-size:1rem;line-height:1.45;text-shadow:0 1px 4px #0008}
+.hero #planTxt .muted{color:#e9e3d2}
+.hero #planTxt b{color:#fff}
+.hero #planTxt b[style]{color:#ffd166!important}
+.hero .pcard span{color:#fff}
+.hero .b{background:#f0b429;color:#2b2418;font-weight:800}
+.hero .b2{background:rgba(255,255,255,.92)}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}
+.quick button{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:10px 4px;font:inherit;font-size:.74rem;line-height:1.15;color:var(--ink);cursor:pointer;box-shadow:0 1px 3px #0001}
+.quick button span{display:block;font-size:1.6rem;margin-bottom:4px}
+.wdays{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.wd{flex:0 0 74px;background:#f6f0e3;border-radius:14px;padding:8px 4px;text-align:center;font-size:.74rem;border:2px solid transparent}
+.wd.best{border-color:var(--moss);background:#e7efdc}
+.wd .dn{font-weight:800;font-size:.8rem}
+.wd .em{font-size:1.6rem;line-height:1.3}
+.wd .tp{font-weight:700}
+.wd .tp span{color:var(--muted);font-weight:400}
+.wd .sc2{display:inline-block;margin-top:4px;min-width:34px;border-radius:99px;color:#fff;font-weight:800;padding:2px 6px}
+.wd small{display:block;color:var(--muted);min-height:1.1em}
+.spcar{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.spcar .sc3{flex:0 0 132px;cursor:pointer}
+.spcar img{width:132px;height:110px;object-fit:cover;border-radius:14px;background:#efe6d4;display:block}
+.spcar b{display:block;font-size:.85rem;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spcar .pb{height:6px;background:#efe6d4;border-radius:99px;overflow:hidden;margin-top:3px}
+.spcar .pb i{display:block;height:100%}
+.spcar small{color:var(--muted);font-size:.72rem}
+.tipcard{background:linear-gradient(135deg,#fff8e6,#fffdf8)}
 .spc{padding-top:14px}
 .spc.mortal{border:2px solid var(--deadly)}
 .banner{position:relative;height:180px;margin:-14px -14px 10px;border-radius:13px 13px 0 0;overflow:hidden;background:#efe6d4;display:flex;align-items:center;justify-content:center;cursor:zoom-in}
@@ -202,7 +243,7 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
 </head>
 <body>
 <header>
-  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v7</p></div>
+  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v8</p></div>
   <button id="btnInstall" class="hidden">Instalar app</button>
 </header>
 
@@ -210,43 +251,53 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
 
 <!-- ======================= HOY ======================= -->
 <section id="v-hoy">
-  <div class="card">
-    <div class="row" style="flex-wrap:nowrap">
-      <select id="zona" aria-label="Zona" style="flex:1;min-width:0"></select>
-      <button class="b2" id="btnGeo" title="Usar mi ubicación">📍</button>
-      <button class="b2" id="btnReload" title="Actualizar">↻</button>
+  <div class="hero" id="hero">
+    <div class="heroBg" id="heroBg"></div>
+    <div class="heroIn">
+      <div class="heroTop">
+        <select id="zona" aria-label="Zona"></select>
+        <button id="btnGeo" title="Usar mi ubicación">📍</button>
+        <button id="btnReload" title="Actualizar">↻</button>
+      </div>
+      <div class="heroMain">
+        <svg class="ring" viewBox="0 0 120 120" id="ring"></svg>
+        <div><div class="heroKick">🧺 TU PLAN DE HOY</div><p class="verdict" id="verdict">—</p><div id="verdictTxt"></div></div>
+      </div>
+      <div id="planTxt">Calculando…</div>
+      <div class="row" id="planBtns"></div>
     </div>
-    <div id="estado" class="note">Cargando el tiempo…</div>
   </div>
+  <div id="estado" class="note" style="margin:-4px 4px 10px">Cargando el tiempo…</div>
 
-  <div class="card" id="plan" style="border:2px solid var(--moss)">
-    <div class="muted" style="font-weight:700;letter-spacing:.3px">🧺 TU PLAN DE HOY</div>
-    <div id="planTxt" style="font-size:1.05rem;margin:6px 0 10px">Calculando…</div>
-    <div class="row" id="planBtns"></div>
-  </div>
-
-  <div class="card">
-    <div class="gauge">
-      <svg class="ring" viewBox="0 0 120 120" id="ring"></svg>
-      <div><p class="verdict" id="verdict">—</p><div id="verdictTxt" class="muted"></div></div>
-    </div>
-    <h3>Próximos días: ¿cuándo salir?</h3>
-    <div class="days" id="days"></div>
-    <div class="legend">💧 lluvia (mm) · 💨 levante fuerte · 🎯 fin de semana en temporada de caza (ojo con monterías) · recuadro = mejor día</div>
+  <div class="quick">
+    <button data-go="mapa"><span>🗺️</span>Mapa y<br>senderos</button>
+    <button data-go="quiz"><span>🔎</span>¿Qué seta<br>es?</button>
+    <button data-go="salida"><span>📲</span>Aviso<br>que salgo</button>
+    <button data-go="diario"><span>📓</span>Mi<br>diario</button>
   </div>
 
   <div class="card">
-    <h2>¿Qué estará saliendo?</h2>
+    <h2>🌦️ Próximos días: ¿cuándo salir?</h2>
+    <div class="wdays" id="days"></div>
+    <div class="legend">💧 lluvia · 💨 levante fuerte · 🎯 fin de semana de caza (ojo con monterías) · recuadro = mejor día</div>
+  </div>
+
+  <div class="card">
+    <h2>🍄 Qué está saliendo ahora</h2>
     <div id="spChances" class="muted">Esperando datos del tiempo…</div>
     <div id="spAlert"></div>
   </div>
 
   <div class="card">
-    <h2>📍 ¿Dónde ir? Mejores sitios</h2>
+    <h2>📍 Mejores sitios hoy</h2>
     <p class="muted" style="margin:0 0 8px">¿Qué quieres coger?</p>
     <div class="chips" id="fObjetivo"></div>
     <div id="zonas" class="muted">Calculando…</div>
-    <div class="note">Los 3 mejores para hoy según el tiempo de cada sitio y las setas que suelen salir allí. Toca uno para ver qué buscar y cómo llegar.</div>
+  </div>
+
+  <div class="card tipcard">
+    <h2>💡 Consejo del día</h2>
+    <div id="tipDay"></div>
   </div>
 
   <div class="card form hidden" id="cardManual">
@@ -289,6 +340,7 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
     </div>
     <div id="mapBtns">
       <button id="mbYo" title="Mi posición">🎯<small>Yo</small></button>
+      <button id="mb3d" class="hidden" title="Relieve 3D">⛰️<small>3D</small></button>
       <button id="mbCapa" title="Capas y zonas buenas">🍄<small>Zonas</small></button>
       <button id="mbSend" title="Senderos">🥾<small>Senderos</small></button>
       <button id="mbCoche" title="Coche">🚗<small>Coche</small></button>
@@ -674,6 +726,22 @@ const SITIOS = [
   tip:"Empieza preguntando en el centro de visitantes por las zonas y normas. Con levante fuerte, aquí aguanta más la humedad."}
 ];
 
+const TIPS = [
+  ["🧺","Usa cesta de mimbre: las setas respiran y van soltando esporas por el monte mientras andas."],
+  ["🔍","Saca la primera seta de cada tipo entera, con la base del pie: ahí está la volva que delata a las amanitas mortales."],
+  ["💧","Tras el levante, busca en umbrías y junto a los arroyos: es donde el suelo aguanta la humedad."],
+  ["🌳","El tentullo y la tana van con alcornoque y quejigo; el níscalo, siempre con pino."],
+  ["⏰","Sal a primera hora: setas más frescas y antes que los demás. Y vuelve antes de que se ponga el sol."],
+  ["🎯","De octubre a febrero, los fines de semana hay monterías: si ves carteles de cacería, no entres."],
+  ["📸","Haz foto de cada seta dudosa (sombrero, láminas y base) y enséñala a un experto antes de comer nada."],
+  ["🍄","Deja las setas pequeñas para que crezcan y las viejas para que suelten esporas."],
+  ["❄️","Con frío, las solanas abrigadas son las que más dan; con calor, las umbrías."],
+  ["☠️","Nunca cojas un “parasol” de menos de 10 cm: las lepiotas pequeñas son mortales."],
+  ["🚗","Guarda el coche en el mapa al aparcar: la flecha te lleva de vuelta aunque no tengas cobertura."],
+  ["📲","Antes de entrar al monte, manda el “Aviso que salgo” a alguien de confianza."],
+  ["🧊","En casa, setas en la nevera en papel, nunca en plástico, y a cocinarlas en 1–2 días."],
+  ["🔁","Muchas setas salen en el mismo sitio cada año: guárdalo con ⭐ en el mapa."]
+];
 const MOCHILA = ["Cesta de mimbre o rejilla","Navaja y cepillo","Papel o caja aparte para setas dudosas","Móvil cargado + batería externa","Guardar el coche en el modo Campo al aparcar","Agua y algo de comer","Botas impermeables y ropa de abrigo","Prenda de color vivo (temporada de caza)","Silbato","Decir a alguien a dónde vas y cuándo vuelves"];
 
 const ZONAS_INFO = [
@@ -714,6 +782,11 @@ try{ navigator.storage && navigator.storage.persist && navigator.storage.persist
 function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 const D2 = iso => new Date(iso+"T12:00:00");
 function fmtDate(iso){ return D2(iso).toLocaleDateString("es-ES",{weekday:"short",day:"numeric"}); }
+function wEmoji(c,rain){
+  if(c==null) return rain>=5?"🌧️":rain>=1?"🌦️":"🌤️";
+  if(c===0) return "☀️"; if(c<=2) return "🌤️"; if(c===3) return "☁️"; if(c===45||c===48) return "🌫️";
+  if(c>=51&&c<=57) return "🌦️"; if(c>=61&&c<=67) return "🌧️"; if(c>=71&&c<=77) return "🌨️"; if(c>=80&&c<=82) return "🌦️"; if(c>=95) return "⛈️"; return "🌤️";
+}
 function fmtDay2(iso,hoy){ const d=D2(iso); return (hoy?"Hoy":d.toLocaleDateString("es-ES",{weekday:"short"}).replace(".",""))+"<br>"+d.getDate(); }
 function scoreColor(s){ return s>=70?"#3f7d3a":s>=45?"#7e9a2f":s>=25?"#c98a1b":"#b33a2b"; }
 function verdictOf(s){
@@ -767,10 +840,10 @@ async function loadWeather(loc){
 function renderGauge(s){
   const r=50, c=2*Math.PI*r, v = s==null?0:s, col = s==null?"#ccc":scoreColor(v);
   $("#ring").innerHTML =
-   '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="#efe6d4" stroke-width="12"/>'+
+   '<circle cx="60" cy="60" r="'+r+'" fill="rgba(0,0,0,.25)" stroke="rgba(255,255,255,.25)" stroke-width="12"/>'+
    '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+(c*v/100)+' '+c+'" transform="rotate(-90 60 60)"/>'+
-   '<text x="60" y="66" text-anchor="middle" font-size="30" font-weight="800" fill="#2b2418">'+(s==null?"–":v)+'</text>'+
-   '<text x="60" y="84" text-anchor="middle" font-size="10" fill="#6f6553">de 100</text>';
+   '<text x="60" y="66" text-anchor="middle" font-size="30" font-weight="800" fill="#fff">'+(s==null?"–":v)+'</text>'+
+   '<text x="60" y="84" text-anchor="middle" font-size="10" fill="#e9e3d2">de 100</text>';
 }
 
 function renderWeather(){
@@ -782,9 +855,10 @@ function renderWeather(){
   const {best,bestI,list} = M.bestAhead(DATA,i0,8);
   $("#days").innerHTML = list.map(([i,s])=>{
     const rain=DATA.p[i]||0, lev=M.isLevante(DATA.wdir[i],DATA.wspd[i]);
-    return '<div class="day'+(i===bestI?' best':'')+'" title="'+DATA.time[i]+'"><b>'+fmtDay2(DATA.time[i],i===i0)+'</b>'+
-      '<div class="bar"><i style="height:'+Math.max(4,s)+'%;background:'+scoreColor(s)+'"></i></div>'+
-      '<b style="margin:2px 0 0">'+s+'</b><small>'+(rain>=1?"💧"+Math.round(rain):"")+(lev?"💨":"")+(huntingDay(DATA.time[i])?"🎯":"")+'</small></div>';
+    return '<div class="wd'+(i===bestI?' best':'')+'"><div class="dn">'+fmtDay2(DATA.time[i],i===i0).replace("<br>"," ")+'</div><div class="em">'+wEmoji(DATA.wcode&&DATA.wcode[i],rain)+'</div>'+
+      '<div class="tp">'+Math.round(DATA.tmax[i])+'° <span>'+Math.round(DATA.tmin[i])+'°</span></div>'+
+      '<small>'+(rain>=1?"💧"+Math.round(rain)+" mm":"")+(lev?" 💨":"")+(huntingDay(DATA.time[i])?" 🎯":"")+'</small>'+
+      '<span class="sc2" style="background:'+scoreColor(s)+'">'+s+'</span></div>';
   }).join("");
   let txt = vt;
   if(bestI!==i0 && best>=CUR.score+8) txt += " Mejor día previsto: <b>"+fmtDate(DATA.time[bestI])+"</b> ("+best+").";
@@ -801,10 +875,10 @@ function renderWeather(){
 
 function renderChances(i0){
   const arr = SETAS.map(s=>({s, c:M.speciesChance(s.id,s.m,DATA,i0)}));
-  const ed = arr.filter(x=>x.s.t==="exc"||x.s.t==="buena").sort((a,b)=>b.c-a.c).filter(x=>x.c>=8).slice(0,7);
-  $("#spChances").innerHTML = ed.length ? ed.map(x=>
-    '<div class="hbar" data-goto="'+x.s.id+'"><img class="mini" data-photo="'+x.s.id+'" alt=""><span class="nm">'+esc(shortName(x.s))+'</span><span class="tr"><i style="width:'+x.c+'%;background:'+scoreColor(x.c)+'"></i></span><span class="v">'+x.c+'</span></div>'
-  ).join("")+'<div class="note">Probabilidad orientativa según los días que tarda cada una en salir tras la lluvia, la temperatura que le gusta y su temporada. Toca una para ver su ficha.</div>'
+  const ed = arr.filter(x=>x.s.t==="exc"||x.s.t==="buena").sort((a,b)=>b.c-a.c).filter(x=>x.c>=8).slice(0,10);
+  $("#spChances").innerHTML = ed.length ? '<div class="spcar">'+ed.map(x=>
+    '<div class="sc3" data-goto="'+x.s.id+'"><img data-photo="'+x.s.id+'" alt="Foto de '+esc(shortName(x.s))+'"><b>'+esc(shortName(x.s))+'</b><div class="pb"><i style="width:'+x.c+'%;background:'+scoreColor(x.c)+'"></i></div><small>'+x.c+'% · '+(EXTRA[x.s.id]?NIVEL[EXTRA[x.s.id].nv]:"")+'</small></div>'
+  ).join("")+'</div>'+'<div class="note">Probabilidad orientativa según los días que tarda cada una en salir tras la lluvia, la temperatura que le gusta y su temporada. Toca una para ver su ficha.</div>'
   : '<p class="muted" style="margin:0">Ahora mismo no se esperan setas comestibles. Mira los próximos días.</p>';
   fillMinis($("#spChances"));
   const bad = arr.filter(x=>x.s.t==="mortal" && x.c>=35).sort((a,b)=>b.c-a.c).slice(0,3);
@@ -875,6 +949,8 @@ function renderPlan(){
   if(TRAILS.length && sc>=45){ const nt=trailsNear([s.lat,s.lon],1500)[0]; if(nt) txt+='<div class="muted" style="margin-top:4px">Sendero: <b>'+esc(nt.t.name)+'</b> ('+fmtDist(nt.t.len)+')</div>'; }
   if(b.rk.top.length) txt+='<div class="pstrip">'+b.rk.top.slice(0,3).map(x=>{ const z=SETAS.find(q=>q.id===x.id); return '<div class="pcard" data-goto="'+x.id+'"><img data-photo="'+x.id+'" alt=""><span>'+esc(shortName(z))+' · '+x.c+'%</span></div>'; }).join("")+'</div>';
   el.innerHTML=txt; fillMinis(el);
+  const heroSp = b.rk.top[0] ? b.rk.top[0].id : "tana";
+  speciesPhotos(heroSp).then(l=>{ if(!l.length) return; const im=new Image(); im.onload=()=>{ $("#heroBg").style.backgroundImage="url('"+l[0].src+"')"; $("#heroBg").classList.add("ok"); }; im.src=l[0].src; });
   const tgt = sc>=45 ? s : (futBest? futBest.site : s);
   $("#planBtns").innerHTML='<a class="b" style="text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+tgt.lat+','+tgt.lon+'" target="_blank" rel="noopener">🚗 Llévame</a><button class="b2" data-mapa="'+tgt.id+'">🗺️ Mapa</button><button class="b2" id="btnSalida">📲 Aviso que salgo</button>';
 }
@@ -891,7 +967,7 @@ function renderSites(){
     const bestTxt = r.best>r.s+5 ? "Mejor el "+fmtDate(r.bestDay)+" (índice "+r.best+")" : "Hoy es de los mejores días de la semana";
     const top = r.rk.top.length ? r.rk.top.map(x=>{ const sp=SETAS.find(z=>z.id===x.id); return '<span class="pill t-'+sp.t+'" data-goto="'+x.id+'">'+esc(shortName(sp))+' '+x.c+'%</span>'; }).join("") : '<span class="muted">Poco probable ahora</span>';
     const bad = (s.peligro||["phalloides"]).map(id=>{ const sp=SETAS.find(z=>z.id===id); return sp?{sp,c:M.speciesChance(id,sp.m,r.D,r.i0)}:null; }).filter(x=>x&&x.c>=35);
-    return '<div class="zone" data-k="'+k+'"><div class="sc" style="background:'+scoreColor(r.rk.score)+'">'+r.rk.score+'</div>'+
+    return '<div class="zone" data-k="'+k+'">'+(r.rk.top[0]?'<img class="mini2" data-photo="'+r.rk.top[0].id+'" alt="">':'')+'<div class="sc" style="background:'+scoreColor(r.rk.score)+'">'+r.rk.score+'</div>'+
       '<div class="tx"><b>'+(k<3&&r.rk.score>=45?["🥇 ","🥈 ","🥉 "][k]:"")+esc(s.n)+'</b><small>'+esc(s.mun||"Tu sitio")+' · '+bestTxt+'</small></div></div>'+
       '<div class="detail hidden" id="z-'+k+'" style="margin:0 0 10px">'+
         '<div style="margin-bottom:6px"><b>Qué buscar hoy:</b><br>'+top+'</div>'+
@@ -904,7 +980,7 @@ function renderSites(){
         (s.id?'<button class="b2" data-mapa="'+s.id+'">🗺️ En el mapa</button>':'')+'<button class="b2" data-ver="'+k+'">🌦️ Previsión</button></div>'+
       '</div>';
   }).join("")+'<button class="b big" id="btnVerMapa" style="margin-top:10px">🗺️ Ver los '+total+' sitios y los senderos en el mapa</button>';
-  $("#zonas")._rows = rows;
+  $("#zonas")._rows = rows; fillMinis($("#zonas"));
 }
 async function compareZones(){
   const mios = store.get("sitios",[]).slice(0,12).map(s=>({n:"⭐ "+s.nombre, mun:"", sp:(s.setas&&s.setas.length)?s.setas:["tentullo","rebozuelo","gallipierno","tana","trompeta"], lat:s.lat, lon:s.lon, caza:true, hab:"", tip:""}));
@@ -1035,7 +1111,9 @@ function initMap(gl){
   bases.forEach((L,k)=>map.setLayerVisible(L,k===baseIdx));
   trailsLayer = map.addTileLayer("https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png",{maxZoom:18,opacity:0.95,attribution:"Senderos © Waymarked Trails"});
   if(!store.get("trails",false)) map.setLayerVisible(trailsLayer,false);
-  if(GL && store.get("3d",true)) map.set3D(true);
+  if(GL && store.get("3d2",false)){ map.set3D(true); $("#mb3d").classList.add("on"); }
+  if(GL) $("#mb3d").classList.remove("hidden");
+  map.on("moveend",refreshPaths); setTimeout(refreshPaths,800);
   if(store.get("zonas",false)) setTimeout(()=>setZones(true),300);
   if(store.get("montes",false)) setTimeout(()=>setMontes(true),400);
   // si el fondo de satélite del IGN no carga (sin permiso del servidor), pasar al de Esri
@@ -1299,7 +1377,7 @@ async function loadTrails(force){
       const r=await fetch(url,{method:"POST",body:"data="+encodeURIComponent(q),headers:{"Content-Type":"application/x-www-form-urlencoded"},signal:ctrl.signal});
       clearTimeout(to); if(!r.ok) continue;
       TRAILS=parseTrails(await r.json());
-      big.set("trails_v1",{t:Date.now(),list:TRAILS});
+      big.set("trails_v1",{t:Date.now(),list:TRAILS.filter(x=>!x.tmp)});
       break;
     }catch(e){}
   }
@@ -1508,7 +1586,8 @@ function showLayersSheet(){
     '<b>Encima</b>'+
     '<label class="chk"><input type="checkbox" id="lyZonas" '+(zOn?'checked':'')+'> 🍄 <span><b>Zonas buenas hoy</b><br><span class="muted">'+esc(ZMODE_TXT[zonesModeNow()])+'</span></span></label>'+
     '<label class="chk"><input type="checkbox" id="lyMontes" '+(mupLayer&&mupLayer.visible?'checked':'')+'> 🌳 <span><b>Montes públicos (de utilidad pública)</b><br><span class="muted">En color, los montes públicos catalogados (Ministerio). Ahí se puede recoger poca cantidad sin pedir permiso, respetando las normas. Fuera de ellos, casi todo es finca privada.</span></span></label>'+
-    (GL?'<label class="chk"><input type="checkbox" id="ly3d" '+(map.is3D?'checked':'')+'> ⛰️ Relieve en 3D</label>':'')+
+    (GL?'<label class="chk"><input type="checkbox" id="ly3d" '+(map.is3D?'checked':'')+'> ⛰️ Relieve en 3D <span class="muted">(más lento)</span></label>':'')+
+    '<label class="chk"><input type="checkbox" id="lyCaminos" '+(store.get("caminos",true)?'checked':'')+'> 🛤️ <span><b>Todos los caminos</b><br><span class="muted">Pistas (marrón) y veredas (naranja) de toda la comarca, al acercarte. Tócalos para ver el tipo y seguirlos.</span></span></label>'+
     '<label class="chk"><input type="checkbox" id="lyMarcas" '+(trailsLayer&&trailsLayer.visible?'checked':'')+'> 🥾 Marcas de senderos (capa extra)</label>'+
     '<p class="note">Las “zonas buenas” se calculan con el relieve: no saben qué árboles hay ni de quién es el terreno. Úsalas junto al satélite para buscar canutos y laderas con alcornoque o quejigo.</p>');
 }
@@ -1636,6 +1715,67 @@ function renderQuiz(){
     '<div class="warn" style="margin-top:8px">Esto es solo una orientación. Para comer una seta, que la identifique un experto con la seta delante.</div>'+
     '<div class="row" style="margin-top:8px"><button class="b" id="qAgain">Empezar otra vez</button>'+(best&&paresDe(best.s.id).length?'<button class="b2" data-cmp="'+paresDe(best.s.id)[0][0]+','+paresDe(best.s.id)[0][1]+'">⚖️ Ver con qué se confunde</button>':'')+'</div>';
   fillMinis(box);
+}
+
+/* ===================== CAMINOS: todas las pistas y veredas (OpenStreetMap), por zonas ===================== */
+const CELL=0.05; let PATHS={}, pathsBusy=false, pathsQueue=[];
+const PATH_TXT={track:"Pista forestal",path:"Sendero / vereda",footway:"Camino peatonal",bridleway:"Camino de herradura",steps:"Escaleras"};
+function cellKey(la,lo){ return Math.floor(la/CELL)+"_"+Math.floor(lo/CELL); }
+function cellBBox(k){ const [a,b]=k.split("_").map(Number); return [a*CELL,b*CELL,(a+1)*CELL,(b+1)*CELL]; }
+async function loadPathCell(k){
+  const c=await big.get("pc:"+k,null);
+  if(c && Date.now()-c.t<30*864e5){ c.l.forEach(p=>PATHS[p.id]=p); return true; }
+  if(!navigator.onLine) return false;
+  const bb=cellBBox(k).map(v=>v.toFixed(3)).join(",");
+  const q='[out:json][timeout:25];way["highway"~"^(path|track|footway|bridleway|steps)$"]('+bb+');out tags geom;';
+  for(const url of OVERPASS){
+    try{
+      const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),30000);
+      const r=await fetch(url,{method:"POST",body:"data="+encodeURIComponent(q),headers:{"Content-Type":"application/x-www-form-urlencoded"},signal:ctrl.signal});
+      clearTimeout(to); if(!r.ok) continue;
+      const j=await r.json();
+      const l=(j.elements||[]).filter(e=>e.type==="way"&&e.geometry&&e.geometry.length>1).map(e=>{ const pts=simplify(e.geometry.map(g=>[+g.lat.toFixed(5),+g.lon.toFixed(5)]),0.00004); const tg=e.tags||{};
+        return {id:"w"+e.id,k:tg.highway==="track"?"track":(tg.highway==="path"?"path":tg.highway),name:tg.name||"",surf:tg.surface||"",tt:tg.tracktype||"",acc:tg.access||"",pts,len:segLen(pts)}; });
+      l.forEach(p=>PATHS[p.id]=p); big.set("pc:"+k,{t:Date.now(),l}); return true;
+    }catch(e){}
+  }
+  return false;
+}
+function pathsFC(){
+  return {type:"FeatureCollection",features:Object.values(PATHS).map(p=>({type:"Feature",properties:{id:p.id,k:p.k},geometry:{type:"LineString",coordinates:p.pts.map(q=>[q[1],q[0]])}}))};
+}
+let pathsTimer=null;
+function refreshPaths(){
+  if(!map||!map.getBounds||!map.setPaths) return;
+  clearTimeout(pathsTimer);
+  pathsTimer=setTimeout(async()=>{
+    if(map.getZoom()<12.5 || !store.get("caminos",true)) return;
+    const [s,w,n,e]=map.getBounds(); const keys=[];
+    for(let a=Math.floor(s/CELL);a<=Math.floor(n/CELL);a++) for(let b=Math.floor(w/CELL);b<=Math.floor(e/CELL);b++) keys.push(a+"_"+b);
+    if(keys.length>9) return; // demasiado lejos: acércate
+    const todo=keys.filter(k=>!loadedCells.has(k));
+    if(!todo.length) return;
+    if(pathsBusy) return; pathsBusy=true;
+    let any=false;
+    for(const k of todo){ $("#mapMsg").textContent="Cargando caminos de la zona…"; const ok=await loadPathCell(k); if(ok){ loadedCells.add(k); any=true; } }
+    if($("#mapMsg").textContent.indexOf("caminos")>=0) $("#mapMsg").textContent="";
+    pathsBusy=false;
+    if(any) map.setPaths(pathsFC(), id=>openPathSheet(id));
+  },500);
+}
+const loadedCells=new Set();
+function openPathSheet(id){
+  const p=PATHS[id]; if(!p) return;
+  const tt={grade1:"asfaltada o muy firme",grade2:"firme, con grava",grade3:"tierra compacta",grade4:"tierra blanda",grade5:"muy mala"}[p.tt]||"";
+  const priv = /private|no/.test(p.acc);
+  openSheet("path",'<h2>'+(p.k==="track"?"🚜 ":"🥾 ")+esc(p.name||PATH_TXT[p.k]||"Camino")+'</h2><div class="muted">'+esc(PATH_TXT[p.k]||p.k)+'</div>'+
+    '<div class="ruta"><div><b>📏 Este tramo</b>'+fmtDist(p.len)+'</div>'+(p.surf?'<div><b>🪨 Firme</b>'+esc(p.surf)+'</div>':'')+(tt?'<div><b>🚙 Estado</b>'+esc(tt)+'</div>':'')+
+    (myPos?'<div><b>📍 Desde aquí</b>'+fmtDist(nearestOnTrail({segs:[p.pts]},myPos).d)+'</div>':'')+'</div>'+
+    (priv?'<div class="warn">⛔ Este camino está marcado como privado o de acceso prohibido.</div>':'')+
+    '<div class="row"><button class="b" id="btnFollowPath">'+(followTrail==="P"+id?'⏹️ Dejar de seguir':'▶️ Seguir este camino')+'</button>'+
+    '<a class="b2" style="text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+p.pts[0][0]+','+p.pts[0][1]+'" target="_blank" rel="noopener">🚗 Ir hasta aquí</a></div>'+
+    '<p class="note">Trazado de OpenStreetMap. Que haya un camino no significa que se pueda entrar: respeta vallas y carteles de finca privada.</p>');
+  $("#sheet").dataset.curpath=id;
 }
 
 /* ===================== DIBUJOS ===================== */
@@ -2002,6 +2142,7 @@ function init(){
   $("#sheetX").addEventListener("click",closeSheet);
   $("#mbYo").addEventListener("click",()=>{ following=true; $("#mbYo").classList.add("on"); startGPS(); if(map&&myPos) map.setView(myPos,Math.max(map.getZoom(),15)); else $("#mapMsg").textContent="Buscando señal GPS…"; });
   $("#mbCapa").addEventListener("click",()=>{ if(map) showLayersSheet(); });
+  $("#mb3d").addEventListener("click",()=>{ if(!map||!GL) return; const on=!map.is3D; map.set3D(on); store.set("3d2",on); $("#mb3d").classList.toggle("on",on); });
   $("#mapBest").addEventListener("click",e=>{ const c=e.target.closest("[data-site]"); if(c) goSite(c.dataset.site); });
   $("#btnNoTiles").addEventListener("click",()=>{ store.set("noTilesSeen",true); $("#mapNoTiles").classList.add("hidden"); });
   $("#mbInfo").addEventListener("click",()=>openSheet("info",'<h2>❔ Cómo usar el mapa</h2>'+
@@ -2010,7 +2151,7 @@ function init(){
     '<div><span class="dot" style="background:#7e9a2f"></span> <b>45–69</b> merece la pena</div>'+
     '<div><span class="dot" style="background:#c98a1b"></span> <b>25–44</b> flojo</div>'+
     '<div><span class="dot" style="background:#b33a2b"></span> <b>0–24</b> mejor otro día</div></div>'+
-    '<ul class="list"><li><b>Líneas de colores:</b> senderos reales (morado = local SL, naranja = PR, rojo = GR). Tócalas para ver longitud, desnivel y el botón “Seguir esta ruta”, que te avisa si te sales.</li><li><b>Línea amarilla:</b> el sendero que has elegido.</li><li><b>Línea roja gruesa:</b> tu ruta grabada.</li><li><b>Línea discontinua:</b> el camino recto hasta tu coche.</li><li><b>Punto azul:</b> tú.</li>'+
+    '<ul class="list"><li><b>Líneas de colores:</b> senderos reales (morado = local SL, naranja = PR, rojo = GR). Tócalas para ver longitud, desnivel y el botón “Seguir esta ruta”, que te avisa si te sales.</li><li><b>Línea amarilla:</b> el sendero que has elegido.</li><li><b>Rayas marrones:</b> pistas forestales. <b>Puntos naranjas:</b> veredas y caminos. Salen al acercarte; tócalos para seguirlos.</li><li><b>Línea roja gruesa:</b> tu ruta grabada.</li><li><b>Línea discontinua:</b> el camino recto hasta tu coche.</li><li><b>Punto azul:</b> tú.</li>'+
     (GL?'<li><b>⛰️ 3D:</b> se enciende en 🍄 Zonas. Con dos dedos: gira, inclina y acerca. La brújula de abajo devuelve el norte.</li>':'')+
     '<li><b>🍄 Zonas:</b> elige el fondo (satélite del IGN, topográfico…) y enciende las <b>zonas buenas hoy</b>: en verde, los canutos, vaguadas y umbrías donde más humedad hay; con frío, en naranja las solanas.</li><li><b>📲 Aviso:</b> manda por WhatsApp a un familiar a dónde vas, por qué sendero y cuándo vuelves.</li><li><b>🌳 Montes públicos:</b> en 🍄 Zonas, muestra los montes públicos catalogados.</li><li><b>Tarjetas de abajo:</b> los mejores sitios de hoy. Desliza y toca uno.</li></ul>'+
     '<p class="note">Antes de salir, abre en casa la zona a la que vas con wifi: así se queda guardada para verla sin cobertura.</p>'));
@@ -2037,7 +2178,11 @@ function init(){
     if(t.dataset && t.dataset.base!=null && t.type==="radio"){ map.setLayerVisible(bases[baseIdx],false); baseIdx=+t.dataset.base; map.setLayerVisible(bases[baseIdx],true); store.set("base2",baseIdx); return; }
     if(t.id==="lyZonas"){ setZones(t.checked); return; }
     if(t.id==="lyMontes"){ setMontes(t.checked); return; }
-    if(t.id==="ly3d"){ map.set3D(t.checked); store.set("3d",t.checked); return; }
+    if(t.id==="ly3d"){ map.set3D(t.checked); store.set("3d2",t.checked); $("#mb3d").classList.toggle("on",t.checked); return; }
+    if(t.id==="lyCaminos"){ store.set("caminos",t.checked); if(t.checked) refreshPaths(); else map.setPaths({type:"FeatureCollection",features:[]},()=>{}); if(t.checked && Object.keys(PATHS).length) map.setPaths(pathsFC(),id=>openPathSheet(id)); return; }
+    if(t.id==="btnFollowPath"){ const id=$("#sheet").dataset.curpath, p=PATHS[id]; const tid="P"+id;
+      if(followTrail===tid){ followTrail=null; } else { if(!TRAILS.find(x=>x.id===tid)) TRAILS.push({id:tid,name:p.name||PATH_TXT[p.k]||"Camino",net:PATH_TXT[p.k]||"",color:"#e8590c",len:p.len,segs:[p.pts],bb:[0,0,0,0],tmp:true}); followTrail=tid; wasOff=false; startGPS(); }
+      updateFollow(); openPathSheet(id); return; }
     if(t.id==="lyMarcas"){ map.setLayerVisible(trailsLayer,t.checked); store.set("trails",t.checked); return; }
     if(t.id==="btnBrujula"){ enableCompass(); return; }
     if(t.id==="btnCocheDel"){ store.set("coche",null); closeSheet(); renderCoche(); return; }
@@ -2111,6 +2256,10 @@ function init(){
   let lastLoad=Date.now();
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible" && Date.now()-lastLoad>2*3600*1000){ lastLoad=Date.now(); lastCompareKey=""; CURLOC?loadWeather(CURLOC):loadZ(); } });
   setInterval(renderLuz,60000);
+  { const doy=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5); const tp=TIPS[doy%TIPS.length]; $("#tipDay").innerHTML='<div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:1.8rem">'+tp[0]+'</span><span>'+esc(tp[1])+'</span></div>'; }
+  document.querySelector(".quick").addEventListener("click",e=>{ const b=e.target.closest("[data-go]"); if(!b) return; const g=b.dataset.go;
+    if(g==="mapa") show("mapa"); else if(g==="diario") show("diario"); else if(g==="salida") showSalida();
+    else if(g==="quiz"){ show("setas"); setTimeout(()=>{ const q=$("#quiz"); if(q) q.scrollIntoView({behavior:"smooth",block:"center"}); },80); } });
   big.get("trails_v1",null).then(c=>{ if(c&&c.list&&!TRAILS.length){ TRAILS=c.list; renderPlan(); } });
 
   /* app instalable y trabajo en segundo plano */

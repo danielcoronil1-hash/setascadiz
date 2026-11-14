@@ -24,7 +24,7 @@
     const D = {
       time: d.time, p: d.precipitation_sum, tmax: d.temperature_2m_max, tmin: d.temperature_2m_min,
       wspd: d.wind_speed_10m_max, wdir: d.wind_direction_10m_dominant, et0: d.et0_fao_evapotranspiration || [],
-      sunrise: d.sunrise || [], sunset: d.sunset || [], soil: null, label: label || ""
+      sunrise: d.sunrise || [], sunset: d.sunset || [], wcode: d.weather_code || [], soil: null, label: label || ""
     };
     if (j.hourly && j.hourly.soil_moisture_3_to_9cm) {
       const map = {}, ht = j.hourly.time, hv = j.hourly.soil_moisture_3_to_9cm;
@@ -121,7 +121,7 @@
 
   function weatherURL(lat, lon, withSoil) {
     return "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon +
-      "&daily=precipitation_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max,wind_direction_10m_dominant,et0_fao_evapotranspiration,sunrise,sunset" +
+      "&daily=precipitation_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max,wind_direction_10m_dominant,et0_fao_evapotranspiration,sunrise,sunset,weather_code" +
       (withSoil ? "&hourly=soil_moisture_3_to_9cm" : "") +
       "&past_days=31&forecast_days=8&timezone=Europe%2FMadrid";
   }

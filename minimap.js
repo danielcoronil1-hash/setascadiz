@@ -146,7 +146,10 @@
   };
 
   /* gestos */
+  P._moved = function () { clearTimeout(this._mt); this._mt = setTimeout(() => this._emit("moveend"), 350); };
+  P.getBounds = function () { return this._viewBB(); };
   P._zoomAround = function (nz, x, y) {
+    this._moved();
     nz = clampZ(this, nz);
     const W0 = this.worldSize(); const wx = this.mx + (x - this.w / 2) / W0, wy = this.my + (y - this.h / 2) / W0;
     this.z = nz; const W1 = this.worldSize();
@@ -186,11 +189,13 @@
       const p = pts.get(e.pointerId); pts.delete(e.pointerId);
       if (this._pinching && pts.size < 2) { this._pinching = false; if (start) { start.pinch = null; start.mid = null; } this.render(); }
       if (pts.size === 0 && start) {
+        if (start.dragged) this._moved();
         if (moved < 8) {
           const mkEl = start.target && start.target.closest && start.target.closest(".mm-mk");
           const rid = start.target && start.target.getAttribute && start.target.getAttribute("data-rid");
           if (mkEl && mkEl._mk && mkEl._mk.onClick) mkEl._mk.onClick();
           else if (rid && this._trailClick) this._trailClick(rid);
+          else if (start.target.getAttribute && start.target.getAttribute("data-pid") && this._pathClick) this._pathClick(start.target.getAttribute("data-pid"));
           else {
             const now = Date.now();
             if (now - lastTap < 320) { this._zoomAround(Math.round(this.z) + 1, p[0], p[1]); lastTap = 0; }
@@ -230,5 +235,19 @@
   };
   P.highlightTrail = function (id) {
     (this._trails || []).forEach(v => { if (v.isHit) return; const on = v.rid === id; v.e.setAttribute("stroke", on ? "#ffd400" : v.color); v.e.setAttribute("stroke-width", on ? 7 : 3.5); });
+  };
+})();
+
+/* --- caminos (pistas y veredas) en 2D --- */
+(function () {
+  const P = window.MiniMap && window.MiniMap.prototype; if (!P) return;
+  P.setPaths = function (fc, onClick) {
+    (this._paths || []).forEach(v => v.remove()); this._paths = []; this._pathClick = onClick;
+    fc.features.forEach(f => {
+      const pts = f.geometry.coordinates.map(c => [c[1], c[0]]);
+      const v = this.polyline(pts, { color: f.properties.k === "track" ? "#a0522d" : "#e8590c", weight: 2.2, opacity: 0.9, dash: f.properties.k === "track" ? "7 4" : "3 3" });
+      v.minZoom = 13; v.e.setAttribute("data-pid", f.properties.id); v.e.style.pointerEvents = "stroke";
+      this._paths.push(v);
+    });
   };
 })();
