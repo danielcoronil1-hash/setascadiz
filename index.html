@@ -27,6 +27,10 @@ header p{margin:1px 0 0;font-size:.75rem;opacity:.8}
 #btnShare{font:inherit;font-size:.8rem;border:0;background:#f0b429;color:#2b2418;font-weight:800;border-radius:99px;padding:6px 12px;cursor:pointer;white-space:nowrap}
 #modal{position:fixed;inset:0;z-index:2500;background:rgba(10,10,8,.55);overflow-y:auto;-webkit-overflow-scrolling:touch}
 #modal .mbox{position:relative;background:var(--bg);min-height:100%;margin-top:calc(env(safe-area-inset-top) + 36px);border-radius:20px 20px 0 0;padding:16px 14px calc(30px + env(safe-area-inset-bottom));max-width:760px;margin-left:auto;margin-right:auto}
+.aiwait{display:flex;align-items:center;gap:10px;background:#eef4e6;border-radius:12px;padding:14px;font-weight:700}
+.spin{width:22px;height:22px;border:3px solid #c3dcb3;border-top-color:#2f3b26;border-radius:50%;animation:sp 0.9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.noref{display:flex;align-items:center;justify-content:center;height:120px;background:#efe6d4;border-radius:10px;font-size:.75rem;color:var(--muted);text-align:center}
 .fotoMain{width:100%;max-height:300px;object-fit:cover;border-radius:16px;display:block;margin:4px 0 10px;background:#e9e1cf}
 .cautel{background:#fff6d6;border:2px solid #e7c75a;color:#4a3a00;border-radius:12px;padding:10px 12px;font-size:.92rem}
 .fres{border:1px solid var(--line);border-radius:14px;padding:8px;margin:8px 0;background:var(--card)}
@@ -264,7 +268,7 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
 </head>
 <body>
 <header>
-  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v11</p></div>
+  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v12</p></div>
   <div style="display:flex;gap:6px"><button id="btnInstall" class="hidden">Instalar app</button><button id="btnShare" title="Compartir la app">📤 Compartir</button></div>
 </header>
 
@@ -1869,7 +1873,8 @@ function closeTopOverlay(){
 let fotoId={file:null,url:null,step:0,ans:{}};
 function showFotoModal(){
   if(fotoId.url) try{ URL.revokeObjectURL(fotoId.url); }catch(e){}
-  fotoId={file:null,url:null,step:0,ans:{}};
+  fotoId={file:null,url:null,step:0,ans:{},ai:null,modo:"ia"};
+  aiAvailable().then(()=>renderFoto());
   openModal('<h2>📷 Foto a una seta</h2><div id="fotoBox"></div>');
   renderFoto();
 }
@@ -1877,14 +1882,24 @@ function fotoTips(){ return '<ul class="list" style="font-size:.9rem;margin:6px 
 function renderFoto(){
   const box=$("#fotoBox"); if(!box) return;
   if(!fotoId.url){
-    box.innerHTML='<p class="muted">Haz la foto y contesta unas preguntas: te digo a qué setas se parece y si puede ser peligrosa.</p>'+fotoTips()+
+    box.innerHTML='<p class="muted">'+(aiCfg?'Haz la foto y la <b>inteligencia artificial</b> te dice qué seta parece, con su descripción y si puede ser peligrosa.':'Haz la foto y contesta unas preguntas: te digo a qué setas se parece y si puede ser peligrosa.')+'</p>'+fotoTips()+
       '<label class="b big" style="display:block;text-align:center;cursor:pointer">📷 Hacer foto<input type="file" id="fotoIn" accept="image/*" capture="environment" style="display:none"></label>'+
       '<label class="b2" style="display:block;text-align:center;margin-top:8px;cursor:pointer">🖼️ Elegir de la galería<input type="file" id="fotoIn2" accept="image/*" style="display:none"></label>'+
       '<div class="danger" style="margin-top:12px">Ninguna app ni foto sirve para saber con seguridad si una seta se puede comer. Antes de comerla, que la vea un experto con la seta delante.</div>';
     return;
   }
-  const qs=QS.filter(q=>!q.when||q.when(fotoId.ans));
   let html='<img src="'+fotoId.url+'" class="fotoMain" alt="Tu foto">';
+  if(aiCfg && fotoId.modo==="ia"){
+    const A=fotoId.ai;
+    if(!A || A.estado==="cargando"){ box.innerHTML=html+'<div class="aiwait"><div class="spin"></div>🤖 Analizando la foto… (unos segundos)</div>'; if(!A) aiIdentify(); return; }
+    if(A.estado==="error") html+='<div class="warn">'+esc(A.msg)+'</div><button class="b big" id="fRetry" style="margin:8px 0">🔄 Volver a intentarlo</button>';
+    else html+=aiResultHTML(A.res);
+    html+='<button class="b2" id="fQuiz" style="width:100%;margin:8px 0">🔎 Comprobarlo con preguntas</button>'+
+      '<h3>Que la reconozca alguien más</h3><div class="row"><button class="b" id="fLens">🔎 Google Lens / iNaturalist</button><button class="b2" id="fWA">💬 Mandar a un experto</button></div>'+
+      '<div class="row" style="margin-top:8px"><button class="b2" id="fSave">📓 Guardar en el diario</button><button class="b2" id="fAgain">📷 Otra seta</button></div>';
+    box.innerHTML=html; fillMinis(box); return;
+  }
+  const qs=QS.filter(q=>!q.when||q.when(fotoId.ans));
   if(fotoId.step<qs.length){
     const q=qs[fotoId.step];
     html+='<div class="muted">Mirando la seta — pregunta '+(fotoId.step+1)+' de '+qs.length+'</div><h3 style="margin:4px 0 8px">'+esc(q.q)+'</h3>'+
@@ -1922,11 +1937,14 @@ function fotoClick(e){
   const fa=t.closest("[data-fa]"); if(fa){ fotoId.ans[fa.dataset.fa]=fa.dataset.v; fotoId.step++; renderFoto(); $("#modal").scrollTop=0; return true; }
   if(t.id==="fBack"){ const qs=QS.filter(q=>!q.when||q.when(fotoId.ans)); fotoId.step=Math.max(0,fotoId.step-1); delete fotoId.ans[qs[fotoId.step].k]; renderFoto(); return true; }
   if(t.id==="fRetake"||t.id==="fAgain"){ showFotoModal(); return true; }
+  if(t.id==="fRetry"){ fotoId.ai=null; renderFoto(); return true; }
+  if(t.id==="fQuiz"){ fotoId.modo="quiz"; fotoId.step=0; fotoId.ans={}; renderFoto(); $("#modal").scrollTop=0; return true; }
   if(t.id==="fLens"){ shareFoto("¿Qué seta es esta? (Campo de Gibraltar)"); return true; }
-  if(t.id==="fWA"){ const res=quizScore(fotoId.ans).slice(0,3).map(x=>shortName(x.s)).join(", "); shareFoto("Hola, ¿me ayudas a identificar esta seta? La he encontrado en el Campo de Gibraltar. Por lo que veo podría ser: "+res+". Pregunto a un experto antes de comerla."); return true; }
+  if(t.id==="fWA"){ const res=(fotoId.ai&&fotoId.ai.res&&fotoId.ai.res.candidatas)? fotoId.ai.res.candidatas.map(c=>c.nombre).join(", ") : quizScore(fotoId.ans).slice(0,3).map(x=>shortName(x.s)).join(", "); shareFoto("Hola, ¿me ayudas a identificar esta seta? La he encontrado en el Campo de Gibraltar. Por lo que veo podría ser: "+res+". Pregunto a un experto antes de comerla."); return true; }
   if(t.id==="fSave"){
     const res=quizScore(fotoId.ans).slice(0,3);
-    compressImage(fotoId.file,d=>{ const L=store.get("diario",[]); const n=new Date(); const e2={fecha:n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0"),sitio:"Foto de identificación",ids:[],setas:"Posible: "+res.map(x=>shortName(x.s)).join(", "),notas:"Pendiente de revisar por un experto",gps:myPos,w:weatherSnapshot()};
+    const aiNames=(fotoId.ai&&fotoId.ai.res&&fotoId.ai.res.candidatas)? fotoId.ai.res.candidatas.map(c=>c.nombre+" ("+c.confianza+"%)").join(", ") : null;
+    compressImage(fotoId.file,d=>{ const L=store.get("diario",[]); const n=new Date(); const e2={fecha:n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0"),sitio:"Foto de identificación",ids:[],setas:"Posible: "+(aiNames||res.map(x=>shortName(x.s)).join(", ")),notas:"Pendiente de revisar por un experto",gps:myPos,w:weatherSnapshot()};
       if(d){ e2.fotoId="f"+Date.now(); big.set("foto:"+e2.fotoId,d); } L.push(e2); store.set("diario",L); renderDiario(); t.textContent="Guardada ✓"; });
     return true;
   }
@@ -2072,6 +2090,53 @@ function askChat(text){
   if(a && a.sp) extra='<button class="b2 sm" data-goto="'+a.sp+'">🍄 Ver la ficha</button>';
   log.insertAdjacentHTML("beforeend",'<div class="msg bot">'+esc(txt).replace(/\n/g,"<br>")+(extra?'<div style="margin-top:6px">'+extra+'</div>':'')+'</div>');
   log.scrollTop=log.scrollHeight; $("#chatIn").value="";
+}
+
+/* ===================== IDENTIFICACIÓN AUTOMÁTICA POR FOTO (IA en el servidor) ===================== */
+let aiCfg=null; // null = sin comprobar, true/false
+async function aiAvailable(){
+  if(aiCfg!==null) return aiCfg;
+  try{ const r=await fetch("/api/identify",{cache:"no-store"}); if(!r.ok) throw 0; const j=await r.json(); aiCfg=!!j.configurada; }catch(e){ aiCfg=false; }
+  return aiCfg;
+}
+function imageToBase64(file,max){
+  return new Promise(res=>{ const img=new Image(), url=URL.createObjectURL(file);
+    img.onload=()=>{ const sc=Math.min(1,(max||1024)/Math.max(img.width,img.height)); const c=document.createElement("canvas"); c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg",0.82).split(",")[1]); };
+    img.onerror=()=>{ URL.revokeObjectURL(url); res(null); }; img.src=url; });
+}
+async function aiIdentify(){
+  fotoId.ai={estado:"cargando"}; renderFoto();
+  const b64=await imageToBase64(fotoId.file,1024);
+  if(!b64){ fotoId.ai={estado:"error",msg:"No se pudo leer la foto."}; renderFoto(); return; }
+  try{
+    const r=await fetch("/api/identify",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:b64,mime:"image/jpeg",mes:MES[new Date().getMonth()],lugar:CURLOC?CURLOC.n:"Campo de Gibraltar"})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||!j.resultado){ fotoId.ai={estado:"error",msg:j.error||"No se pudo analizar la foto."}; if(r.status===501) aiCfg=false; renderFoto(); return; }
+    fotoId.ai={estado:"ok",res:j.resultado}; renderFoto();
+  }catch(e){ fotoId.ai={estado:"error",msg:"Sin conexión: no se pudo analizar la foto. Puedes usar las preguntas."}; renderFoto(); }
+}
+const COMEST={comestible:["Comestible","t-buena"],toxica:["Tóxica","t-tox"],mortal:["MORTAL","t-mortal"],desconocida:["Desconocida",""]};
+function aiResultHTML(R){
+  if(R.es_seta===false) return '<div class="warn">No parece que en la foto haya una seta. Prueba con otra foto más cerca.</div>';
+  const cands=(R.candidatas||[]).slice(0,3);
+  const anyMortal=cands.some(c=>c.comestibilidad==="mortal"), anyTox=cands.some(c=>c.comestibilidad==="toxica");
+  const pel=R.peligro||"medio";
+  let box;
+  if(anyMortal||pel==="alto") box='<div class="danger"><div style="font-size:1.15rem;font-weight:800">☠️ PELIGRO'+(anyMortal?': puede ser una seta MORTAL':'')+'</div>'+esc(R.recomendacion||"")+'<br><br>Si alguien la ha comido: <b>112</b> o <b>91 562 04 20</b> (Información Toxicológica, 24 h).</div>';
+  else if(anyTox||pel==="medio") box='<div class="warn" style="border-width:2px"><div style="font-size:1.1rem;font-weight:800">⚠️ Cuidado</div>'+esc(R.recomendacion||"")+'</div>';
+  else box='<div class="cautel"><div style="font-size:1.05rem;font-weight:800">🤔 Podría ser '+esc(cands[0]?cands[0].nombre:"")+'</div>'+esc(R.recomendacion||"")+'</div>';
+  return box+
+    '<h3>La IA cree que es…</h3>'+cands.map((c,i)=>{ const known=SETAS.find(s=>s.id===c.id); const ce=COMEST[c.comestibilidad]||COMEST.desconocida;
+      return '<div class="fres"><div class="fcomp"><img src="'+fotoId.url+'" alt="Tu foto">'+(known?'<img data-photo="'+known.id+'" alt="Referencia">':'<div class="noref">Sin foto de referencia</div>')+'</div>'+
+        '<div style="padding:6px 2px"><b>'+(i+1)+'. '+esc(c.nombre||"?")+'</b> <i class="muted">'+esc(c.cientifico||"")+'</i><br>'+
+        '<span class="pill '+ce[1]+'">'+ce[0]+'</span><span class="pill">Confianza '+Math.max(0,Math.min(100,+c.confianza||0))+'%</span>'+
+        (c.rasgos?'<div class="muted" style="font-size:.85rem;margin-top:4px">'+esc(c.rasgos)+'</div>':'')+
+        (known?'<button class="b2 sm" data-goto="'+known.id+'" style="margin-top:6px">🍄 Ver su ficha</button>':'')+'</div></div>'; }).join("")+
+    (R.descripcion?'<h3>Descripción</h3><p style="margin:4px 0">'+esc(R.descripcion)+'</p>':'')+
+    ((R.parecidas_peligrosas||[]).length?'<div class="warn" style="margin:8px 0"><b>Se puede confundir con:</b> '+esc(R.parecidas_peligrosas.join(", "))+'</div>':'')+
+    (R.calidad_foto&&R.calidad_foto!=="buena"&&R.consejo_foto?'<div class="ok" style="margin:8px 0">📷 <b>Para afinar más:</b> '+esc(R.consejo_foto)+'</div>':'')+
+    '<p class="note">La inteligencia artificial puede equivocarse. Nunca comas una seta solo por lo que diga la app: que la vea un experto con la seta delante.</p>';
 }
 
 /* ===================== DIBUJOS ===================== */
@@ -2561,7 +2626,7 @@ function init(){
   $("#btnShare").addEventListener("click",shareApp); $("#btnShare2").addEventListener("click",shareApp);
   $("#modalX").addEventListener("click",()=>{ closeModal(); });
   $("#modal").addEventListener("click",e=>{ if(e.target.id==="modal"){ closeModal(); return; } });
-  $("#modalBody").addEventListener("change",e=>{ if(e.target.id==="fotoIn"||e.target.id==="fotoIn2"){ const f=e.target.files&&e.target.files[0]; if(!f) return; fotoId.file=f; fotoId.url=URL.createObjectURL(f); fotoId.step=0; fotoId.ans={}; renderFoto(); } });
+  $("#modalBody").addEventListener("change",e=>{ if(e.target.id==="fotoIn"||e.target.id==="fotoIn2"){ const f=e.target.files&&e.target.files[0]; if(!f) return; fotoId.file=f; fotoId.url=URL.createObjectURL(f); fotoId.step=0; fotoId.ans={}; fotoId.ai=null; fotoId.modo="ia"; renderFoto(); } });
   $("#modalBody").addEventListener("click",e=>{
     if($("#fotoBox") && fotoClick(e)) return;
     const f=e.target.closest("figure[data-ph]"); if(f){ $("#viewer").classList.remove("cmpmode"); openViewer(f.dataset.ph,+f.dataset.k); ovPush(); return; }

@@ -1,6 +1,6 @@
 /* Service worker: funciona sin cobertura y vigila el tiempo en segundo plano (Android, app instalada) */
 importScripts("score.js");
-const CACHE = "setas-cdg-v11";
+const CACHE = "setas-cdg-v12";
 const TILES = "setas-tiles";
 const TILE_HOSTS = /tile\.opentopomap\.org|tile\.openstreetmap\.org|arcgisonline\.com|waymarkedtrails\.org|elevation-tiles-prod|upload\.wikimedia\.org|ign\.es\/wmts|mapama\.gob\.es/;
 const LIB_HOSTS = /unpkg\.com/;
@@ -32,6 +32,7 @@ self.addEventListener("fetch", e => {
     return;
   }
   if (url.origin !== location.origin) return; // el tiempo va directo a la red
+  if (url.pathname.startsWith("/api/")) return; // la identificación siempre por red
   e.respondWith(
     fetch(req).then(res => {
       if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
