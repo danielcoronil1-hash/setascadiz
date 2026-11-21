@@ -263,12 +263,14 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
 .cmpimgs{display:flex;flex-direction:column;gap:6px}
 .cmpimgs img{width:100%;height:130px!important;max-height:none!important;object-fit:cover;border-radius:10px}
 .pairbtn{display:flex;align-items:center;gap:8px;width:100%;text-align:left;font:inherit;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px;margin:6px 0;cursor:pointer}
+.pk{width:30px;height:30px;border-radius:8px;background:#1c64d4;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.05rem;box-shadow:0 2px 6px #0005;border:2px solid #fff}
+.pkl{position:absolute;top:32px;left:15px;transform:translateX(-50%);white-space:nowrap;font-size:10px;font-weight:800;background:#1c64d4;color:#fff;padding:1px 6px;border-radius:6px}
 .me{width:18px;height:18px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 2px #1a73e866}
 </style>
 </head>
 <body>
 <header>
-  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v12</p></div>
+  <div><h1>🍄 Setas · Campo de Gibraltar</h1><p>Los Alcornocales y el Estrecho · v13</p></div>
   <div style="display:flex;gap:6px"><button id="btnInstall" class="hidden">Instalar app</button><button id="btnShare" title="Compartir la app">📤 Compartir</button></div>
 </header>
 
@@ -326,6 +328,7 @@ img.mini2{width:42px;height:42px;border-radius:12px;object-fit:cover;background:
     <h2>📍 Mejores sitios hoy</h2>
     <p class="muted" style="margin:0 0 8px">¿Qué quieres coger?</p>
     <div class="chips" id="fObjetivo"></div>
+    <div class="chips" id="sortSites"></div>
     <div id="zonas" class="muted">Calculando…</div>
   </div>
 
@@ -753,14 +756,31 @@ const SITIOS = [
   hab:"Alcornocal y quejigal con la laguna del Picacho y el canuto de la Garganta de Puerto Oscuro (nacimiento del río Barbate). Aparcamiento pequeño.",
   sp:["tentullo","rebozuelo","trompeta","tana","lengua","gallipierno"],
   tip:"Llega temprano: hay sitio para unos 10–15 coches. El sendero de Puerto Oscuro es corto; el de subida al Picacho, duro."},
- {id:"riomiel", ruta:{km:"Corto hasta el río (45 min) o circular de unos 12 km. Garganta del Capitán: unas 2 h", dif:"Media (piedras, zarzas, desnivel)", t:"1–5 h", park:"Inicio en la barriada de El Cobre / Río de la Miel; aparcamiento pequeño en la Garganta del Capitán", via:"Canuto con cascadas y pozas, laurel y ojaranzo; laderas expuestas al sol."}, n:"Río de la Miel y Garganta del Capitán", mun:"Algeciras", lat:36.1174, lon:-5.4769, caza:false,
-  hab:"Canutos con laurel, ojaranzo y helecho junto al río, y alcornocal en las laderas. Montes públicos del Ayuntamiento de Algeciras.",
+ {id:"riomiel", ruta:{km:"Corto hasta el río (unos 45 min) o circular de unos 12 km", dif:"Media (piedras, zarzas y desnivel)", t:"1–5 h", park:"Barriada de El Cobre: carril a la izquierda a unos 300 m de los Arcos del Cobre, junto al colegio Santa María del Cobre", via:"Canuto del río de la Miel con cascadas, pozas, laurel y ojaranzo; laderas de alcornocal más soleadas."}, n:"Sendero Río de la Miel", mun:"Algeciras (El Cobre)", lat:36.1174, lon:-5.4769, caza:false,
+  hab:"Sendero oficial del parque natural. Canuto muy húmedo con laurel, ojaranzo, helechos y musgo junto al río, y alcornocal en las laderas.",
   sp:["trompeta","rebozuelo","tentullo","higado","lengua"],
-  tip:"Lo bueno está en las umbrías del canuto. Muy frecuentado los fines de semana: ve a primera hora."},
- {id:"huertagrande", ruta:{km:"Paseos cortos desde el centro de visitantes", dif:"Fácil", t:"30 min – 1 h", park:"Centro de visitantes Huerta Grande (N-340, km 96, Pelayo)", via:"Alcornocal húmedo del sur del parque con vistas al Estrecho."}, n:"Huerta Grande y El Bujeo", mun:"Algeciras (Pelayo)", lat:36.0796, lon:-5.5040, caza:false,
+  tip:"Lo bueno está en las umbrías del canuto, cerca del agua. Muy concurrido los fines de semana: ve a primera hora."},
+ {id:"capitan", ruta:{km:"Unos 4 km ida y vuelta", dif:"Media (algún paso de piedras para llegar a la cascada)", t:"unas 2 h", park:"Aparcamiento pequeño al inicio del sendero, en el carril que sale de El Cobre hacia Botafuegos", via:"Baja a la garganta del arroyo Botafuegos por un bosque de ribera muy cerrado; restos de molinos antiguos."}, n:"Garganta del Capitán", mun:"Algeciras (Botafuegos)", lat:36.1348, lon:-5.4841, caza:false,
+  hab:"Sendero oficial del parque natural. Garganta umbría y muy húmeda del arroyo Botafuegos, con alcornoques y quejigos en las laderas.",
+  sp:["trompeta","rebozuelo","tentullo","lengua","pieazul"],
+  tip:"Las trompetas y rebozuelos, en la hojarasca húmeda del fondo de la garganta. Con levante, de lo mejor de Algeciras porque guarda la humedad."},
+ {id:"prisioneros", ruta:{km:"Subida larga: hasta el Puerto de la Higuera (Las Corzas); se puede enlazar con el Río de la Miel", dif:"Media-dura (cuesta fuerte al principio)", t:"2–5 h", park:"Inicio en Los Tres Pinos (El Cobre). El mismo punto de salida que el Río de la Miel", via:"Sube por la sierra con vistas a la bahía y a África; arriba, alcornocal y canutos con niebla."}, n:"Sendero Los Prisioneros", mun:"Algeciras (El Cobre)", lat:36.1040, lon:-5.4984, caza:false,
+  hab:"Sendero oficial del parque natural. La parte alta, con las nieblas del Estrecho, tiene alcornocal y canutos muy húmedos.",
+  sp:["tentullo","rebozuelo","tana","gallipierno","lengua"],
+  tip:"Abajo hay poco. Merece la pena en la parte alta, en los canutos y bajo los alcornoques con musgo. Lleva agua: la subida es dura."},
+ {id:"huertagrande", ruta:{km:"Paseos cortos y sendero que sale del centro de visitantes", dif:"Fácil", t:"30 min – 2 h", park:"Centro de visitantes Huerta Grande (N-340, km 96, Pelayo). Hay aparcamiento", via:"Alcornocal húmedo y bosque de ribera de la garganta del arroyo Marchenilla, con vistas al Estrecho."}, n:"Huerta Grande (Pelayo)", mun:"Algeciras (Pelayo)", lat:36.0796, lon:-5.5040, caza:false,
   hab:"Alcornocal del sur del parque, muy húmedo por las nubes del Estrecho. Centro de visitantes del parque natural.",
   sp:["rebozuelo","tentullo","gallipierno","lengua","trompeta"],
-  tip:"Empieza preguntando en el centro de visitantes por las zonas y normas. Con levante fuerte, aquí aguanta más la humedad."}
+  tip:"Empieza preguntando en el centro de visitantes por las zonas y normas. Con levante fuerte, aquí aguanta más la humedad."},
+ {id:"bujeo", ruta:{km:"Sendero junto al río Guadalmesí, ida y vuelta a tu medida", dif:"Fácil", t:"1–3 h", park:"Área recreativa El Bujeo, en el km 93 de la N-340 (Algeciras–Tarifa)", via:"Bosque de ribera del Guadalmesí y alcornocal húmedo; mucha sombra."}, n:"Área recreativa El Bujeo", mun:"Tarifa (límite con Algeciras)", lat:36.0729, lon:-5.5164, caza:false,
+  hab:"Sendero oficial del parque natural, entre Los Alcornocales y el Parque Natural del Estrecho. Ribera y alcornocal muy húmedos por las nieblas.",
+  sp:["rebozuelo","tentullo","gallipierno","lengua","trompeta","higado"],
+  tip:"Busca en las laderas con alcornoques a ambos lados del río. Suele haber caballos sueltos en el área: no dejes comida a la vista."},
+ {id:"riscoblanco", ruta:{km:"Corto por abajo; se puede subir por el canuto hasta la sierra", dif:"Fácil abajo / media arriba", t:"1–3 h", park:"El carril Los Barrios–Facinas está cerrado a coches: hay que pedir autorización al parque para entrar en coche, o andar unos 8 km por el carril", via:"Canuto de Risco Blanco y arroyo de San Carlos del Tiradero, con alcornocal y quejigal muy bien conservados."}, n:"Risco Blanco y San Carlos del Tiradero", mun:"Los Barrios", lat:36.1633, lon:-5.5824, caza:true,
+  acceso:"Para llegar en coche hace falta autorización previa del parque natural (se pide por internet). Sin ella, son unos 8 km andando por el carril.",
+  hab:"Uno de los alcornocales y quejigales mejor conservados de la comarca, con canutos, helechos, musgo y arroyo. Quien lo visita habla de setas por todas partes.",
+  sp:["tentullo","rebozuelo","trompeta","tana","lengua","pieazul"],
+  tip:"Pide la autorización con tiempo. Al ir menos gente, suele haber más setas que en los sitios cercanos a Algeciras."}
 ];
 
 const TIPS = [
@@ -957,7 +977,7 @@ function adviceFor(c,i0){
 }
 
 /* sitios recomendados y mis sitios: una sola descarga para todos */
-let lastCompareKey="", SITE_ROWS=null, objetivo="todas";
+let lastCompareKey="", SITE_ROWS=null, objetivo="todas", sortMode="nota";
 function siteRank(r){
   const ids = objetivo==="todas" ? r.sp : r.sp.filter(id=>id===objetivo);
   if(objetivo!=="todas" && !ids.length) return {score:-1, top:[]};
@@ -995,18 +1015,21 @@ function renderPlan(){
 function renderSites(){
   if(!SITE_ROWS) return;
   renderPlan();
-  const rows = SITE_ROWS.map(r=>Object.assign({},r,{rk:siteRank(r)})).filter(r=>r.rk.score>=0).sort((a,b)=>b.rk.score-a.rk.score);
+  let rows = SITE_ROWS.map(r=>Object.assign({},r,{rk:siteRank(r)})).filter(r=>r.rk.score>=0).sort((a,b)=>b.rk.score-a.rk.score);
+  if(myPos) rows.forEach(r=>r.dist=haversine(myPos,[r.lat,r.lon]));
+  if(sortMode==="cerca" && myPos) rows.sort((a,b)=>a.dist-b.dist);
+  $("#sortSites").innerHTML='<button data-sort="nota" class="'+(sortMode==="nota"?"on":"")+'">⭐ Mejor nota</button><button data-sort="cerca" class="'+(sortMode==="cerca"?"on":"")+'">📍 Más cerca de mí</button>';
   if(!rows.length){ $("#zonas").innerHTML='<p class="muted" style="margin:0">Ningún sitio de la lista es típico para esa seta.</p>'; return; }
   updateSiteMarkers();
-  const total=rows.length; rows.splice(3);
+  const total=rows.length; rows.splice(sortMode==="cerca"?5:3);
   $("#zonas").innerHTML = rows.map((r,k)=>{
     const s=r.site, dir="https://www.google.com/maps/dir/?api=1&destination="+r.lat+","+r.lon;
     const hunt = s.caza && huntingDay(r.D.time[r.i0]);
-    const bestTxt = r.best>r.s+5 ? "Mejor el "+fmtDate(r.bestDay)+" (índice "+r.best+")" : "Hoy es de los mejores días de la semana";
+    const bestTxt = (r.dist!=null?"📍 a "+fmtDist(r.dist)+" · ":"")+(r.best>r.s+5 ? "Mejor el "+fmtDate(r.bestDay)+" (índice "+r.best+")" : "Hoy es de los mejores días de la semana");
     const top = r.rk.top.length ? r.rk.top.map(x=>{ const sp=SETAS.find(z=>z.id===x.id); return '<span class="pill t-'+sp.t+'" data-goto="'+x.id+'">'+esc(shortName(sp))+' '+x.c+'%</span>'; }).join("") : '<span class="muted">Poco probable ahora</span>';
     const bad = (s.peligro||["phalloides"]).map(id=>{ const sp=SETAS.find(z=>z.id===id); return sp?{sp,c:M.speciesChance(id,sp.m,r.D,r.i0)}:null; }).filter(x=>x&&x.c>=35);
     return '<div class="zone" data-k="'+k+'">'+(r.rk.top[0]?'<img class="mini2" data-photo="'+r.rk.top[0].id+'" alt="">':'')+'<div class="sc" style="background:'+scoreColor(r.rk.score)+'">'+r.rk.score+'</div>'+
-      '<div class="tx"><b>'+(k<3&&r.rk.score>=45?["🥇 ","🥈 ","🥉 "][k]:"")+esc(s.n)+'</b><small>'+esc(s.mun||"Tu sitio")+' · '+bestTxt+'</small></div></div>'+
+      '<div class="tx"><b>'+(sortMode!=="cerca"&&k<3&&r.rk.score>=45?["🥇 ","🥈 ","🥉 "][k]:"")+esc(s.n)+'</b><small>'+esc(s.mun||"Tu sitio")+' · '+bestTxt+'</small></div></div>'+
       '<div class="detail hidden" id="z-'+k+'" style="margin:0 0 10px">'+
         '<div style="margin-bottom:6px"><b>Qué buscar hoy:</b><br>'+top+'</div>'+
         (s.hab?'<p style="margin:6px 0">'+esc(s.hab)+'</p>':'')+
@@ -1175,11 +1198,34 @@ function renderMapBest(){
   }).join("");
   fillMinis(el);
 }
+/* marca el sitio: dónde aparcar, zona donde buscar y sendero oficial resaltado */
+let focusL=[];
+function clearFocus(){ focusL.forEach(x=>{ try{ x.remove(); }catch(e){} }); focusL=[]; }
+function siteZone(s){
+  const nt = TRAILS.length? trailsNear([s.lat,s.lon],1500) : [];
+  const t0 = nt.find(x=>x.t.len<20000);
+  if(t0){
+    // centro y radio a partir del sendero, limitado a la parte cercana al sitio
+    const pts=allPts(t0.t).filter(p=>haversine(p,[s.lat,s.lon])<3500);
+    if(pts.length>3){ let la=0,lo=0; pts.forEach(p=>{ la+=p[0]; lo+=p[1]; }); const c=[la/pts.length,lo/pts.length];
+      const r=Math.min(1600,Math.max(500,Math.max(...pts.map(p=>haversine(p,c)))*0.9)); return {c,r,trail:t0.t}; }
+  }
+  return {c:[s.lat,s.lon],r:700,trail:null};
+}
+function zoneView(s,z){ const dLat=z.r/111320, dLon=z.r/(111320*Math.cos(z.c[0]*Math.PI/180)); return [[s.lat,s.lon],[z.c[0]-dLat,z.c[1]-dLon],[z.c[0]+dLat,z.c[1]+dLon]]; }
+function focusSite(id){
+  if(!map) return; clearFocus();
+  const s=SITIOS.find(x=>x.id===id); if(!s) return;
+  const z=siteZone(s);
+  focusL.push(map.circle(z.c,z.r,{fill:"#2f9e44",fillOpacity:0.13,color:"#2f9e44",outline:true}));
+  focusL.push(map.marker([s.lat,s.lon],'<div class="pk">🅿️</div><div class="pkl">Aparcar / inicio</div>',{anchor:[15,15],z:6,onClick:()=>openSiteSheet(id)}));
+  if(z.trail) selectTrail(z.trail.id,false);
+}
 function goSite(id){
   const s=SITIOS.find(x=>x.id===id); if(!s||!map) return;
   following=false; $("#mbYo").classList.remove("on");
-  if(GL) map.flyTo([s.lat,s.lon],14.6,map.is3D?64:0,-20); else map.setView([s.lat,s.lon],14);
-  openSiteSheet(id);
+  const z=siteZone(s); map.fitBounds(zoneView(s,z),70);
+  focusSite(id); openSiteSheet(id);
 }
 /* sitios recomendados en el mapa, coloreados con la nota de hoy */
 function updateSiteMarkers(){
@@ -1205,6 +1251,7 @@ function openSiteSheet(id){
     '<h2>'+esc(s.n)+'</h2><div class="muted">'+esc(s.mun)+dist+'</div>'+
     (rk?'<div class="row" style="margin:8px 0"><div class="zone" style="border:0;padding:0"><div class="sc" style="background:'+scoreColor(Math.max(0,rk.score))+'">'+Math.max(0,rk.score)+'</div></div><div class="muted">'+(r.best>r.s+5?"Mejor el <b>"+fmtDate(r.bestDay)+"</b>":"Hoy es de los mejores días de la semana")+'</div></div>':'')+
     '<div><b>Qué buscar:</b>'+(rk&&rk.top.length?'<div class="pstrip">'+rk.top.slice(0,4).map(x=>{ const z=SETAS.find(q=>q.id===x.id); return '<div class="pcard" data-goto="'+x.id+'"><img data-photo="'+x.id+'" alt=""><span>'+esc(shortName(z))+' · '+x.c+'%</span></div>'; }).join("")+'</div>':'<br>'+top)+'</div>'+
+    (s.acceso?'<div class="warn" style="margin:8px 0">🔐 <b>Acceso:</b> '+esc(s.acceso)+'</div>':'')+
     (s.ruta?'<div class="ruta"><div><b>🥾 Recorrido</b>'+esc(s.ruta.km)+'</div><div><b>📈 Dificultad</b>'+esc(s.ruta.dif)+'</div><div><b>⏱️ Tiempo</b>'+esc(s.ruta.t)+'</div><div><b>🅿️ Aparcar</b>'+esc(s.ruta.park)+'</div><div style="margin-top:4px">'+esc(s.ruta.via)+'</div></div>':'')+
     '<p style="margin:8px 0">'+esc(s.hab)+'</p><p style="margin:8px 0"><b>Consejo:</b> '+esc(s.tip)+'</p>'+
     (hunt?'<div class="warn">🎯 Fin de semana en temporada de caza: mira si hay carteles de montería.</div>':'')+
@@ -1212,6 +1259,7 @@ function openSiteSheet(id){
     '<div class="row" style="margin-top:10px">'+
       '<a class="b" style="text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+s.lat+','+s.lon+'" target="_blank" rel="noopener">🚗 Llevarme en coche</a>'+
       '<button class="b2" data-zoom="'+s.lat+','+s.lon+'">'+(GL?'⛰️ Verlo en 3D':'🥾 Ver senderos aquí')+'</button>'+
+      '<button class="b2" data-zonasite="'+s.id+'">🍄 Zonas buenas aquí</button>'+
     '</div>'+
     '<p class="note">Las líneas de colores del mapa son los senderos señalizados (OpenStreetMap). Toca una para ver su recorrido y desnivel. Algunos senderos del parque natural piden autorización previa a la Junta, y mucho terreno alrededor es privado: no salgas de las zonas públicas sin permiso.</p>');
   $("#sheet").dataset.cursite=id; fillMinis($("#sheetBody"));
@@ -2079,6 +2127,7 @@ function answer(raw){
   }
   return "No te he entendido del todo 🙂. Prueba con algo como:\n• ¿Mañana es buen día?\n• ¿Qué día me recomiendas?\n• ¿Dónde voy el sábado?\n• ¿Cuándo salen las tanas?\n• ¿Va a llover esta semana?\n• ¿Hay levante mañana?\n• ¿A qué hora anochece?";
 }
+function alertMsg(m){ const el=$("#estado"); if(el) el.textContent=m; }
 function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
 function askChat(text){
   text=(text||"").trim(); if(!text) return;
@@ -2467,6 +2516,9 @@ function init(){
   $("#planTxt").addEventListener("click",e=>{ const g=e.target.closest("[data-goto]"); if(g) openSpecies(g.dataset.goto); });
   $("#planBtns").addEventListener("click",e=>{ if(e.target.id==="btnSalida"){ showSalida(); return; } const mp=e.target.closest("[data-mapa]"); if(mp){ const id=mp.dataset.mapa; show("mapa"); openMap(()=>goSite(id)); } });
   renderObjetivo();
+  $("#sortSites").addEventListener("click",e=>{ const b=e.target.closest("[data-sort]"); if(!b) return; sortMode=b.dataset.sort;
+    if(sortMode==="cerca" && !myPos){ $("#zonas").insertAdjacentHTML("afterbegin",'<p class="note" style="margin-top:0">Buscando tu ubicación…</p>'); oneShotPos(p=>{ if(!p){ sortMode="nota"; alertMsg("No se pudo obtener tu ubicación."); } renderSites(); }); return; }
+    renderSites(); });
   $("#fObjetivo").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; objetivo=b.dataset.k; renderObjetivo(); renderSites(); });
   $("#spChances").addEventListener("click",e=>{ const h=e.target.closest("[data-goto]"); if(h) openSpecies(h.dataset.goto); });
 
@@ -2546,6 +2598,7 @@ function init(){
       if(followTrail===tid){ followTrail=null; } else { if(!TRAILS.find(x=>x.id===tid)) TRAILS.push({id:tid,name:p.name||PATH_TXT[p.k]||"Camino",net:PATH_TXT[p.k]||"",color:"#e8590c",len:p.len,segs:[p.pts],bb:[0,0,0,0],tmp:true}); followTrail=tid; wasOff=false; startGPS(); }
       updateFollow(); openPathSheet(id); return; }
     if(t.id==="lyMarcas"){ map.setLayerVisible(trailsLayer,t.checked); store.set("trails",t.checked); return; }
+    const zs=t.closest("[data-zonasite]"); if(zs){ const s=SITIOS.find(x=>x.id===zs.dataset.zonasite); setZones(true); const z=siteZone(s); following=false; $("#mbYo").classList.remove("on"); map.fitBounds(zoneView(s,z),50); focusSite(s.id); closeSheet(); $("#mapMsg").textContent="En verde: canutos, vaguadas y umbrías dentro de la zona del sitio."; setTimeout(()=>{ if($("#mapMsg").textContent.indexOf("En verde")>=0) $("#mapMsg").textContent=""; },6000); return; }
     if(t.id==="btnBrujula"){ enableCompass(); return; }
     if(t.id==="btnCocheDel"){ store.set("coche",null); closeSheet(); renderCoche(); return; }
     if(t.id==="btnRec"){ await setRecording(!recording); showRutaSheet(); return; }

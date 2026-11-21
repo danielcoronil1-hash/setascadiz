@@ -113,7 +113,7 @@
   P.circle = function (ll, r, st) {
     const e = document.createElementNS("http://www.w3.org/2000/svg", "circle"); st = st || {};
     e.setAttribute("fill", st.fill || "#1a73e8"); e.setAttribute("fill-opacity", st.fillOpacity || 0.1);
-    e.setAttribute("stroke", st.color || "#1a73e8"); e.setAttribute("stroke-width", 1);
+    e.setAttribute("stroke", st.color || "#1a73e8"); e.setAttribute("stroke-width", st.outline ? 2.5 : 1); if (st.outline) e.setAttribute("stroke-dasharray", "8 6");
     this.svg.appendChild(e);
     const v = { type: "circle", ll, r, e }, self = this;
     v.set = function (p, rr) { v.ll = p; if (rr != null) v.r = rr; self._drawVec(v); };

@@ -120,15 +120,17 @@
       remove: () => self._do(() => { if (self.map.getLayer(id)) self.map.removeLayer(id); if (self.map.getSource(id)) self.map.removeSource(id); })
     };
   };
-  P.circle = function (ll, r) {
+  P.circle = function (ll, r, st) {
+    st = st || {};
     const id = "c" + (this._n++), self = this; let data = circlePoly(ll, r || 10);
     this._do(() => {
       self.map.addSource(id, { type: "geojson", data });
-      self.map.addLayer({ id, type: "fill", source: id, paint: { "fill-color": "#1a73e8", "fill-opacity": 0.12 } });
+      self.map.addLayer({ id, type: "fill", source: id, paint: { "fill-color": st.fill || "#1a73e8", "fill-opacity": st.fillOpacity == null ? 0.12 : st.fillOpacity } });
+      if (st.outline) self.map.addLayer({ id: id + "o", type: "line", source: id, paint: { "line-color": st.color || st.fill || "#1a73e8", "line-width": 2.5, "line-dasharray": [2, 1.5] } });
     });
     return {
       set: (p, rr) => { data = circlePoly(p, rr || 10); self._do(() => { const s = self.map.getSource(id); if (s) s.setData(data); }); },
-      remove: () => self._do(() => { if (self.map.getLayer(id)) self.map.removeLayer(id); if (self.map.getSource(id)) self.map.removeSource(id); })
+      remove: () => self._do(() => { ["o", ""].forEach(k => { if (self.map.getLayer(id + k)) self.map.removeLayer(id + k); }); if (self.map.getSource(id)) self.map.removeSource(id); })
     };
   };
 
